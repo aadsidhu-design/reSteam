@@ -19,3 +19,5 @@
 .dv-genres > span { width: 100%; }
 .dv-chk { display: flex !important; flex-direction: row; align-items: center; gap: 6px !important; }
 @media (max-width: 800px) { .dv-card { grid-template-columns: 1fr; } }
+.dv-shots { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
+.dv-shots img { width: 96px; height: 54px; object-fit: cover; }

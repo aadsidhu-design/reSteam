@@ -79,6 +79,34 @@ const FileSlot = ({ title, hint, have, accept, limit, onFile, onClear }: {
   )
 }
 
+/** Up to six screenshots, uploaded in order; choosing new ones replaces the old set. */
+const ShotsSlot = ({ g, reload }: { g: Mine; reload: () => Promise<void> }) => {
+  const [msg, setMsg] = useState<{ ok: boolean; t: string } | null>(null)
+  const [pct, setPct] = useState<number | null>(null)
+  return (
+    <div className="dv-slot">
+      <div className="grow"><b>Screenshots</b><div className="muted small">Up to 6 images (PNG, JPEG, WebP; 2 MB each). They fill the gallery on your store page.</div>
+        {(g.shots ?? 0) > 0 && <div className="dv-shots">{Array.from({ length: g.shots ?? 0 }, (_, n) => <img key={n} src={`/api/games/${g.id}/shots/${n}?v=${g.shots}`} alt="" />)}</div>}
+        {pct !== null && <div className="dv-bar"><span style={{ width: `${pct}%` }} /></div>}
+        {msg && <div className={`small ${msg.ok ? 'pos' : 'err'}`}>{msg.t}</div>}</div>
+      <label className="btn small">{(g.shots ?? 0) > 0 ? 'Replace' : 'Choose files'}
+        <input type="file" hidden multiple accept="image/png,image/jpeg,image/webp" onChange={async e => {
+          const files = [...(e.target.files ?? [])].slice(0, 6); e.target.value = ''
+          if (!files.length) return
+          if (files.some(f => f.size > LIMITS.cover)) { setMsg({ ok: false, t: 'Each screenshot must be 2 MB or smaller.' }); return }
+          setMsg(null); setPct(0)
+          await call('DELETE', `/dev/games/${g.id}/shots`)
+          for (let n = 0; n < files.length; n++) {
+            const err = await upload(`/dev/games/${g.id}/shots/${n}`, files[n], p => setPct(((n + p / 100) / files.length) * 100))
+            if (err) { setMsg({ ok: false, t: err }); break }
+          }
+          setPct(null); await reload(); await store.loadCatalog()
+        }} /></label>
+      {(g.shots ?? 0) > 0 && <button className="btn small" onClick={async () => { await call('DELETE', `/dev/games/${g.id}/shots`); await reload(); await store.loadCatalog() }}>Remove</button>}
+    </div>
+  )
+}
+
 const GameCard = observer(({ g, genres, reload }: { g: Mine; genres: string[]; reload: () => Promise<void> }) => {
   const [edit, setEdit] = useState(false)
   const published = g.status === 'published'
@@ -92,6 +120,7 @@ const GameCard = observer(({ g, genres, reload }: { g: Mine; genres: string[]; r
         <FileSlot title="Cover image" hint="PNG, JPEG or WebP up to 2 MB. Shown on the store, library and community." accept="image/png,image/jpeg,image/webp" limit={LIMITS.cover}
           have={g.hasCover ? 'Cover uploaded' : null}
           onFile={async (f, p) => { const e = await upload(`/dev/games/${g.id}/cover`, f, p); await reload(); await store.loadCatalog(); return e }} />
+        <ShotsSlot g={g} reload={reload} />
         <FileSlot title="Play in the browser" hint="A .zip with index.html at the top level (HTML5 / JavaScript / WebAssembly). Up to 15 MB zipped. Runs in a sandbox." accept=".zip,application/zip" limit={LIMITS.web}
           have={g.playable ? 'Web build uploaded. Owners can play it right on reSteam.' : null}
           onFile={async (f, p) => { const e = await upload(`/dev/games/${g.id}/web`, f, p); await reload(); return e }}

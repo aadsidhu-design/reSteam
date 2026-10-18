@@ -25,6 +25,7 @@ export interface Game {
   user?: boolean
   owner?: string | null
   hasCover?: boolean
+  shots?: number
   playable?: boolean
   build?: { name: string; size: number } | null
   status?: string

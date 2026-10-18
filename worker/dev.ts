@@ -6,6 +6,7 @@ import { logEvent } from './social'
 const MAX_GAMES_PER_USER = 10
 const MAX_CREATES_PER_HOUR = 5
 const MAX_COVER = 2 * 1024 * 1024
+const MAX_SHOTS = 6
 const MAX_BUILD = 50 * 1024 * 1024
 const MAX_ZIP = 15 * 1024 * 1024
 const MAX_WEB_TOTAL = 40 * 1024 * 1024
@@ -19,7 +20,7 @@ const gameId = (c: Ctx) => Number(c.params.id)
 
 interface GameRow {
   id: number; title: string; dev: string; genre: string; tags: string; price: number; discount: number; blurb: string; hue: number; motif: string
-  owner_id: string | null; status: string; has_cover: number; web_entry: string | null; build_name: string | null; build_size: number; created_at: number
+  owner_id: string | null; status: string; has_cover: number; shots: number; web_entry: string | null; build_name: string | null; build_size: number; created_at: number
   released: string; publisher: string; achievements: number; size_gb: number
 }
 
@@ -28,7 +29,7 @@ export function shapeGame(g: GameRow & { owner?: string | null }) {
   return {
     id: g.id, title: g.title, dev: g.dev, publisher: g.publisher, genre: JSON.parse(g.genre), tags: JSON.parse(g.tags), price: g.price, discount: g.discount,
     released: g.released, blurb: g.blurb, hue: g.hue, motif: g.motif, achievements: g.achievements, sizeGb: g.size_gb,
-    user: g.owner_id !== null, owner: g.owner ?? null, hasCover: !!g.has_cover, playable: !!g.web_entry,
+    user: g.owner_id !== null, owner: g.owner ?? null, hasCover: !!g.has_cover, shots: g.shots, playable: !!g.web_entry,
     build: g.build_name ? { name: g.build_name, size: g.build_size } : null, status: g.status,
   }
 }
@@ -155,6 +156,29 @@ export const devRoutes: Route[] = [
     return json({ ok: true })
   }),
 
+  route('PUT', '/dev/games/:id/shots/:n', {}, async c => {
+    const g = await ownedGame(c)
+    if (!g) return fail(404, 'no such game')
+    const n = Number(c.params.n)
+    // screenshots are kept contiguous so the gallery never has gaps
+    if (!Number.isInteger(n) || n < 0 || n >= MAX_SHOTS || n > g.shots) return fail(400, `Screenshots are numbered 0 to ${MAX_SHOTS - 1}, in order`)
+    const len = Number(c.req.headers.get('content-length') ?? 0)
+    if (!len || len > MAX_COVER) return fail(413, 'Screenshots can be up to 2 MB')
+    const bytes = new Uint8Array(await c.req.arrayBuffer())
+    const type = imageType(bytes)
+    if (!type || bytes.length > MAX_COVER) return fail(415, 'Screenshots must be PNG, JPEG or WebP images')
+    await c.env.FILES.put(`games/${g.id}/shot/${n}`, bytes, { httpMetadata: { contentType: type } })
+    await c.env.DB.prepare('UPDATE games SET shots = MAX(shots, ?) WHERE id = ?').bind(n + 1, g.id).run()
+    return json({ ok: true, shots: Math.max(g.shots, n + 1) })
+  }),
+  route('DELETE', '/dev/games/:id/shots', {}, async c => {
+    const g = await ownedGame(c)
+    if (!g) return fail(404, 'no such game')
+    await deletePrefix(c.env, `games/${g.id}/shot/`)
+    await c.env.DB.prepare('UPDATE games SET shots = 0 WHERE id = ?').bind(g.id).run()
+    return json({ ok: true })
+  }),
+
   route('PUT', '/dev/games/:id/build', {}, async c => {
     const g = await ownedGame(c)
     if (!g) return fail(404, 'no such game')
@@ -250,6 +274,12 @@ export const devRoutes: Route[] = [
     const o = await c.env.FILES.get(`games/${gameId(c)}/cover`)
     if (!o) return fail(404, 'no cover')
     // only ever served as the image type validated at upload, never executable
+    return new Response(o.body, { headers: { 'content-type': o.httpMetadata?.contentType ?? 'image/png', 'cache-control': 'public, max-age=300', 'content-security-policy': "default-src 'none'; sandbox" } })
+  }),
+
+  route('GET', '/games/:id/shots/:n', { auth: false }, async c => {
+    const o = await c.env.FILES.get(`games/${gameId(c)}/shot/${Number(c.params.n)}`)
+    if (!o) return fail(404, 'no screenshot')
     return new Response(o.body, { headers: { 'content-type': o.httpMetadata?.contentType ?? 'image/png', 'cache-control': 'public, max-age=300', 'content-security-policy': "default-src 'none'; sandbox" } })
   }),
 

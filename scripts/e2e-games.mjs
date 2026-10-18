@@ -49,6 +49,13 @@ check('a png cover is accepted', (await dev.call('PUT', `/dev/games/${id}/cover`
 const cover = await fetch(`${BASE}/api/games/${id}/cover`)
 check('the cover is served as an image, sandboxed', cover.status === 200 && cover.headers.get('content-type') === 'image/png' && /sandbox/.test(cover.headers.get('content-security-policy') ?? ''))
 
+check('screenshots must be real images', (await dev.call('PUT', `/dev/games/${id}/shots/0`, strToU8('<svg onload=alert(1)>'))).status === 415)
+check('screenshots must be uploaded in order', (await dev.call('PUT', `/dev/games/${id}/shots/3`, png)).status === 400)
+check('screenshots upload', (await dev.call('PUT', `/dev/games/${id}/shots/0`, png)).status === 200 && (await dev.call('PUT', `/dev/games/${id}/shots/1`, png)).status === 200)
+const shot = await fetch(`${BASE}/api/games/${id}/shots/1`)
+check('screenshots are served sandboxed as images', shot.status === 200 && shot.headers.get('content-type') === 'image/png' && /sandbox/.test(shot.headers.get('content-security-policy') ?? ''))
+check('others cannot add screenshots', (await other.call('PUT', `/dev/games/${id}/shots/2`, png)).status === 404)
+
 const buildBytes = new Uint8Array(200_000).map((_, i) => i % 251)
 check('a downloadable build is accepted', (await dev.call('PUT', `/dev/games/${id}/build?name=${encodeURIComponent('pond-1.0.zip')}`, buildBytes)).status === 200)
 check('a build over the limit is refused', (await dev.call('PUT', `/dev/games/${id}/build`, new Uint8Array(51 * 1024 * 1024))).status === 413)

@@ -11,18 +11,20 @@ import { Plats, reviewClass, Tags } from './StorePages'
 
 const Media = ({ g }: { g: Game }) => {
   const [i, setI] = useState(0)
-  const thumbs = [0, 1, 2, 3, 4, 5, 6]
+  const real = g.shots ?? 0
+  const thumbs = real > 0 ? Array.from({ length: real }, (_, k) => k) : [0, 1, 2, 3, 4, 5, 6]
+  const shot = (n: number, title: boolean) => real > 0 ? <img className="art-svg art-img" src={`/api/games/${g.id}/shots/${n}`} alt={`${g.title} screenshot ${n + 1}`} /> : <Art game={g} kind="shot" variant={n} showTitle={title} />
   return (
     <div className="media">
       <div className="media-main">
-        <Art game={g} kind="shot" variant={i} showTitle={i === 0} />
-        {i < 2 && <div className="play-over"><Icon name="play" size={54} /></div>}
+        {shot(i, i === 0)}
+        {real === 0 && i < 2 && <div className="play-over"><Icon name="play" size={54} /></div>}
         <button className="m-arrow l" onClick={() => setI((i + thumbs.length - 1) % thumbs.length)} aria-label="Previous"><Icon name="chevronLeft" size={30} /></button>
         <button className="m-arrow r" onClick={() => setI((i + 1) % thumbs.length)} aria-label="Next"><Icon name="chevronRight" size={30} /></button>
       </div>
       <div className="thumbs">{thumbs.map(n => (
         <button key={n} className={`thumb ${n === i ? 'on' : ''}`} onClick={() => setI(n)} aria-label={`Media ${n + 1}`}>
-          <Art game={g} kind="shot" variant={n} showTitle={false} />{n < 2 && <span className="thumb-play"><Icon name="play" size={20} /></span>}
+          {shot(n, false)}{real === 0 && n < 2 && <span className="thumb-play"><Icon name="play" size={20} /></span>}
         </button>))}
       </div>
     </div>

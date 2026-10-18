@@ -224,7 +224,7 @@ class Store {
         const ids = new Set(list.map(g => g.id))
         for (const s of list) {
           const have = GAMES.find(g => g.id === s.id)
-          if (have) Object.assign(have, { price: s.price, discount: s.discount, hasCover: s.hasCover, playable: s.playable, build: s.build, owner: s.owner, user: s.user, sizeGb: s.sizeGb || have.sizeGb })
+          if (have) Object.assign(have, { price: s.price, discount: s.discount, hasCover: s.hasCover, shots: s.shots, playable: s.playable, build: s.build, owner: s.owner, user: s.user, sizeGb: s.sizeGb || have.sizeGb })
           else GAMES.push({ ...s, rating: 0, reviews: 0, owners: 0, playing: 0 })
         }
         // drop uploaded games that were unpublished or deleted
