@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `fcf36b7`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `d110afa`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -8,13 +8,13 @@ Generated 2026-10-18 from commit `fcf36b7`. Run `npm run coverage` to refresh.
 
 | Measure | Value |
 | --- | --- |
-| Client behaviors replicated | 216 of 246 (12 partial, 18 not yet) |
+| Client behaviors replicated | 217 of 247 (12 partial, 18 not yet) |
 | Backend behaviors replicated | 74 of 90 (1 partial, 15 not yet) |
-| Visual fidelity (average of compared pages) | 75 / 100 over 18 pages |
+| Visual fidelity (average of compared pages) | 75 / 100 over 19 pages |
 | Behavior fidelity | 71 / 100 |
 | API endpoints | 98 (98 exercised by e2e checks) |
 | Automated checks | 225 |
-| Client routes | 22 |
+| Client routes | 23 |
 | Database tables | 29 |
 | Languages | 12 (368 strings) |
 
@@ -34,6 +34,7 @@ Generated 2026-10-18 from commit `fcf36b7`. Run `npm run coverage` to refresh.
 | Login | `/login` | network-capture | 66 | 86 | 2026-10-17 | Form, QR sign-in handshake and recovery flow studied; visual treatment is approximate. |
 | Charts | `/charts` | connected-browser | 78 | 80 | 2026-10-18 | Sub-nav, centered title over blurred art and the rank, price, change and weeks columns match; no regions and 25 rows instead of 100. Movement and weeks come from daily snapshots. |
 | New Releases | `/store/new` | connected-browser | 76 | 64 | 2026-10-18 | Breadcrumb, large title, patterned header and two spotlight capsules with caption bars match; the real page has more sections below that were not captured. |
+| Discounts and events | `/store/specials` | connected-browser | 72 | 66 | 2026-10-18 | Large title over blurred art and the spotlight carousel (media left, capsule, tags and wishlist star right) match; no video and no event sections below. |
 | Footer | `(all)` | connected-browser | 74 | 60 | 2026-10-18 | Four-column layout matched; legal pages do not exist. |
 | Loading and motion | `(all)` | screenshot+css | 94 | 88 | 2026-10-18 | Throbber, carousel fades, hover lifts and menu timings copied from the real CSS values. |
 | Language menu | `(header)` | connected-browser | 70 | 55 | 2026-10-18 | 12 of about 29 languages, chrome strings only; real store translates every page. |
@@ -187,6 +188,7 @@ Generated 2026-10-18 from commit `fcf36b7`. Run `npm run coverage` to refresh.
 | Explore.tsx | 6 | 0 | 100% |
 | MegaMenu.tsx | 40 | 0 | 100% |
 | Player.tsx | 5 | 0 | 100% |
+| Specials.tsx | 6 | 0 | 100% |
 
 ## Features
 
@@ -306,7 +308,7 @@ Generated 2026-10-18 from commit `fcf36b7`. Run `npm run coverage` to refresh.
 - [ ] Scheduled updates
 - [ ] Download region
 
-**Store** (52/58)
+**Store** (53/59)
 
 - [x] Browse menu
 - [x] Recommendations menu
@@ -336,6 +338,7 @@ Generated 2026-10-18 from commit `fcf36b7`. Run `npm run coverage` to refresh.
 - [x] Discovery Queue
 - [x] Charts and stats
 - [x] New Releases page
+- [x] Discounts and events page
 - [x] Chart history (movement, weeks)
 - [x] Account page layout
 - [x] Profile layout

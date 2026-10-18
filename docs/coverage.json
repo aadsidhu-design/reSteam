@@ -1,12 +1,12 @@
 {
   "generated": "2026-10-18",
-  "commit": "fcf36b7",
+  "commit": "d110afa",
   "summary": {
     "client": {
-      "d": 216,
+      "d": 217,
       "p": 12,
       "m": 18,
-      "n": 246
+      "n": 247
     },
     "backend": {
       "d": 74,
@@ -14,12 +14,12 @@
       "m": 15,
       "n": 90
     },
-    "visualAvg": 75.27777777777777,
-    "behaviorAvg": 70.83333333333333,
+    "visualAvg": 75.10526315789474,
+    "behaviorAvg": 70.57894736842105,
     "endpoints": 98,
     "tested": 98,
     "checks": 225,
-    "routes": 22,
+    "routes": 23,
     "dbTables": 29
   },
   "pages": [
@@ -142,6 +142,16 @@
       "behavior": 64,
       "verified": "2026-10-18",
       "notes": "Breadcrumb, large title, patterned header and two spotlight capsules with caption bars match; the real page has more sections below that were not captured."
+    },
+    {
+      "page": "Discounts and events",
+      "route": "/store/specials",
+      "real": "/specials/",
+      "method": "connected-browser",
+      "visual": 72,
+      "behavior": 66,
+      "verified": "2026-10-18",
+      "notes": "Large title over blurred art and the spotlight carousel (media left, capsule, tags and wishlist star right) match; no video and no event sections below."
     },
     {
       "page": "Footer",
@@ -1202,6 +1212,12 @@
     {
       "file": "Player.tsx",
       "translated": 5,
+      "literals": 0,
+      "pct": 100
+    },
+    {
+      "file": "Specials.tsx",
+      "translated": 6,
       "literals": 0,
       "pct": 100
     }

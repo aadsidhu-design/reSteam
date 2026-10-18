@@ -33,7 +33,7 @@ const Browse = ({ go }: { go: () => void }) => {
     [t('mm.storehome'), '/store'],
     [t('mm.newreleases'), '/store/new', t('mm.newreleasesdesc')],
     [t('mm.charts'), '/charts', t('mm.chartsdesc')],
-    [t('home.discounts'), '/store/browse?sale=1'],
+    [t('home.discounts'), '/store/specials'],
     [t('home.free'), '/store/browse?free=1'],
     [t('mm.browsergames'), '/store/browse?playable=1'],
     [t('auth.upload'), '/developer'],
@@ -143,7 +143,7 @@ const Special = ({ go }: { go: () => void }) => (
       <Blue to="/store/browse?user=1" label="PLAYER UPLOADS" icon="person" onGo={go} />
     </div>
     <div className="mg-list narrow right">
-      <Link to="/store/browse?sale=1" onClick={go} className="mg-link">{t('home.discounts')}</Link>
+      <Link to="/store/specials" onClick={go} className="mg-link">{t('home.discounts')}</Link>
       <Link to="/store/browse?minRating=95" onClick={go} className="mg-link">{t('mm.rated95')}</Link>
       <Link to="/community" onClick={go} className="mg-link">{t('mm.hubs')}</Link>
       <Link to="/developer" onClick={go} className="mg-link">{t('mm.publish')}</Link>
