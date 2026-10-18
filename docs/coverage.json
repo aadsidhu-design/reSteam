@@ -1,6 +1,6 @@
 {
   "generated": "2026-10-18",
-  "commit": "5f12cb9",
+  "commit": "4c531bf",
   "summary": {
     "client": {
       "d": 214,
@@ -14,8 +14,8 @@
       "m": 15,
       "n": 90
     },
-    "visualAvg": 75.76923076923077,
-    "behaviorAvg": 72.84615384615384,
+    "visualAvg": 75.0625,
+    "behaviorAvg": 70.6875,
     "endpoints": 98,
     "tested": 98,
     "checks": 224,
@@ -157,31 +157,31 @@
       "page": "Community hub and posts",
       "route": "/community?hub=",
       "real": "steamcommunity.com/app/:id",
-      "method": "not-compared",
-      "visual": null,
-      "behavior": null,
-      "verified": "",
-      "notes": "Built from the earlier client study; not yet compared with the web hub."
+      "method": "connected-browser",
+      "visual": 72,
+      "behavior": 62,
+      "verified": "2026-10-18",
+      "notes": "Title row, tab row, stats line, banner and popular-content note now follow the real order. No screenshots, artwork, videos or workshop; News and Follow added."
     },
     {
       "page": "Profile",
       "route": "/profile",
       "real": "steamcommunity.com/id/:name",
-      "method": "not-compared",
-      "visual": null,
-      "behavior": null,
-      "verified": "",
-      "notes": "Not yet compared."
+      "method": "connected-browser",
+      "visual": 70,
+      "behavior": 66,
+      "verified": "2026-10-18",
+      "notes": "Avatar frame, Level badge, Recent Activity panel with achievement bars and the status sidebar match. No badges, inventory or showcases."
     },
     {
       "page": "Settings / account",
       "route": "/settings/*",
       "real": "store.steampowered.com/account",
-      "method": "not-compared",
-      "visual": null,
-      "behavior": null,
-      "verified": "",
-      "notes": "Not yet compared with the web account pages."
+      "method": "connected-browser",
+      "visual": 74,
+      "behavior": 56,
+      "verified": "2026-10-18",
+      "notes": "Breadcrumb, large title, side nav and blue section bars match the account page. No purchase history, family or payment methods; most panes are reSteam settings."
     },
     {
       "page": "Library",

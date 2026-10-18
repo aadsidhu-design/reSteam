@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `5f12cb9`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `4c531bf`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -10,8 +10,8 @@ Generated 2026-10-18 from commit `5f12cb9`. Run `npm run coverage` to refresh.
 | --- | --- |
 | Client behaviors replicated | 214 of 244 (12 partial, 18 not yet) |
 | Backend behaviors replicated | 74 of 90 (1 partial, 15 not yet) |
-| Visual fidelity (average of compared pages) | 76 / 100 over 13 pages |
-| Behavior fidelity | 73 / 100 |
+| Visual fidelity (average of compared pages) | 75 / 100 over 16 pages |
+| Behavior fidelity | 71 / 100 |
 | API endpoints | 98 (98 exercised by e2e checks) |
 | Automated checks | 224 |
 | Client routes | 21 |
@@ -35,9 +35,9 @@ Generated 2026-10-18 from commit `5f12cb9`. Run `npm run coverage` to refresh.
 | Footer | `(all)` | connected-browser | 74 | 60 | 2026-10-18 | Four-column layout matched; legal pages do not exist. |
 | Loading and motion | `(all)` | screenshot+css | 94 | 88 | 2026-10-18 | Throbber, carousel fades, hover lifts and menu timings copied from the real CSS values. |
 | Language menu | `(header)` | connected-browser | 70 | 55 | 2026-10-18 | 12 of about 29 languages, chrome strings only; real store translates every page. |
-| Community hub and posts | `/community?hub=` | not-compared | - | - | - | Built from the earlier client study; not yet compared with the web hub. |
-| Profile | `/profile` | not-compared | - | - | - | Not yet compared. |
-| Settings / account | `/settings/*` | not-compared | - | - | - | Not yet compared with the web account pages. |
+| Community hub and posts | `/community?hub=` | connected-browser | 72 | 62 | 2026-10-18 | Title row, tab row, stats line, banner and popular-content note now follow the real order. No screenshots, artwork, videos or workshop; News and Follow added. |
+| Profile | `/profile` | connected-browser | 70 | 66 | 2026-10-18 | Avatar frame, Level badge, Recent Activity panel with achievement bars and the status sidebar match. No badges, inventory or showcases. |
+| Settings / account | `/settings/*` | connected-browser | 74 | 56 | 2026-10-18 | Breadcrumb, large title, side nav and blue section bars match the account page. No purchase history, family or payment methods; most panes are reSteam settings. |
 | Library | `/library` | no-web-equivalent | - | - | - | The real library lives in the desktop client; modelled on the earlier client study. |
 | Downloads | `/downloads` | no-web-equivalent | - | - | - | Client-only feature, here backed by real file downloads for uploaded builds. |
 
