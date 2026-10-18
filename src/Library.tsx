@@ -56,7 +56,7 @@ const Capsule = observer(({ g, wide = false }: { g: Game; wide?: boolean }) => {
         <div className="played-panel">
           <div className="pp-btn"><Icon name="download" size={30} /></div>
           <div>
-            <div className="caps">Time played</div>
+            <div className="caps">{t('lb2.timeplayed')}</div>
             <div className="pp-line">Last two weeks: {hours(store.playtime[g.id] ?? 0)}</div>
             <div className="pp-line">Total: {hours(store.playtime[g.id] ?? 0)}</div>
           </div>
@@ -75,7 +75,7 @@ const ShelfHeader = ({ title, sub, onRemove, caret = false }: { title: string; s
       {onRemove && (
         <span className="popwrap">
           <button className="icon-btn" onClick={() => setOpen(!open)} aria-label={`${title} options`}><Icon name={caret ? 'chevronDown' : 'gear'} size={caret ? 22 : 18} /></button>
-          {open && <div className="popover"><button className="pop-item" onClick={onRemove}>Hide this shelf</button></div>}
+          {open && <div className="popover"><button className="pop-item" onClick={onRemove}>{t('lb2.hideshelf')}</button></div>}
         </span>
       )}
       {sub && <span className="muted small shelf-sub">{sub}</span>}
@@ -171,7 +171,7 @@ const Home = observer(() => {
 const GridView = observer(({ list }: { list: Game[] }) => (
   <div className="lib-grid" style={{ gridTemplateColumns: `repeat(auto-fill, minmax(${store.settings.gridSize}px, 1fr))` }}>
     {list.map(g => <Capsule key={g.id} g={g} />)}
-    {list.length === 0 && <p className="muted">No games match.</p>}
+    {list.length === 0 && <p className="muted">{t('lb2.nomatch')}</p>}
   </div>
 ))
 

@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `a6225f2`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `350381c`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -16,7 +16,7 @@ Generated 2026-10-18 from commit `a6225f2`. Run `npm run coverage` to refresh.
 | Automated checks | 283 |
 | Client routes | 25 |
 | Database tables | 34 |
-| Languages | 12 (444 strings) |
+| Languages | 12 (451 strings) |
 
 ## Fidelity by page
 
@@ -165,18 +165,18 @@ Generated 2026-10-18 from commit `a6225f2`. Run `npm run coverage` to refresh.
 
 | Language | Strings | Coverage |
 | --- | --- | --- |
-| Chinese (Simplified) | 444/444 | 100% |
-| English | 444/444 | 100% |
-| French | 444/444 | 100% |
-| German | 444/444 | 100% |
-| Italian | 444/444 | 100% |
-| Japanese | 444/444 | 100% |
-| Korean | 444/444 | 100% |
-| Polish | 444/444 | 100% |
-| Portuguese (Brazil) | 444/444 | 100% |
-| Russian | 444/444 | 100% |
-| Spanish | 444/444 | 100% |
-| Turkish | 444/444 | 100% |
+| Chinese (Simplified) | 451/451 | 100% |
+| English | 451/451 | 100% |
+| French | 451/451 | 100% |
+| German | 451/451 | 100% |
+| Italian | 451/451 | 100% |
+| Japanese | 451/451 | 100% |
+| Korean | 451/451 | 100% |
+| Polish | 451/451 | 100% |
+| Portuguese (Brazil) | 451/451 | 100% |
+| Russian | 451/451 | 100% |
+| Spanish | 451/451 | 100% |
+| Turkish | 451/451 | 100% |
 
 ## UI text going through the translator
 
@@ -193,14 +193,14 @@ Generated 2026-10-18 from commit `a6225f2`. Run `npm run coverage` to refresh.
 | NewReleases.tsx | 3 | 4 | 43% |
 | Developer.tsx | 32 | 22 | 59% |
 | Settings.tsx | 48 | 27 | 64% |
-| Library.tsx | 48 | 22 | 69% |
 | Chrome.tsx | 47 | 20 | 70% |
+| Library.tsx | 51 | 19 | 73% |
 | StorePages.tsx | 65 | 23 | 74% |
-| Profile.tsx | 18 | 5 | 78% |
 | Friends.tsx | 37 | 10 | 79% |
 | Reviews.tsx | 14 | 3 | 82% |
 | Community.tsx | 34 | 5 | 87% |
 | Auth.tsx | 31 | 2 | 94% |
+| Profile.tsx | 22 | 1 | 96% |
 | StoreGame.tsx | 46 | 2 | 96% |
 | Charts.tsx | 9 | 0 | 100% |
 | Downloads.tsx | 13 | 0 | 100% |

@@ -402,6 +402,13 @@ const ROWS: Row[] = [
   ['st.home', 'Home', 'Inicio', 'Accueil', 'Startseite', 'Home', 'Início', 'ホーム', '홈', '首页', 'Главная', 'Ana sayfa', 'Strona główna'],
   ['st.featuredtag', 'Featured tag', 'Etiqueta destacada', 'Tag à la une', 'Hervorgehobener Tag', 'Tag in evidenza', 'Etiqueta em destaque', '注目のタグ', '추천 태그', '精选标签', 'Рекомендуемая метка', 'Öne çıkan etiket', 'Wyróżniony tag'],
   ['st.allgames', 'All Games', 'Todos los juegos', 'Tous les jeux', 'Alle Spiele', 'Tutti i giochi', 'Todos os jogos', 'すべてのゲーム', '모든 게임', '所有游戏', 'Все игры', 'Tüm Oyunlar', 'Wszystkie gry'],
+  ['pf.friendsn', 'Friends', 'Amigos', 'Amis', 'Freunde', 'Amici', 'Amigos', 'フレンド', '친구', '好友', 'Друзья', 'Arkadaşlar', 'Znajomi'],
+  ['pf.hours', 'Hours played', 'Horas jugadas', 'Heures de jeu', 'Spielstunden', 'Ore di gioco', 'Horas jogadas', 'プレイ時間', '플레이 시간', '游戏时数', 'Часов в игре', 'Oynanan saat', 'Godziny gry'],
+  ['pf.wishlist', 'Wishlist', 'Lista de deseados', 'Liste de souhaits', 'Wunschliste', 'Lista dei desideri', 'Lista de desejos', 'ほしい物リスト', '위시리스트', '愿望单', 'Список желаемого', 'İstek listesi', 'Lista życzeń'],
+  ['pf.published', 'Published games', 'Juegos publicados', 'Jeux publiés', 'Veröffentlichte Spiele', 'Giochi pubblicati', 'Jogos publicados', '公開したゲーム', '게시한 게임', '已发布的游戏', 'Опубликованные игры', 'Yayınlanan oyunlar', 'Opublikowane gry'],
+  ['lb2.timeplayed', 'Time played', 'Tiempo de juego', 'Temps de jeu', 'Spielzeit', 'Tempo di gioco', 'Tempo de jogo', 'プレイ時間', '플레이 시간', '游戏时间', 'Время в игре', 'Oynama süresi', 'Czas gry'],
+  ['lb2.hideshelf', 'Hide this shelf', 'Ocultar esta estantería', 'Masquer cette étagère', 'Dieses Regal ausblenden', 'Nascondi questo scaffale', 'Ocultar esta prateleira', 'この棚を非表示', '이 선반 숨기기', '隐藏此栏目', 'Скрыть эту полку', 'Bu rafı gizle', 'Ukryj tę półkę'],
+  ['lb2.nomatch', 'No games match.', 'Ningún juego coincide.', 'Aucun jeu ne correspond.', 'Keine passenden Spiele.', 'Nessun gioco corrisponde.', 'Nenhum jogo encontrado.', '一致するゲームはありません。', '일치하는 게임이 없습니다.', '没有匹配的游戏。', 'Подходящих игр нет.', 'Eşleşen oyun yok.', 'Brak pasujących gier.'],
 ]
 
 export const PAGE_STRINGS: Record<Lang, Record<string, string>> = Object.fromEntries(

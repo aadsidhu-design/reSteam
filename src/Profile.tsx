@@ -104,10 +104,10 @@ export const ProfilePage = observer(() => {
               </div>
               <div className="pf-links">
                 <div><span>Games</span><b>{data.gamesOwned ?? 0}</b></div>
-                <div><span>Friends</span><b>{data.friends ?? 0}</b></div>
-                <div><span>Hours played</span><b>{Math.round((data.minutes ?? 0) / 60)}</b></div>
-                {self && <Link to="/wishlist"><span>Wishlist</span><b>{store.wishlist.length}</b></Link>}
-                {self && <Link to="/developer"><span>Published games</span></Link>}
+                <div><span>{t('pf.friendsn')}</span><b>{data.friends ?? 0}</b></div>
+                <div><span>{t('pf.hours')}</span><b>{Math.round((data.minutes ?? 0) / 60)}</b></div>
+                {self && <Link to="/wishlist"><span>{t('pf.wishlist')}</span><b>{store.wishlist.length}</b></Link>}
+                {self && <Link to="/developer"><span>{t('pf.published')}</span></Link>}
               </div>
             </aside>
           </div>

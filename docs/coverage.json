@@ -1,6 +1,6 @@
 {
   "generated": "2026-10-18",
-  "commit": "a6225f2",
+  "commit": "350381c",
   "summary": {
     "client": {
       "d": 224,
@@ -1138,74 +1138,74 @@
     {
       "code": "schinese",
       "name": "Chinese (Simplified)",
-      "have": 444,
-      "total": 444
+      "have": 451,
+      "total": 451
     },
     {
       "code": "english",
       "name": "English",
-      "have": 444,
-      "total": 444
+      "have": 451,
+      "total": 451
     },
     {
       "code": "french",
       "name": "French",
-      "have": 444,
-      "total": 444
+      "have": 451,
+      "total": 451
     },
     {
       "code": "german",
       "name": "German",
-      "have": 444,
-      "total": 444
+      "have": 451,
+      "total": 451
     },
     {
       "code": "italian",
       "name": "Italian",
-      "have": 444,
-      "total": 444
+      "have": 451,
+      "total": 451
     },
     {
       "code": "japanese",
       "name": "Japanese",
-      "have": 444,
-      "total": 444
+      "have": 451,
+      "total": 451
     },
     {
       "code": "koreana",
       "name": "Korean",
-      "have": 444,
-      "total": 444
+      "have": 451,
+      "total": 451
     },
     {
       "code": "polish",
       "name": "Polish",
-      "have": 444,
-      "total": 444
+      "have": 451,
+      "total": 451
     },
     {
       "code": "brazilian",
       "name": "Portuguese (Brazil)",
-      "have": 444,
-      "total": 444
+      "have": 451,
+      "total": 451
     },
     {
       "code": "russian",
       "name": "Russian",
-      "have": 444,
-      "total": 444
+      "have": 451,
+      "total": 451
     },
     {
       "code": "spanish",
       "name": "Spanish",
-      "have": 444,
-      "total": 444
+      "have": 451,
+      "total": 451
     },
     {
       "code": "turkish",
       "name": "Turkish",
-      "have": 444,
-      "total": 444
+      "have": 451,
+      "total": 451
     }
   ],
   "textCoverage": [
@@ -1276,28 +1276,22 @@
       "pct": 64
     },
     {
-      "file": "Library.tsx",
-      "translated": 48,
-      "literals": 22,
-      "pct": 68.57142857142857
-    },
-    {
       "file": "Chrome.tsx",
       "translated": 47,
       "literals": 20,
       "pct": 70.1492537313433
     },
     {
+      "file": "Library.tsx",
+      "translated": 51,
+      "literals": 19,
+      "pct": 72.85714285714285
+    },
+    {
       "file": "StorePages.tsx",
       "translated": 65,
       "literals": 23,
       "pct": 73.86363636363636
-    },
-    {
-      "file": "Profile.tsx",
-      "translated": 18,
-      "literals": 5,
-      "pct": 78.26086956521739
     },
     {
       "file": "Friends.tsx",
@@ -1322,6 +1316,12 @@
       "translated": 31,
       "literals": 2,
       "pct": 93.93939393939394
+    },
+    {
+      "file": "Profile.tsx",
+      "translated": 22,
+      "literals": 1,
+      "pct": 95.65217391304348
     },
     {
       "file": "StoreGame.tsx",
