@@ -5,14 +5,15 @@ import { ALL_TAGS, GAMES, GENRES, compact, fmt, priceOf, reviewLabel, type Game 
 import { store } from './store'
 import { Art } from './art'
 import { Icon } from './icons'
-import { Modal, Price, useDismiss } from './ui'
+import { Avatar, Modal, Price, useDismiss } from './ui'
 import { MegaNav } from './MegaMenu'
+import { t as tr } from './i18n'
 import './store.css'
 
 export const reviewClass = (rating: number, reviews = 1) => (reviews < 10 ? 'rv-none' : rating >= 70 ? 'rv-pos' : rating >= 40 ? 'rv-mixed' : 'rv-neg')
 
 /* ---------- layout with the store sub-menu ---------- */
-const SearchBox = () => {
+const SearchBox = observer(() => {
   const nav = useNavigate()
   const [q, setQ] = useState('')
   const [open, setOpen] = useState(false)
@@ -21,7 +22,7 @@ const SearchBox = () => {
   return (
     <div className="ssearch popwrap" ref={ref}>
       <form className="ssearch-form" onSubmit={e => { e.preventDefault(); setOpen(false); nav(`/store/browse?q=${encodeURIComponent(q.trim())}`) }}>
-      <input placeholder="Search the store" value={q} onChange={e => { setQ(e.target.value); setOpen(true) }} onFocus={() => setOpen(true)} aria-label="Search the store" />
+      <input placeholder={tr('search.ph')} value={q} onChange={e => { setQ(e.target.value); setOpen(true) }} onFocus={() => setOpen(true)} aria-label={tr('search.ph')} />
       <button className="ssearch-btn" aria-label="Search"><Icon name="search" size={22} /></button>
       </form>
       {open && hits.length > 0 && (
@@ -36,7 +37,7 @@ const SearchBox = () => {
       )}
     </div>
   )
-}
+})
 
 export const StoreLayout = observer(() => {
   const flat = useLocation().pathname !== '/store'
@@ -105,7 +106,7 @@ const Dots = ({ n, i, set }: { n: number; i: number; set: (i: number) => void })
   <div className="dots">{Array.from({ length: n }, (_, k) => <button key={k} className={k === i ? 'on' : ''} onClick={() => set(k)} aria-label={`Page ${k + 1}`} />)}</div>
 )
 const Head = ({ title, more, children }: { title: string; more?: string; children?: React.ReactNode }) => (
-  <div className="sec-head2"><h2>{title}{children}</h2>{more && <Link to={more} className="seebtn">See More</Link>}</div>
+  <div className="sec-head2"><h2>{title}{children}</h2>{more && <Link to={more} className="seebtn">{tr('home.seemore')}</Link>}</div>
 )
 
 const DevBanner = () => (
@@ -183,8 +184,8 @@ export const StoreHome = observer(() => {
 
       <section className="container sec">
         <div className="sec-head2">
-          <h2>Featured &amp; Recommended</h2>
-          <button className="giftbtn" onClick={() => setGift(true)}><span className="giftart"><Icon name="gift" size={26} /></span> Send a Gift Card</button>
+          <h2>{tr('home.featured')}</h2>
+          <button className="giftbtn" onClick={() => setGift(true)}><span className="giftart"><Icon name="gift" size={26} /></span> {tr('home.gift')}</button>
         </div>
         <div className="feat-wrap" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
           <button className="peek l" onClick={() => setIdx((idx + featured.length - 1) % featured.length)} aria-label="Previous featured game"><Art game={featured[(idx + featured.length - 1) % featured.length]} kind="wide" showTitle={false} /><Icon name="chevronLeft" size={44} /></button>
@@ -207,7 +208,7 @@ export const StoreHome = observer(() => {
       <section className="container"><DevBanner /></section>
 
       <section className="container sec">
-        <Head title="Discounts & Events" more="/store/browse?sale=1" />
+        <Head title={tr('home.discounts')} more="/store/browse?sale=1" />
         <div className="feat-wrap">
           <Arrows onPrev={() => setDPage((dPage + 1) % 2)} onNext={() => setDPage((dPage + 1) % 2)} />
           <div className="events">
@@ -257,14 +258,14 @@ export const StoreHome = observer(() => {
             <div key={t}>
               <h2 className="tag-title">{t.toUpperCase()} GAMES</h2><div className="tag-sub">Featured tag</div>
               <div className="tag-panel">{list.map(g => <Link key={g.id} to={`/store/${g.id}`} className="tg"><div className="tg-art"><Art game={g} kind="header" /></div><CapPrice g={g} /></Link>)}</div>
-              <div className="seerow"><Link to={`/store/browse?tag=${encodeURIComponent(t)}`} className="seebtn">See More</Link></div>
+              <div className="seerow"><Link to={`/store/browse?tag=${encodeURIComponent(t)}`} className="seebtn">{tr('home.seemore')}</Link></div>
             </div>
           )
         })}
       </section>
 
       <section className="container sec newrel">
-        <Head title="Top New Releases" more="/store/browse?sort=new"><span className="monthchip">{month}</span></Head>
+        <Head title={tr('home.newrel')} more="/store/browse?sort=new"><span className="monthchip">{month}</span></Head>
         <div className="feat-wrap">
           <Arrows onPrev={() => setNPage((nPage + 2) % 3)} onNext={() => setNPage((nPage + 1) % 3)} />
           <div className="nr-panel">
@@ -301,12 +302,12 @@ export const StoreHome = observer(() => {
       </section>
 
       <section className="container sec">
-        <Head title="Free to Play" more="/store/browse?free=1" />
+        <Head title={tr('home.free')} more="/store/browse?free=1" />
         <div className="cards">{freeGames.map(g => <Card key={g.id} g={g} />)}</div>
       </section>
 
       <section className="container sec">
-        <h2>Browse by genre</h2>
+        <h2>{tr('home.genre')}</h2>
         <div className="genres">
           {GENRES.map((gn, i) => {
             const g = GAMES.find(x => x.genre.includes(gn))!
@@ -457,11 +458,11 @@ export const Cart = observer(() => {
   return (
     <div className="container cart2">
       <div className="crumbs2"><Link to="/store">Home</Link> &gt; <span>Your Shopping Cart</span></div>
-      <h1 className="cart-h1">Your Shopping Cart</h1>
+      <h1 className="cart-h1">{tr('cart.title')}</h1>
       <div className="cart-grid2">
         <div>
           <div className="cart-box">
-            {empty ? <div className="cart-empty">Your cart is empty.</div> : store.cartGames.map(g => (
+            {empty ? <div className="cart-empty">{tr('cart.empty')}</div> : store.cartGames.map(g => (
               <div className="cart-item" key={g.id}>
                 <div className="ci-art"><Art game={g} kind="header" /></div>
                 <div className="grow"><Link to={`/store/${g.id}`} className="ci-title">{g.title}</Link><div className="muted small"><Plats /> {g.sizeGb.toFixed(1)} GB</div></div>
@@ -469,8 +470,8 @@ export const Cart = observer(() => {
               </div>))}
           </div>
           <div className="cart-btns">
-            <Link to="/store" className="btn gray">Continue Shopping</Link>
-            <button className="btn bluebig" disabled={empty} onClick={() => setPay(true)}>Continue to payment</button>
+            <Link to="/store" className="btn gray">{tr('cart.continue')}</Link>
+            <button className="btn bluebig" disabled={empty} onClick={() => setPay(true)}>{tr('cart.pay')}</button>
           </div>
           <h3 className="rec-title">RECOMMENDATIONS FOR YOU</h3>
           <div className="rec3">{recs.map((g, i) => (
@@ -479,8 +480,8 @@ export const Cart = observer(() => {
                 {g.discount > 0 ? <><span className="rec-pct">-{g.discount}%</span><span className="rec-price"><s>{fmt(g.price)}</s><b>{fmt(priceOf(g))}</b></span></> : <span className="rec-price plain"><b>{fmt(g.price)}</b></span>}</div></Link>))}</div>
         </div>
         <aside className="cart-side">
-          <div className="est"><b>Estimated total</b><div className="est-total">{fmt(store.cartTotal)}</div><div className="small">Sales tax will be calculated during checkout where applicable</div>
-            <button className="btn bluebig full" disabled={empty} onClick={() => setPay(true)}>Continue to payment</button></div>
+          <div className="est"><b>{tr('cart.total')}</b><div className="est-total">{fmt(store.cartTotal)}</div><div className="small">Sales tax will be calculated during checkout where applicable</div>
+            <button className="btn bluebig full" disabled={empty} onClick={() => setPay(true)}>{tr('cart.pay')}</button></div>
           <div className="cart-ill">
             <svg viewBox="0 0 300 150" aria-hidden><rect x="60" y="20" width="190" height="110" rx="4" fill="#0f1722" stroke="#33465c" /><rect x="70" y="30" width="60" height="90" fill="#17222f" /><rect x="136" y="30" width="104" height="52" fill="#2b3f66" /><rect x="136" y="90" width="104" height="8" fill="#1d2b3d" /><rect x="136" y="104" width="70" height="8" fill="#1d2b3d" /></svg>
             <p>A purchase of a digital product grants a license for the product on reSteam.</p>
@@ -499,12 +500,12 @@ export const Wishlist = observer(() => {
   const onSale = list.filter(g => g.discount > 0).length
   return (
     <div className="container">
-      <div className="row-between"><h1>Your Wishlist</h1>
+      <div className="row-between wl-head"><div className="wl-who"><Avatar f={{ name: store.name, status: store.status }} size={64} ring={false} /><h1>{tr('wish.title', { name: store.name }).toUpperCase()}</h1></div>
         <select className="input sortsel" value={sort} onChange={e => setSort(e.target.value as typeof sort)} aria-label="Sort wishlist">
           <option value="added">Sort by: date added</option><option value="name">Sort by: name</option><option value="price">Sort by: price</option><option value="discount">Sort by: discount</option>
         </select></div>
       {onSale > 0 && <div className="sale-banner">{onSale} game{onSale === 1 ? '' : 's'} from your wishlist {onSale === 1 ? 'is' : 'are'} on sale now</div>}
-      {list.length === 0 && <p className="muted">Your wishlist is empty. <Link to="/store">Browse the store</Link></p>}
+      {list.length === 0 && <div className="wl-empty"><b>{tr('wish.empty')}</b><p>Fill up your wishlist by browsing the store and using the "Add to your Wishlist" button.</p><Link to="/store/browse">Browse the store</Link></div>}
       {list.map(g => (
         <div className="lrow wish" key={g.id}>
           <div className="lrow-art big"><Art game={g} kind="header" /></div>

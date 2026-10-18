@@ -8,6 +8,7 @@ import { Art } from './art'
 import { Icon } from './icons'
 import { Price } from './ui'
 import { Plats, reviewClass, Tags } from './StorePages'
+import { t } from './i18n'
 
 const Media = ({ g }: { g: Game }) => {
   const [i, setI] = useState(0)
@@ -50,10 +51,10 @@ export const StoreGame = observer(() => {
   return (
     <div className="sg-wrap">
     <div className="sg-bd" aria-hidden><Art game={g} kind="hero" showTitle={false} /></div>
-    {!store.signedIn && <div className="notsigned"><div><Link className="btn" to={`/login?next=${encodeURIComponent(`/store/${g.id}`)}`}>Sign in</Link><span><b>You're not signed in!</b>Sign in to reSteam to wishlist, follow, purchase and see recommendations</span></div></div>}
+    {!store.signedIn && <div className="notsigned"><div><Link className="btn" to={`/login?next=${encodeURIComponent(`/store/${g.id}`)}`}>{t('game.signin')}</Link><span><b>You're not signed in!</b>Sign in to reSteam to wishlist, follow, purchase and see recommendations</span></div></div>}
     <div className="container sgame">
       <div className="crumbs"><Link to="/store/browse">All Games</Link> &gt; <Link to={`/store/browse?genre=${encodeURIComponent(g.genre[0])}`}>{g.genre[0]} Games</Link> &gt; <span>{g.title}</span></div>
-      <div className="sg-title"><h1>{g.title}</h1><Link to={`/community?hub=${g.id}`} className="hubbtn">Community Hub</Link></div>
+      <div className="sg-title"><h1>{g.title}</h1><Link to={`/community?hub=${g.id}`} className="hubbtn">{t('game.hub')}</Link></div>
 
       <div className="sg-top">
         <Media g={g} />
@@ -75,9 +76,9 @@ export const StoreGame = observer(() => {
       <div className="sg-signed">
         {!store.signedIn ? <div className="sg-btns small"><span><Link to={`/login?next=${encodeURIComponent(`/store/${g.id}`)}`}><b>Sign in</b></Link> to add this item to your wishlist, follow it, or mark it as ignored</span></div> : (
         <div className="sg-btns">
-          <button className={`btn ${wished ? 'blue' : ''}`} onClick={() => store.toggleWishlist(g.id)} disabled={owned}>{wished ? 'On Wishlist ✓' : 'Add to your wishlist'}</button>
-          <button className={`btn ${store.followed.includes(g.id) ? 'blue' : ''}`} onClick={() => { store.toggleFollow(g.id); store.toast(store.followed.includes(g.id) ? `Following ${g.title}` : `Unfollowed ${g.title}`) }}>{store.followed.includes(g.id) ? 'Following ✓' : 'Follow'}</button>
-          <button className={`btn ${store.ignored.includes(g.id) ? 'red' : ''}`} onClick={() => { store.toggleIgnore(g.id); store.toast(store.ignored.includes(g.id) ? `${g.title} is now ignored and will be hidden from the store` : `${g.title} is no longer ignored`) }}>{store.ignored.includes(g.id) ? 'Ignored ✓' : 'Ignore'}</button>
+          <button className={`btn ${wished ? 'blue' : ''}`} onClick={() => store.toggleWishlist(g.id)} disabled={owned}>{wished ? 'On Wishlist ✓' : t('game.wish')}</button>
+          <button className={`btn ${store.followed.includes(g.id) ? 'blue' : ''}`} onClick={() => { store.toggleFollow(g.id); store.toast(store.followed.includes(g.id) ? `Following ${g.title}` : `Unfollowed ${g.title}`) }}>{store.followed.includes(g.id) ? 'Following ✓' : t('game.follow')}</button>
+          <button className={`btn ${store.ignored.includes(g.id) ? 'red' : ''}`} onClick={() => { store.toggleIgnore(g.id); store.toast(store.ignored.includes(g.id) ? `${g.title} is now ignored and will be hidden from the store` : `${g.title} is no longer ignored`) }}>{store.ignored.includes(g.id) ? 'Ignored ✓' : t('game.ignore')}</button>
           {friends.length > 0 && <span className="muted small">{friends.map(f => f.name).join(', ')} playing now</span>}
         </div>
         )}
@@ -87,7 +88,7 @@ export const StoreGame = observer(() => {
       <div className="sg-body">
         <div className="sg-main">
           <div className="buybox">
-            <div className="bb-top"><h2 className="bb-title">{g.price === 0 ? `Play ${g.title}` : `Buy ${g.title}`}</h2><Plats /></div>
+            <div className="bb-top"><h2 className="bb-title">{g.price === 0 ? t('game.play') + ' ' + g.title : t('game.buy', { title: g.title })}</h2><Plats /></div>
             <div className="bb-actions">
               {g.discount > 0 && <span className="bb-pct">-{g.discount}%</span>}
               <span className="bb-price">{g.discount > 0 && <s>{fmt(g.price)}</s>}<b>{fmt(priceOf(g))}</b></span>
@@ -95,9 +96,9 @@ export const StoreGame = observer(() => {
                 installed ? <button className="btn play" onClick={() => nav(`/library/${g.id}`)}>Play in Library</button>
                   : queued ? <Link to="/downloads" className="btn blue">Installing…</Link>
                   : <button className="btn blue" onClick={() => { store.install(g.id); nav('/downloads') }}><Icon name="download" size={18} /> Install</button>
-              ) : g.price === 0 ? <button className="btn addcart" onClick={() => { store.claimFree(g.id); store.toast(`${g.title} was added to your library`) }}>Play Game</button>
+              ) : g.price === 0 ? <button className="btn addcart" onClick={() => { store.claimFree(g.id); store.toast(`${g.title} was added to your library`) }}>{t('game.play')}</button>
                 : inCart ? <Link to="/cart" className="btn addcart">In cart — View cart</Link>
-                : <button className="btn addcart" onClick={() => store.addToCart(g.id)}>Add to Cart</button>}
+                : <button className="btn addcart" onClick={() => store.addToCart(g.id)}>{t('game.addcart')}</button>}
             </div>
           </div>
 

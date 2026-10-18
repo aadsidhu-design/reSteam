@@ -5,12 +5,13 @@ import { GAMES, fmt } from './data'
 import { notificationText, store } from './store'
 import { Icon } from './icons'
 import { Avatar, Logo, Modal, ago, useDismiss } from './ui'
+import { LANGUAGES, i18n, t } from './i18n'
 import './shell.css'
 
 export const Header = observer(() => {
   const nav = useNavigate()
   const path = useLocation().pathname
-  const [menu, setMenu] = useState<'bell' | 'user' | null>(null)
+  const [menu, setMenu] = useState<'bell' | 'user' | 'lang' | null>(null)
   const ref = useDismiss(menu !== null, () => setMenu(null))
   const isStore = path.startsWith('/store') || path === '/cart' || path === '/wishlist'
   const isCommunity = path.startsWith('/community')
@@ -25,11 +26,11 @@ export const Header = observer(() => {
       <div className={`gh-inner ${isCommunity || path.startsWith('/profile') ? 'narrow' : ''}`}>
         <Link to="/store" className="gh-logo" aria-label="reSteam home"><Logo size={36} /><span>reSteam</span></Link>
         <nav className="gh-nav">
-          <NavLink to="/store" className={isStore ? 'active' : ''}>STORE</NavLink>
-          <NavLink to="/library" className={isLibrary ? 'active' : ''}>LIBRARY</NavLink>
-          <NavLink to="/community" className={isCommunity ? 'active' : ''}>COMMUNITY</NavLink>
+          <NavLink to="/store" className={isStore ? 'active' : ''}>{t('nav.store')}</NavLink>
+          <NavLink to="/library" className={isLibrary ? 'active' : ''}>{t('nav.library')}</NavLink>
+          <NavLink to="/community" className={isCommunity ? 'active' : ''}>{t('nav.community')}</NavLink>
           {store.signedIn && <NavLink to="/profile" className={path === '/profile' || path.startsWith('/profile/') ? 'active' : ''}>{store.name.toUpperCase()}</NavLink>}
-          <NavLink to="/about" className={isAbout ? 'active' : ''}>ABOUT</NavLink>
+          <NavLink to="/about" className={isAbout ? 'active' : ''}>{t('nav.about')}</NavLink>
         </nav>
         <div className="grow" />
         {dl && dlGame && (
@@ -41,9 +42,9 @@ export const Header = observer(() => {
         )}
         {store.account === 'in' ? (
           <div className="gh-right" ref={ref}>
-            <Link to="/developer" className="gh-install"><Icon name="plus" size={13} /> Upload a game</Link>
-            <Link to="/wishlist" className="gh-link">Wishlist ({store.wishlist.length})</Link>
-            <Link to="/cart" className="gh-link"><Icon name="cart" size={15} /> Cart ({store.cart.length})</Link>
+            <Link to="/developer" className="gh-install"><Icon name="plus" size={13} /> {t('auth.upload')}</Link>
+            <Link to="/wishlist" className="gh-link">{t('nav.wishlist')} ({store.wishlist.length})</Link>
+            <Link to="/cart" className="gh-link"><Icon name="cart" size={15} /> {t('nav.cart')} ({store.cart.length})</Link>
             <div className="popwrap">
               <button className="gh-icon" onClick={() => { setMenu(menu === 'bell' ? null : 'bell') }} aria-label="Notifications">
                 <Icon name="bell" size={20} />
@@ -80,24 +81,42 @@ export const Header = observer(() => {
               </button>
               {menu === 'user' && (
                 <div className="popover right">
-                  <button className="pop-item" onClick={() => { setMenu(null); nav('/profile') }}>View my profile</button>
+                  <button className="pop-item" onClick={() => { setMenu(null); nav('/profile') }}>{t('user.profile')}</button>
                   <button className="pop-item" onClick={() => { setMenu(null); store.friendsOpen = true }}>Friends &amp; Chat</button>
-                  <button className="pop-item" onClick={() => { setMenu(null); nav('/downloads') }}>Manage downloads</button>
+                  <button className="pop-item" onClick={() => { setMenu(null); nav('/downloads') }}>{t('user.downloads')}</button>
                   <button className="pop-item" onClick={() => { setMenu(null); nav('/developer') }}>Upload a game</button>
-                  <button className="pop-item" onClick={() => { setMenu(null); nav('/settings/account') }}>Account details</button>
-                  <button className="pop-item" onClick={() => { setMenu(null); nav('/settings/interface') }}>Settings</button>
-                  <button className="pop-item" onClick={() => { setMenu(null); void store.signOut().then(() => nav('/store')) }}>Sign out of account…</button>
+                  <button className="pop-item" onClick={() => { setMenu(null); nav('/settings/account') }}>{t('user.account')}</button>
+                  <button className="pop-item" onClick={() => { setMenu(null); nav('/settings/interface') }}>{t('user.settings')}</button>
+                  <button className="pop-item" onClick={() => { setMenu(null); void store.signOut().then(() => nav('/store')) }}>{t('user.signout')}</button>
+                </div>
+              )}
+            </div>
+            <div className="popwrap">
+              <button className="gh-lang" onClick={() => setMenu(menu === 'lang' ? null : 'lang')} aria-expanded={menu === 'lang'}>{t('lang.label')} <Icon name="chevronDown" size={11} /></button>
+              {menu === 'lang' && (
+                <div className="popover right lang-pop" role="listbox" aria-label="Language">
+                  {LANGUAGES.map(([code, name]) => <button key={code} role="option" aria-selected={i18n.lang === code} className={`pop-item ${i18n.lang === code ? 'sel' : ''}`} onClick={() => { i18n.set(code); setMenu(null) }}>{name}</button>)}
                 </div>
               )}
             </div>
             <button className="gh-wallet" onClick={() => nav('/settings/account')} title="reSteam Wallet">{fmt(store.wallet)}</button>
           </div>
         ) : store.account === 'out' ? (
-          <div className="gh-right">
-            <Link to="/developer" className="gh-install"><Icon name="plus" size={13} /> Upload a game</Link>
-            <Link className="gh-login" to={`/login?next=${encodeURIComponent(path)}`}>login</Link>
+          <div className="gh-right" ref={ref}>
+            <Link to="/developer" className="gh-install"><Icon name="plus" size={13} /> {t('auth.upload')}</Link>
+            <Link className="gh-login" to={`/login?next=${encodeURIComponent(path)}`}>{t('auth.login')}</Link>
             <span className="gh-sep">|</span>
-            <Link className="gh-login" to={`/login?mode=join&next=${encodeURIComponent(path)}`}>join</Link>
+            <Link className="gh-login" to={`/login?mode=join&next=${encodeURIComponent(path)}`}>{t('auth.join')}</Link>
+            <span className="gh-sep">|</span>
+            <div className="popwrap">
+              <button className="gh-lang" onClick={() => setMenu(menu === 'lang' ? null : 'lang')} aria-expanded={menu === 'lang'}>{t('lang.label')} <Icon name="chevronDown" size={11} /></button>
+              {menu === 'lang' && (
+                <div className="popover right lang-pop" role="listbox" aria-label="Language">
+                  {LANGUAGES.map(([code, name]) => <button key={code} role="option" aria-selected={i18n.lang === code} className={`pop-item ${i18n.lang === code ? 'sel' : ''}`} onClick={() => { i18n.set(code); setMenu(null) }}>{name}</button>)}
+                </div>
+              )}
+            </div>
+
           </div>
         ) : null}
       </div>
@@ -108,13 +127,16 @@ export const Header = observer(() => {
 export const Footer = () => (
   <footer className="gfooter">
     <div className="gf-inner">
-      <div className="gf-brand"><Logo size={30} /> <span>reSteam</span></div>
-      <p>reSteam is an independent, non-commercial fan project that recreates the look and behavior of a PC game store for learning. It has no affiliation with, and is not endorsed by, any game store company. All games, studios and artwork here are fictional and generated in your browser.</p>
-      <div className="gf-links">
-        <Link to="/about">About reSteam</Link>
-        <a href="https://github.com/aadsidhu-design/resteam" target="_blank" rel="noreferrer">Source code</a>
-        <Link to="/store/browse">Browse all games</Link>
-        <Link to="/community">Community</Link>
+      <div className="gf-left">
+        <div className="gf-brand"><Logo size={34} /> <span>reSteam</span></div>
+        <p>An independent, non-commercial fan project that recreates a PC game store for learning. It is not affiliated with or endorsed by any game store company. Every game, studio and picture here is fictional or made by players. Wallet funds are play money.</p>
+        <div className="gf-social"><a href="https://github.com/aadsidhu-design/reSteam" target="_blank" rel="noreferrer" aria-label="Source code on GitHub"><Icon name="info" size={26} /></a></div>
+      </div>
+      <div className="gf-cols">
+        <div><h5>RESTEAM</h5><Link to="/about">About reSteam</Link><Link to="/developer">Publish a game</Link><Link to="/store/browse">All games</Link><Link to="/store">Gift cards</Link></div>
+        <div><h5>COMMUNITY</h5><Link to="/community">Community</Link><Link to="/community?tab=Discussions">Discussions</Link><Link to="/community?tab=Guides">Guides</Link><Link to="/community?tab=Reviews">Reviews</Link></div>
+        <div><h5>LEGAL</h5><Link to="/about">Not affiliated</Link><Link to="/about">Play money</Link><Link to="/about">Your data</Link></div>
+        <div><h5>MORE</h5><a href="https://github.com/aadsidhu-design/reSteam" target="_blank" rel="noreferrer">Source code</a><Link to="/settings/account">My account</Link><Link to="/login">Sign in</Link><Link to="/login?mode=join">Join</Link></div>
       </div>
     </div>
   </footer>

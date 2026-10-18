@@ -433,3 +433,11 @@ a.lrow:hover { background: #1e2d40; color: #fff; }
 .sg-signed { background: rgba(0, 0, 0, .25); padding: 14px 16px; margin-top: 16px; }
 .sg-btns .btn { background: #2a475e; color: #67c1f5; }
 .bb-title { font-size: 21px !important; }
+
+.wl-head { margin: 18px 0 6px; }
+.wl-who { display: flex; align-items: center; gap: 16px; }
+.wl-who h1 { margin: 0; font-size: 28px; font-weight: 500; letter-spacing: .01em; }
+.wl-empty { text-align: center; padding: 56px 0 90px; color: #b8c2cc; }
+.wl-empty b { display: block; font-size: 20px; color: #c6d4df; margin-bottom: 22px; }
+.wl-empty p { font-size: 17px; margin: 0 0 26px; }
+.wl-empty a { color: #c6d4df; text-decoration: underline; font-size: 18px; }

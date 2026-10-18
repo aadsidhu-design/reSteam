@@ -71,3 +71,15 @@ REA's response-body capture is capped at 64 KiB per body, so large stylesheets a
 | Discovery Queue | purple-to-blue banner after Discounts & Events, linking to a one-item-at-a-time queue | `Explore.tsx` |
 
 The store's category and ways-to-play menus are rendered by React only while open, so they are not present in a static DOM capture; their contents were matched from screenshots instead.
+
+## Signed-in store, captured through a connected browser
+
+A visible Chrome with its own profile and a loopback-only debugging port was signed in by the user, and REA attached to it. Read-only: only menus, cart and wishlist were opened.
+
+- **Mega menus.** Each tab (`Browse`, `Recommendations`, `Categories`, `Hardware`, `Ways to Play`, `Special Sections`) is a `button[aria-expanded]` that opens a full-width panel under the nav bar. Panels have small grey uppercase headings, tile cards with a white label box, pill-shaped tag links, a multi-column genre list with an Expand control, and a plain link list on the right. The active tab turns `#1a9fff` with a 3 px underline and a flipped chevron. reSteam's `MegaMenu.tsx` uses the same structure with its own content.
+- **Recommendations panel.** Three "recommended for you" rows (art, title, price), a promo card with a call-to-action button and a NEW badge, and a link list (discovery queue, community recommendations, new-release queue, friends, curators).
+- **Cart.** Breadcrumb, 24 px bold title, a 750 px content column and a 368 px summary column ("Estimated total", tax note, disabled pay button), a license note, and a three-capsule recommendations row.
+- **Wishlist.** An avatar next to an uppercase "<name>'S WISHLIST" title, centered empty-state copy, and a four-column footer.
+- **Language.** A `language` pulldown in the header's top row lists about 29 languages by their native names; the page reloads with `?l=<code>`. reSteam switches language in place from a string table (`i18n.ts`).
+
+Personal details in these captures (account name, recommendations, categories) were not copied into the repository.

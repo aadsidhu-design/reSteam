@@ -27,13 +27,18 @@
 .bell-pop { width: 360px; max-height: 70vh; overflow-y: auto; }
 .req-actions { display: flex; gap: 8px; margin-top: 6px; }
 
-.gfooter { flex: none; background: #171d25; border-top: 1px solid #0006; margin-top: 48px; padding: 26px 16px 70px; color: #8b929a; font-size: 12px; }
-.gf-inner { max-width: 1040px; margin: 0 auto; display: grid; gap: 12px; }
-.gf-brand { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; color: #c7d5e0; }
-.gf-inner p { margin: 0; line-height: 1.6; max-width: 820px; }
-.gf-links { display: flex; gap: 22px; flex-wrap: wrap; }
-.gf-links a { color: #a0b0bf; }
-.gf-links a:hover { color: #fff; }
+.gfooter { flex: none; background: #171d25; margin-top: 48px; padding: 36px 16px 90px; color: #8b929a; font-size: 13px; }
+.gf-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1.4fr; gap: 40px; }
+.gf-left p { margin: 16px 0; line-height: 1.6; max-width: 420px; }
+.gf-brand { display: flex; align-items: center; gap: 10px; font-size: 24px; font-weight: 700; color: #c7d5e0; letter-spacing: .04em; }
+.gf-social { display: flex; gap: 22px; color: #8b929a; }
+.gf-social a { color: #8b929a; }
+.gf-social a:hover { color: #fff; }
+.gf-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.gf-cols h5 { margin: 0 0 16px; font-size: 13px; letter-spacing: .02em; color: #c6ccd2; font-weight: 700; }
+.gf-cols a { display: block; color: #8b929a; margin-bottom: 14px; font-size: 14px; }
+.gf-cols a:hover { color: #fff; }
+@media (max-width: 800px) { .gf-inner { grid-template-columns: 1fr; } .gf-cols { grid-template-columns: repeat(2, 1fr); } }
 
 /* ---- floating friends & chat button (bottom right, like the web store) ---- */
 .fdock { position: fixed; right: 18px; bottom: 0; z-index: 35; display: flex; align-items: center; gap: 10px; height: 34px; padding: 0 14px; background: #1a2230; color: #c7d5e0; border: 1px solid #00000099; border-bottom: 0; border-radius: 6px 6px 0 0; box-shadow: 0 -4px 18px #0008; font-weight: 700; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
@@ -57,3 +62,7 @@
 .gh-install:hover { color: #fff; filter: brightness(1.12); }
 .gh-inner.narrow { max-width: 940px; }
 .gh-inner { transition: max-width .2s ease-out; }
+.gh-lang { background: none; border: 0; color: #b8b6b4; font-size: 12px; display: inline-flex; align-items: center; gap: 4px; padding: 0 4px; height: 24px; }
+.gh-lang:hover { color: #fff; }
+.lang-pop { min-width: 300px; max-height: 70vh; overflow-y: auto; }
+.lang-pop .pop-item.sel { color: #1a9fff; }

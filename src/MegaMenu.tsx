@@ -3,12 +3,14 @@ import { Link, useNavigate } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { ALL_TAGS, GAMES, GENRES, fmt, priceOf, type Game } from './data'
 import { store } from './store'
+import { t } from './i18n'
 import { Art } from './art'
 import { Icon } from './icons'
 import './mega.css'
 
 type Menu = 'Browse' | 'Recommendations' | 'Categories' | 'Hardware' | 'Ways to Play' | 'Special Sections'
 const MENUS: Menu[] = ['Browse', 'Recommendations', 'Categories', 'Hardware', 'Ways to Play', 'Special Sections']
+const LABEL: Record<Menu, string> = { Browse: 'menu.browse', Recommendations: 'menu.reco', Categories: 'menu.cats', Hardware: 'menu.hw', 'Ways to Play': 'menu.ways', 'Special Sections': 'menu.special' }
 
 const enc = encodeURIComponent
 const topOf = (pred: (g: Game) => boolean): Game | undefined =>
@@ -168,7 +170,7 @@ export const MegaNav = observer(({ children }: { children?: React.ReactNode }) =
       <div className="subnav-in">
         {MENUS.map(m => (
           <button key={m} className={`mg-tab ${open === m ? 'on' : ''}`} aria-expanded={open === m} onClick={() => setOpen(open === m ? null : m)} onMouseEnter={() => { if (open) setOpen(m) }}>
-            <span>{m}</span><Icon name="chevronDown" size={14} />
+            <span>{t(LABEL[m])}</span><Icon name="chevronDown" size={14} />
           </button>
         ))}
         {children}
