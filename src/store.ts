@@ -246,13 +246,15 @@ class Store {
   }
   /** Loads public review counts into the catalog so every price/rating widget reads real data. */
   async loadStats() {
-    const r = await api<{ stats: Record<string, { reviews: number; positive: number; owners: number; playing: number }> }>('GET', '/stats')
+    const r = await api<{ stats: Record<string, { reviews: number; positive: number; recent: number; recent_positive: number; owners: number; playing: number }> }>('GET', '/stats')
     if (!r) return
     runInAction(() => {
       for (const g of GAMES) {
         const s = r.stats[g.id]
         g.reviews = s?.reviews ?? 0
         g.rating = s && s.reviews > 0 ? Math.round((s.positive / s.reviews) * 100) : 0
+        g.recentReviews = s?.recent ?? 0
+        g.recentRating = s && s.recent > 0 ? Math.round((s.recent_positive / s.recent) * 100) : 0
         g.owners = s?.owners ?? 0
         g.playing = s?.playing ?? 0
       }

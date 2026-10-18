@@ -479,6 +479,7 @@ const ROWS: Row[] = [
   ['gd.signoutall', 'Sign out of all other devices', 'Cerrar sesión en los demás dispositivos', 'Se déconnecter des autres appareils', 'Auf allen anderen Geräten abmelden', 'Esci da tutti gli altri dispositivi', 'Sair de todos os outros dispositivos', '他のすべてのデバイスからログアウト', '다른 모든 기기에서 로그아웃', '退出所有其他设备', 'Выйти на всех остальных устройствах', 'Diğer tüm cihazlardan çıkış yap', 'Wyloguj ze wszystkich innych urządzeń'],
   ['gd.done', 'Done', 'Hecho', 'Terminé', 'Fertig', 'Fatto', 'Concluído', '完了', '완료', '完成', 'Готово', 'Tamam', 'Gotowe'],
   ['gd.log', 'Recent security activity', 'Actividad de seguridad reciente', 'Activité de sécurité récente', 'Letzte Sicherheitsaktivität', 'Attività di sicurezza recente', 'Atividade de segurança recente', '最近のセキュリティ操作', '최근 보안 활동', '最近的安全活动', 'Недавняя активность безопасности', 'Son güvenlik etkinliği', 'Ostatnia aktywność bezpieczeństwa'],
+  ['sg.recentrev', 'Recent reviews', 'Reseñas recientes', 'Évaluations récentes', 'Aktuelle Reviews', 'Recensioni recenti', 'Análises recentes', '最近のレビュー', '최근 평가', '最近评测', 'Недавние обзоры', 'Son incelemeler', 'Ostatnie recenzje'],
 ]
 
 export const PAGE_STRINGS: Record<Lang, Record<string, string>> = Object.fromEntries(

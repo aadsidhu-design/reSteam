@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `f2daf37`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `d7a1118`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -16,7 +16,7 @@ Generated 2026-10-18 from commit `f2daf37`. Run `npm run coverage` to refresh.
 | Automated checks | 313 |
 | Client routes | 25 |
 | Database tables | 36 |
-| Languages | 12 (520 strings) |
+| Languages | 12 (521 strings) |
 
 ## Fidelity by page
 
@@ -173,18 +173,18 @@ Generated 2026-10-18 from commit `f2daf37`. Run `npm run coverage` to refresh.
 
 | Language | Strings | Coverage |
 | --- | --- | --- |
-| Chinese (Simplified) | 520/520 | 100% |
-| English | 520/520 | 100% |
-| French | 520/520 | 100% |
-| German | 520/520 | 100% |
-| Italian | 520/520 | 100% |
-| Japanese | 520/520 | 100% |
-| Korean | 520/520 | 100% |
-| Polish | 520/520 | 100% |
-| Portuguese (Brazil) | 520/520 | 100% |
-| Russian | 520/520 | 100% |
-| Spanish | 520/520 | 100% |
-| Turkish | 520/520 | 100% |
+| Chinese (Simplified) | 521/521 | 100% |
+| English | 521/521 | 100% |
+| French | 521/521 | 100% |
+| German | 521/521 | 100% |
+| Italian | 521/521 | 100% |
+| Japanese | 521/521 | 100% |
+| Korean | 521/521 | 100% |
+| Polish | 521/521 | 100% |
+| Portuguese (Brazil) | 521/521 | 100% |
+| Russian | 521/521 | 100% |
+| Spanish | 521/521 | 100% |
+| Turkish | 521/521 | 100% |
 
 ## UI text going through the translator
 
@@ -209,7 +209,7 @@ Generated 2026-10-18 from commit `f2daf37`. Run `npm run coverage` to refresh.
 | Auth.tsx | 33 | 2 | 94% |
 | Community.tsx | 38 | 2 | 95% |
 | Profile.tsx | 22 | 1 | 96% |
-| StoreGame.tsx | 46 | 2 | 96% |
+| StoreGame.tsx | 49 | 2 | 96% |
 | Charts.tsx | 9 | 0 | 100% |
 | Downloads.tsx | 13 | 0 | 100% |
 | Explore.tsx | 6 | 0 | 100% |

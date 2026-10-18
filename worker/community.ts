@@ -47,9 +47,11 @@ export const communityRoutes: Route[] = [
         (SELECT COUNT(*) FROM users u WHERE u.playing_game = g.id AND u.playing_at > ?) AS playing,
         (SELECT COUNT(*) FROM reviews r WHERE r.game_id = g.id) AS reviews,
         (SELECT COUNT(*) FROM reviews r WHERE r.game_id = g.id AND r.recommend = 1) AS positive,
+        (SELECT COUNT(*) FROM reviews r WHERE r.game_id = g.id AND r.created_at > ?) AS recent,
+        (SELECT COUNT(*) FROM reviews r WHERE r.game_id = g.id AND r.created_at > ? AND r.recommend = 1) AS recent_positive,
         (SELECT COUNT(*) FROM posts p WHERE p.game_id = g.id AND p.created_at > ?) AS posts7d
        FROM games g`,
-    ).bind(now - 120_000, now - 7 * DAY).all<{ id: number }>()
+    ).bind(now - 120_000, now - 30 * DAY, now - 30 * DAY, now - 7 * DAY).all<{ id: number }>()
     return json({ stats: Object.fromEntries(results.map(r => [r.id, r])) }, 200, { 'cache-control': 'public, max-age=20' })
   }),
 

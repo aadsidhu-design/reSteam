@@ -461,3 +461,8 @@ a.lrow:hover { background: #1e2d40; color: #fff; }
 .vr-list { display: grid; gap: 8px; max-height: 280px; overflow: auto; }
 .vr-row { background: #16202d; padding: 8px 12px; }
 .vr-notes { white-space: pre-wrap; color: #acb2b8; margin-top: 4px; }
+.thumb-scroll { display: flex; align-items: center; gap: 2px; height: 16px; margin-top: 4px; background: #00000040; }
+.thumb-scroll button { flex: none; width: 24px; height: 16px; display: grid; place-items: center; border: 0; padding: 0; background: #ffffff1a; color: #fff; }
+.thumb-scroll button:hover { background: #ffffff33; }
+.thumb-track { position: relative; flex: 1; height: 100%; }
+.thumb-track span { position: absolute; top: 2px; bottom: 2px; width: 18%; background: #ffffff40; border-radius: 1px; }

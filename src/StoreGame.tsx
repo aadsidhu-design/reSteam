@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { GAMES, compact, fmt, priceOf, reviewLabel, type Game } from './data'
@@ -28,6 +28,15 @@ const GameNews = ({ g }: { g: Game }) => {
 
 const Media = ({ g }: { g: Game }) => {
   const [i, setI] = useState(0)
+  const [pos, setPos] = useState(0)
+  const strip = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const el = strip.current
+    if (!el) return
+    const on = () => setPos(el.scrollWidth > el.clientWidth ? el.scrollLeft / (el.scrollWidth - el.clientWidth) : 0)
+    el.addEventListener('scroll', on, { passive: true })
+    return () => el.removeEventListener('scroll', on)
+  }, [])
   const real = g.shots ?? 0
   const thumbs = real > 0 ? Array.from({ length: real }, (_, k) => k) : [0, 1, 2, 3, 4, 5, 6]
   const shot = (n: number, title: boolean) => real > 0 ? <img className="art-svg art-img" src={`/api/games/${g.id}/shots/${n}`} alt={`${g.title} screenshot ${n + 1}`} /> : <Art game={g} kind="shot" variant={n} showTitle={title} />
@@ -39,10 +48,15 @@ const Media = ({ g }: { g: Game }) => {
         <button className="m-arrow l" onClick={() => setI((i + thumbs.length - 1) % thumbs.length)} aria-label={t('sg.prev')}><Icon name="chevronLeft" size={30} /></button>
         <button className="m-arrow r" onClick={() => setI((i + 1) % thumbs.length)} aria-label={t('sg.next')}><Icon name="chevronRight" size={30} /></button>
       </div>
-      <div className="thumbs">{thumbs.map(n => (
+      <div className="thumbs" ref={strip}>{thumbs.map(n => (
         <button key={n} className={`thumb ${n === i ? 'on' : ''}`} onClick={() => setI(n)} aria-label={`Media ${n + 1}`}>
           {shot(n, false)}{real === 0 && n < 2 && <span className="thumb-play"><Icon name="play" size={20} /></span>}
         </button>))}
+      </div>
+      <div className="thumb-scroll">
+        <button aria-label={t('sg.prev')} onClick={() => strip.current?.scrollBy({ left: -240, behavior: 'smooth' })}><Icon name="chevronLeft" size={14} /></button>
+        <div className="thumb-track"><span style={{ left: `${pos * (100 - 18)}%` }} /></div>
+        <button aria-label={t('sg.next')} onClick={() => strip.current?.scrollBy({ left: 240, behavior: 'smooth' })}><Icon name="chevronRight" size={14} /></button>
       </div>
     </div>
   )
@@ -79,6 +93,7 @@ export const StoreGame = observer(() => {
           <div className="sg-cap"><Art game={g} kind="header" /></div>
           <p className="sg-desc">{g.blurb}</p>
           <dl className="sg-kv">
+            {(g.recentReviews ?? 0) > 0 && <><dt>{t('sg.recentrev')}:</dt><dd><span className={reviewClass(g.recentRating ?? 0, g.recentReviews)}>{reviewLabel(g.recentRating ?? 0, g.recentReviews)}</span>{(g.recentReviews ?? 0) >= 10 && <span className="muted"> ({compact(g.recentReviews ?? 0)})</span>}</dd></>}
             <dt>{t('sg.allrev')}:</dt><dd><span className={reviewClass(g.rating, g.reviews)}>{reviewLabel(g.rating, g.reviews)}</span>{g.reviews >= 10 && <span className="muted"> ({compact(g.reviews)})</span>}</dd>
             <dt>{t('sg.release')}:</dt><dd>{new Date(g.released).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</dd>
             <dt>{t('sg.dev')}:</dt><dd><Link to={`/store/browse?q=${encodeURIComponent(g.dev)}`}>{g.dev}</Link></dd>

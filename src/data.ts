@@ -13,6 +13,8 @@ export interface Game {
   discount: number // percent
   rating: number // % positive, filled from live review stats
   reviews: number
+  recentReviews?: number // reviews written in the last 30 days
+  recentRating?: number
   owners: number
   playing: number
   released: string
