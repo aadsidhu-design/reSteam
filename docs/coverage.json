@@ -1,6 +1,6 @@
 {
   "generated": "2026-10-18",
-  "commit": "3d693b7",
+  "commit": "10bfd9a",
   "summary": {
     "client": {
       "d": 224,
@@ -1130,74 +1130,74 @@
     {
       "code": "schinese",
       "name": "Chinese (Simplified)",
-      "have": 368,
-      "total": 368
+      "have": 374,
+      "total": 374
     },
     {
       "code": "english",
       "name": "English",
-      "have": 368,
-      "total": 368
+      "have": 374,
+      "total": 374
     },
     {
       "code": "french",
       "name": "French",
-      "have": 368,
-      "total": 368
+      "have": 374,
+      "total": 374
     },
     {
       "code": "german",
       "name": "German",
-      "have": 368,
-      "total": 368
+      "have": 374,
+      "total": 374
     },
     {
       "code": "italian",
       "name": "Italian",
-      "have": 368,
-      "total": 368
+      "have": 374,
+      "total": 374
     },
     {
       "code": "japanese",
       "name": "Japanese",
-      "have": 368,
-      "total": 368
+      "have": 374,
+      "total": 374
     },
     {
       "code": "koreana",
       "name": "Korean",
-      "have": 368,
-      "total": 368
+      "have": 374,
+      "total": 374
     },
     {
       "code": "polish",
       "name": "Polish",
-      "have": 368,
-      "total": 368
+      "have": 374,
+      "total": 374
     },
     {
       "code": "brazilian",
       "name": "Portuguese (Brazil)",
-      "have": 368,
-      "total": 368
+      "have": 374,
+      "total": 374
     },
     {
       "code": "russian",
       "name": "Russian",
-      "have": 368,
-      "total": 368
+      "have": 374,
+      "total": 374
     },
     {
       "code": "spanish",
       "name": "Spanish",
-      "have": 368,
-      "total": 368
+      "have": 374,
+      "total": 374
     },
     {
       "code": "turkish",
       "name": "Turkish",
-      "have": 368,
-      "total": 368
+      "have": 374,
+      "total": 374
     }
   ],
   "textCoverage": [
@@ -1317,9 +1317,9 @@
     },
     {
       "file": "StoreGame.tsx",
-      "translated": 35,
-      "literals": 7,
-      "pct": 83.33333333333334
+      "translated": 45,
+      "literals": 3,
+      "pct": 93.75
     },
     {
       "file": "Charts.tsx",

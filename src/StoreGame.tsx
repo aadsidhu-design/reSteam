@@ -68,7 +68,7 @@ export const StoreGame = observer(() => {
   return (
     <div className="sg-wrap">
     <div className="sg-bd" aria-hidden><Art game={g} kind="hero" showTitle={false} /></div>
-    {!store.signedIn && <div className="notsigned"><div><Link className="btn" to={`/login?next=${encodeURIComponent(`/store/${g.id}`)}`}>{t('game.signin')}</Link><span><b>You're not signed in!</b>Sign in to reSteam to wishlist, follow, purchase and see recommendations</span></div></div>}
+    {!store.signedIn && <div className="notsigned"><div><Link className="btn" to={`/login?next=${encodeURIComponent(`/store/${g.id}`)}`}>{t('game.signin')}</Link><span><b>{t('game.banner')}</b>{t('game.bannersub')}</span></div></div>}
     <div className="container sgame">
       <div className="crumbs"><Link to="/store/browse">All Games</Link> &gt; <Link to={`/store/browse?genre=${encodeURIComponent(g.genre[0])}`}>{g.genre[0]} Games</Link> &gt; <span>{g.title}</span></div>
       <div className="sg-title"><h1>{g.title}</h1><Link to={`/community?hub=${g.id}`} className="hubbtn">{t('game.hub')}</Link></div>
@@ -91,7 +91,7 @@ export const StoreGame = observer(() => {
       </div>
 
       <div className="sg-signed">
-        {!store.signedIn ? <div className="sg-btns small"><span><Link to={`/login?next=${encodeURIComponent(`/store/${g.id}`)}`}><b>Sign in</b></Link> to add this item to your wishlist, follow it, or mark it as ignored</span></div> : (
+        {!store.signedIn ? <div className="sg-btns small"><span><Link to={`/login?next=${encodeURIComponent(`/store/${g.id}`)}`}><b>{t('game.signin')}</b></Link> {t('sg.signbar')}</span></div> : (
         <div className="sg-btns">
           <button className={`btn ${wished ? 'blue' : ''}`} onClick={() => store.toggleWishlist(g.id)} disabled={owned}>{wished ? 'On Wishlist ✓' : t('game.wish')}</button>
           <button className={`btn ${store.followed.includes(g.id) ? 'blue' : ''}`} onClick={() => { store.toggleFollow(g.id); store.toast(store.followed.includes(g.id) ? `Following ${g.title}` : `Unfollowed ${g.title}`) }}>{store.followed.includes(g.id) ? 'Following ✓' : t('game.follow')}</button>
@@ -134,12 +134,12 @@ export const StoreGame = observer(() => {
 
         <aside className="sg-rail">
           <div className="rail-box feats">
-            <div className="feat-row"><span className="fi">●</span>{g.tags.includes('Multiplayer') || g.tags.includes('Co-op') ? 'Multi-player' : 'Single-player'}</div>
-            <div className="feat-row"><span className="fi">✱</span>{g.achievements} Achievements</div>
-            <div className="feat-row"><span className="fi">⇩</span>{g.sizeGb.toFixed(1)} GB install size</div>
-            <div className="feat-row"><span className="fi">☷</span>{compact(g.owners)} {g.owners === 1 ? 'owner' : 'owners'} on reSteam</div>
+            <div className="feat-row"><span className="fi">●</span>{g.tags.includes('Multiplayer') || g.tags.includes('Co-op') ? t('sg.multi') : t('sg.single')}</div>
+            <div className="feat-row"><span className="fi">✱</span>{t('sg.achcount', { n: String(g.achievements) })}</div>
+            <div className="feat-row"><span className="fi">⇩</span>{t('sg.sizegb', { n: g.sizeGb.toFixed(1) })}</div>
+            <div className="feat-row"><span className="fi">☷</span>{t('sg.owners', { n: compact(g.owners) })}</div>
           </div>
-          <div className="rail-box"><div className="muted small">Achievements</div>
+          <div className="rail-box"><div className="muted small">{t('sg.achievements')}</div>
             <div className="ach-tiles">{[0, 1, 2, 3].map(n => <div key={n} className="ach-tile"><Art game={g} kind="icon" variant={n} /></div>)}<button className="ach-more" onClick={() => setAchOpen(true)}>{t('sg.viewall')}<br />{g.achievements}</button></div></div>
           <div className="rail-box details">
             <div><span>{t('sg.title').toUpperCase()}:</span> {g.title}</div>
