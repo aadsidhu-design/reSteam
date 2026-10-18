@@ -1,6 +1,6 @@
 {
   "generated": "2026-10-18",
-  "commit": "81dca91",
+  "commit": "ae8720e",
   "summary": {
     "client": {
       "d": 224,
@@ -1138,74 +1138,74 @@
     {
       "code": "schinese",
       "name": "Chinese (Simplified)",
-      "have": 486,
-      "total": 486
+      "have": 492,
+      "total": 492
     },
     {
       "code": "english",
       "name": "English",
-      "have": 486,
-      "total": 486
+      "have": 492,
+      "total": 492
     },
     {
       "code": "french",
       "name": "French",
-      "have": 486,
-      "total": 486
+      "have": 492,
+      "total": 492
     },
     {
       "code": "german",
       "name": "German",
-      "have": 486,
-      "total": 486
+      "have": 492,
+      "total": 492
     },
     {
       "code": "italian",
       "name": "Italian",
-      "have": 486,
-      "total": 486
+      "have": 492,
+      "total": 492
     },
     {
       "code": "japanese",
       "name": "Japanese",
-      "have": 486,
-      "total": 486
+      "have": 492,
+      "total": 492
     },
     {
       "code": "koreana",
       "name": "Korean",
-      "have": 486,
-      "total": 486
+      "have": 492,
+      "total": 492
     },
     {
       "code": "polish",
       "name": "Polish",
-      "have": 486,
-      "total": 486
+      "have": 492,
+      "total": 492
     },
     {
       "code": "brazilian",
       "name": "Portuguese (Brazil)",
-      "have": 486,
-      "total": 486
+      "have": 492,
+      "total": 492
     },
     {
       "code": "russian",
       "name": "Russian",
-      "have": 486,
-      "total": 486
+      "have": 492,
+      "total": 492
     },
     {
       "code": "spanish",
       "name": "Spanish",
-      "have": 486,
-      "total": 486
+      "have": 492,
+      "total": 492
     },
     {
       "code": "turkish",
       "name": "Turkish",
-      "have": 486,
-      "total": 486
+      "have": 492,
+      "total": 492
     }
   ],
   "textCoverage": [
@@ -1240,12 +1240,6 @@
       "pct": 0
     },
     {
-      "file": "Versions.tsx",
-      "translated": 2,
-      "literals": 9,
-      "pct": 18.181818181818183
-    },
-    {
       "file": "NewsHub.tsx",
       "translated": 8,
       "literals": 11,
@@ -1261,6 +1255,12 @@
       "file": "Achievements.tsx",
       "translated": 2,
       "literals": 1,
+      "pct": 66.66666666666666
+    },
+    {
+      "file": "Versions.tsx",
+      "translated": 8,
+      "literals": 4,
       "pct": 66.66666666666666
     },
     {

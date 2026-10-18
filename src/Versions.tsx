@@ -11,12 +11,12 @@ export const PropertiesModal = ({ g, onClose }: { g: Game; onClose: () => void }
   const [vers, setVers] = useState<Ver[] | null>(null)
   useEffect(() => { void api<{ versions: Ver[] }>('GET', `/games/${g.id}/versions`).then(r => setVers(r?.versions ?? [])) }, [g.id])
   return (
-    <Modal title={`${g.title} — Properties`} onClose={onClose} width={520}>
+    <Modal title={`${g.title} — ${t('vr.props')}`} onClose={onClose} width={520}>
       <dl className="kv">
-        <dt>Version</dt><dd>{g.version ?? 1}</dd>
-        <dt>Developer</dt><dd>{g.dev}</dd>
-        <dt>Install size</dt><dd>{g.sizeGb ? `${g.sizeGb.toFixed(2)} GB` : 'n/a'}</dd>
-        <dt>Game ID</dt><dd>{g.id}</dd>
+        <dt>{t('vr.version')}</dt><dd>{g.version ?? 1}</dd>
+        <dt>{t('vr.developer')}</dt><dd>{g.dev}</dd>
+        <dt>{t('vr.size')}</dt><dd>{g.sizeGb ? `${g.sizeGb.toFixed(2)} GB` : 'n/a'}</dd>
+        <dt>{t('vr.gameid')}</dt><dd>{g.id}</dd>
       </dl>
       <h3 className="vr-h">{t('vr.history')}</h3>
       {vers === null ? <p className="muted small">Loading…</p> : vers.length === 0 ? <p className="muted small">{t('vr.none')}</p> : (
@@ -40,7 +40,7 @@ export const RefundModal = ({ g, onClose }: { g: Game; onClose: () => void }) =>
         <>
           <p>You can refund this purchase: it is within 14 days ({e.daysLeft} left) and you have played {e.minutesPlayed} of 120 minutes. <b>{fmt(e.cents)}</b> will go back to your wallet and the game will leave your library.</p>
           {err && <div className="err">{err}</div>}
-          <div className="modal-actions"><button className="btn" onClick={onClose}>Keep the game</button>
+          <div className="modal-actions"><button className="btn" onClick={onClose}>{t('vr.keep')}</button>
             <button className="btn red" disabled={busy} onClick={async () => { setBusy(true); const r = await call('POST', `/refund/${g.id}`); setBusy(false); if (r.error) setErr(r.error); else { await store.hydrate(); store.toast(`${g.title} was refunded`); onClose(); location.hash = '#/library' } }}>Refund {fmt(e.cents)}</button></div>
         </>
       ) : (

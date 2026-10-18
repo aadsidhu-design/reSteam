@@ -445,6 +445,12 @@ const ROWS: Row[] = [
   ['vr.noach', 'The developer has not named any achievements yet.', 'El desarrollador aún no ha nombrado ningún logro.', 'Le développeur n’a pas encore nommé de succès.', 'Der Entwickler hat noch keine Erfolge benannt.', 'Lo sviluppatore non ha ancora dato un nome a nessun obiettivo.', 'O desenvolvedor ainda não nomeou nenhuma conquista.', '開発者はまだ実績に名前を付けていません。', '개발자가 아직 도전 과제 이름을 정하지 않았습니다.', '开发者尚未命名任何成就。', 'Разработчик ещё не назвал достижения.', 'Geliştirici henüz başarımları adlandırmadı.', 'Twórca nie nazwał jeszcze żadnych osiągnięć.'],
   ['nr.newest', 'Newest games', 'Juegos más recientes', 'Jeux les plus récents', 'Neueste Spiele', 'Giochi più recenti', 'Jogos mais recentes', '最新ゲーム', '최신 게임', '最新游戏', 'Новейшие игры', 'En yeni oyunlar', 'Najnowsze gry'],
   ['nr.seeall', 'See every new release', 'Ver todos los lanzamientos nuevos', 'Voir toutes les nouveautés', 'Alle Neuerscheinungen ansehen', 'Vedi tutte le novità', 'Ver todos os lançamentos', 'すべての新作を見る', '모든 신작 보기', '查看所有新品', 'Все новинки', 'Tüm yeni çıkanları gör', 'Zobacz wszystkie nowości'],
+  ['vr.version', 'Version', 'Versión', 'Version', 'Version', 'Versione', 'Versão', 'バージョン', '버전', '版本', 'Версия', 'Sürüm', 'Wersja'],
+  ['vr.developer', 'Developer', 'Desarrollador', 'Développeur', 'Entwickler', 'Sviluppatore', 'Desenvolvedor', 'デベロッパー', '개발자', '开发者', 'Разработчик', 'Geliştirici', 'Twórca'],
+  ['vr.size', 'Install size', 'Tamaño de instalación', 'Taille d’installation', 'Installationsgröße', 'Dimensione installazione', 'Tamanho da instalação', 'インストールサイズ', '설치 크기', '安装大小', 'Размер установки', 'Kurulum boyutu', 'Rozmiar instalacji'],
+  ['vr.gameid', 'Game ID', 'ID del juego', 'ID du jeu', 'Spiel-ID', 'ID del gioco', 'ID do jogo', 'ゲームID', '게임 ID', '游戏 ID', 'ID игры', 'Oyun kimliği', 'ID gry'],
+  ['vr.props', 'Properties', 'Propiedades', 'Propriétés', 'Eigenschaften', 'Proprietà', 'Propriedades', 'プロパティ', '속성', '属性', 'Свойства', 'Özellikler', 'Właściwości'],
+  ['vr.keep', 'Keep the game', 'Conservar el juego', 'Garder le jeu', 'Spiel behalten', 'Tieni il gioco', 'Manter o jogo', 'ゲームを残す', '게임 유지', '保留游戏', 'Оставить игру', 'Oyunu sakla', 'Zachowaj grę'],
 ]
 
 export const PAGE_STRINGS: Record<Lang, Record<string, string>> = Object.fromEntries(
