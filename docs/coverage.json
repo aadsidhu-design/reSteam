@@ -1,6 +1,6 @@
 {
   "generated": "2026-10-18",
-  "commit": "e55c33b",
+  "commit": "ee0cb1a",
   "summary": {
     "client": {
       "d": 224,
@@ -1138,74 +1138,74 @@
     {
       "code": "schinese",
       "name": "Chinese (Simplified)",
-      "have": 472,
-      "total": 472
+      "have": 474,
+      "total": 474
     },
     {
       "code": "english",
       "name": "English",
-      "have": 472,
-      "total": 472
+      "have": 474,
+      "total": 474
     },
     {
       "code": "french",
       "name": "French",
-      "have": 472,
-      "total": 472
+      "have": 474,
+      "total": 474
     },
     {
       "code": "german",
       "name": "German",
-      "have": 472,
-      "total": 472
+      "have": 474,
+      "total": 474
     },
     {
       "code": "italian",
       "name": "Italian",
-      "have": 472,
-      "total": 472
+      "have": 474,
+      "total": 474
     },
     {
       "code": "japanese",
       "name": "Japanese",
-      "have": 472,
-      "total": 472
+      "have": 474,
+      "total": 474
     },
     {
       "code": "koreana",
       "name": "Korean",
-      "have": 472,
-      "total": 472
+      "have": 474,
+      "total": 474
     },
     {
       "code": "polish",
       "name": "Polish",
-      "have": 472,
-      "total": 472
+      "have": 474,
+      "total": 474
     },
     {
       "code": "brazilian",
       "name": "Portuguese (Brazil)",
-      "have": 472,
-      "total": 472
+      "have": 474,
+      "total": 474
     },
     {
       "code": "russian",
       "name": "Russian",
-      "have": 472,
-      "total": 472
+      "have": 474,
+      "total": 474
     },
     {
       "code": "spanish",
       "name": "Spanish",
-      "have": 472,
-      "total": 472
+      "have": 474,
+      "total": 474
     },
     {
       "code": "turkish",
       "name": "Turkish",
-      "have": 472,
-      "total": 472
+      "have": 474,
+      "total": 474
     }
   ],
   "textCoverage": [

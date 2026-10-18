@@ -431,6 +431,8 @@ const ROWS: Row[] = [
   ['set.acctdetails', 'Account Details', 'Detalles de la cuenta', 'Détails du compte', 'Kontodetails', 'Dettagli account', 'Detalhes da conta', 'アカウントの詳細', '계정 세부 정보', '账户详情', 'Данные аккаунта', 'Hesap ayrıntıları', 'Szczegóły konta'],
   ['set.dispname', 'Display name', 'Nombre visible', 'Nom affiché', 'Anzeigename', 'Nome visualizzato', 'Nome de exibição', '表示名', '표시 이름', '显示名称', 'Отображаемое имя', 'Görünen ad', 'Nazwa wyświetlana'],
   ['set.gamesowned', 'Games owned', 'Juegos en propiedad', 'Jeux possédés', 'Besitzte Spiele', 'Giochi posseduti', 'Jogos possuídos', '所有ゲーム数', '보유 게임', '拥有的游戏', 'Игр в коллекции', 'Sahip olunan oyunlar', 'Posiadane gry'],
+  ['cm2.title', 'Title', 'Título', 'Titre', 'Titel', 'Titolo', 'Título', 'タイトル', '제목', '标题', 'Заголовок', 'Başlık', 'Tytuł'],
+  ['cm2.toreply', 'to reply.', 'para responder.', 'pour répondre.', 'um zu antworten.', 'per rispondere.', 'para responder.', 'して返信してください。', '하여 답글을 남기세요.', '后即可回复。', 'чтобы ответить.', 'yanıtlamak için.', 'aby odpowiedzieć.'],
 ]
 
 export const PAGE_STRINGS: Record<Lang, Record<string, string>> = Object.fromEntries(

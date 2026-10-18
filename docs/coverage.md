@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `e55c33b`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `ee0cb1a`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -16,7 +16,7 @@ Generated 2026-10-18 from commit `e55c33b`. Run `npm run coverage` to refresh.
 | Automated checks | 283 |
 | Client routes | 25 |
 | Database tables | 34 |
-| Languages | 12 (472 strings) |
+| Languages | 12 (474 strings) |
 
 ## Fidelity by page
 
@@ -165,18 +165,18 @@ Generated 2026-10-18 from commit `e55c33b`. Run `npm run coverage` to refresh.
 
 | Language | Strings | Coverage |
 | --- | --- | --- |
-| Chinese (Simplified) | 472/472 | 100% |
-| English | 472/472 | 100% |
-| French | 472/472 | 100% |
-| German | 472/472 | 100% |
-| Italian | 472/472 | 100% |
-| Japanese | 472/472 | 100% |
-| Korean | 472/472 | 100% |
-| Polish | 472/472 | 100% |
-| Portuguese (Brazil) | 472/472 | 100% |
-| Russian | 472/472 | 100% |
-| Spanish | 472/472 | 100% |
-| Turkish | 472/472 | 100% |
+| Chinese (Simplified) | 474/474 | 100% |
+| English | 474/474 | 100% |
+| French | 474/474 | 100% |
+| German | 474/474 | 100% |
+| Italian | 474/474 | 100% |
+| Japanese | 474/474 | 100% |
+| Korean | 474/474 | 100% |
+| Polish | 474/474 | 100% |
+| Portuguese (Brazil) | 474/474 | 100% |
+| Russian | 474/474 | 100% |
+| Spanish | 474/474 | 100% |
+| Turkish | 474/474 | 100% |
 
 ## UI text going through the translator
 
