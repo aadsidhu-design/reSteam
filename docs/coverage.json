@@ -1,6 +1,6 @@
 {
   "generated": "2026-10-18",
-  "commit": "10bfd9a",
+  "commit": "68dec18",
   "summary": {
     "client": {
       "d": 224,
@@ -1130,74 +1130,74 @@
     {
       "code": "schinese",
       "name": "Chinese (Simplified)",
-      "have": 374,
-      "total": 374
+      "have": 422,
+      "total": 422
     },
     {
       "code": "english",
       "name": "English",
-      "have": 374,
-      "total": 374
+      "have": 422,
+      "total": 422
     },
     {
       "code": "french",
       "name": "French",
-      "have": 374,
-      "total": 374
+      "have": 422,
+      "total": 422
     },
     {
       "code": "german",
       "name": "German",
-      "have": 374,
-      "total": 374
+      "have": 422,
+      "total": 422
     },
     {
       "code": "italian",
       "name": "Italian",
-      "have": 374,
-      "total": 374
+      "have": 422,
+      "total": 422
     },
     {
       "code": "japanese",
       "name": "Japanese",
-      "have": 374,
-      "total": 374
+      "have": 422,
+      "total": 422
     },
     {
       "code": "koreana",
       "name": "Korean",
-      "have": 374,
-      "total": 374
+      "have": 422,
+      "total": 422
     },
     {
       "code": "polish",
       "name": "Polish",
-      "have": 374,
-      "total": 374
+      "have": 422,
+      "total": 422
     },
     {
       "code": "brazilian",
       "name": "Portuguese (Brazil)",
-      "have": 374,
-      "total": 374
+      "have": 422,
+      "total": 422
     },
     {
       "code": "russian",
       "name": "Russian",
-      "have": 374,
-      "total": 374
+      "have": 422,
+      "total": 422
     },
     {
       "code": "spanish",
       "name": "Spanish",
-      "have": 374,
-      "total": 374
+      "have": 422,
+      "total": 422
     },
     {
       "code": "turkish",
       "name": "Turkish",
-      "have": 374,
-      "total": 374
+      "have": 422,
+      "total": 422
     }
   ],
   "textCoverage": [
@@ -1244,12 +1244,6 @@
       "pct": 0
     },
     {
-      "file": "Community.tsx",
-      "translated": 11,
-      "literals": 28,
-      "pct": 28.205128205128204
-    },
-    {
       "file": "Achievements.tsx",
       "translated": 1,
       "literals": 2,
@@ -1268,18 +1262,6 @@
       "pct": 47.16981132075472
     },
     {
-      "file": "Auth.tsx",
-      "translated": 16,
-      "literals": 17,
-      "pct": 48.484848484848484
-    },
-    {
-      "file": "Library.tsx",
-      "translated": 36,
-      "literals": 34,
-      "pct": 51.42857142857142
-    },
-    {
       "file": "StorePages.tsx",
       "translated": 50,
       "literals": 37,
@@ -1290,6 +1272,12 @@
       "translated": 48,
       "literals": 27,
       "pct": 64
+    },
+    {
+      "file": "Library.tsx",
+      "translated": 48,
+      "literals": 22,
+      "pct": 68.57142857142857
     },
     {
       "file": "Chrome.tsx",
@@ -1316,10 +1304,22 @@
       "pct": 82.35294117647058
     },
     {
+      "file": "Community.tsx",
+      "translated": 34,
+      "literals": 5,
+      "pct": 87.17948717948718
+    },
+    {
       "file": "StoreGame.tsx",
       "translated": 45,
       "literals": 3,
       "pct": 93.75
+    },
+    {
+      "file": "Auth.tsx",
+      "translated": 31,
+      "literals": 2,
+      "pct": 93.93939393939394
     },
     {
       "file": "Charts.tsx",

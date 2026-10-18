@@ -98,7 +98,7 @@ const Home = observer(() => {
         return (
           <section className="shelf whatsnew" key={s}>
             <ShelfHeader title={t('lib.whatsnew')} onRemove={rm} />
-            {items.length === 0 ? <p className="muted">Activity from you and your friends appears here: games started, achievements and reviews.</p> : (
+            {items.length === 0 ? <p className="muted">{t('lb2.activity')}</p> : (
               <Shelf step={800}>
                 {items.map(e => {
                   const g = gameOf(e.gameId)!
@@ -121,7 +121,7 @@ const Home = observer(() => {
           <section className="shelf" key={s}>
             <ShelfHeader title={t('lib.recent')} onRemove={rm} caret />
             {recent.length === 0 ? (
-              <div className="panel"><p>You have ({owned.length}) games.</p><Link to="/store">Visit the store to find games to add</Link></div>
+              <div className="panel"><p>You have ({owned.length}) games.</p><Link to="/store">{t('lb2.visit')}</Link></div>
             ) : (
               <Shelf step={700}>
                 {recent.map((g, i) => {
@@ -145,7 +145,7 @@ const Home = observer(() => {
         return (
           <section className="shelf" key={s}>
             <ShelfHeader title={SHELF_LABEL[s]} sub={s === 'playnext' ? 'Games in your library you have not played yet' : undefined} onRemove={rm} />
-            {list.length === 0 ? <p className="muted">Nothing here yet.</p> : <Shelf>{list.map(g => <div className="recent-col" key={g.id}><Capsule g={g} /></div>)}</Shelf>}
+            {list.length === 0 ? <p className="muted">{t('lb2.nothing')}</p> : <Shelf>{list.map(g => <div className="recent-col" key={g.id}><Capsule g={g} /></div>)}</Shelf>}
           </section>
         )
       }
@@ -228,15 +228,15 @@ export const Library = observer(() => {
         <div className="side-filters">
           <select className="catsel" value={cat} onChange={e => setCat(e.target.value as Cat)} aria-label="Category">
             <option value="all">{t('lb.gamesandsw')}</option>
-            <option value="games">Games</option>
-            <option value="software">Software</option>
+            <option value="games">{t('lb2.games')}</option>
+            <option value="software">{t('lb2.software')}</option>
           </select>
           <button className={`fbtn ${store.recentSort ? 'on' : ''}`} onClick={() => (store.recentSort = !store.recentSort)} title="Sort by recent activity"><Icon name="clock" size={18} /></button>
           <button className={`fbtn ${store.installedOnly ? 'on' : ''}`} onClick={() => (store.installedOnly = !store.installedOnly)} title="Ready to play"><Icon name="playCircle" size={18} /></button>
         </div>
         <div className="side-search popwrap" ref={filterRef}>
           <Icon name="search" size={20} className="ss-icon" />
-          <input value={q} onChange={e => setQ(e.target.value)} aria-label="Search library" />
+          <input value={q} onChange={e => setQ(e.target.value)} aria-label={t('lb2.search')} />
           <button className="icon-btn" onClick={() => setFilterOpen(!filterOpen)} aria-label="Filters"><Icon name="filter" size={22} /></button>
           {filterOpen && (
             <div className="popover right" style={{ minWidth: 220 }}>
@@ -270,7 +270,7 @@ export const Library = observer(() => {
       {nameDlg && (
         <Modal title={nameDlg.mode === 'new' ? 'New collection' : 'Rename collection'} onClose={() => setNameDlg(null)} width={400}>
           <form onSubmit={e => { e.preventDefault(); if (nameDlg.mode === 'new') store.createCollection(nameDlg.value, nameDlg.gameId); else if (nameDlg.id) store.renameCollection(nameDlg.id, nameDlg.value); setNameDlg(null) }}>
-            <input className="input" autoFocus maxLength={30} placeholder="Collection name" value={nameDlg.value} onChange={e => setNameDlg({ ...nameDlg, value: e.target.value })} />
+            <input className="input" autoFocus maxLength={30} placeholder={t('lb2.collname')} value={nameDlg.value} onChange={e => setNameDlg({ ...nameDlg, value: e.target.value })} />
             <div className="modal-actions"><button type="button" className="btn" onClick={() => setNameDlg(null)}>Cancel</button><button className="btn blue" disabled={!nameDlg.value.trim()}>{nameDlg.mode === 'new' ? 'Create' : 'Save'}</button></div>
           </form>
         </Modal>
@@ -284,7 +284,7 @@ export const Library = observer(() => {
           {store.collections.map(c => c.games.includes(ctx.g.id)
             ? <button key={c.id} className="pop-item" onClick={() => { store.removeFromCollection(c.id, ctx.g.id); setCtx(null) }}>Remove from {c.name}</button>
             : <button key={c.id} className="pop-item" onClick={() => { store.addToCollection(c.id, ctx.g.id); setCtx(null) }}>Add to {c.name}</button>)}
-          <button className="pop-item" onClick={() => { const g = ctx.g; setCtx(null); setNameDlg({ mode: 'new', gameId: g.id, value: '' }) }}>Add to new collection…</button>
+          <button className="pop-item" onClick={() => { const g = ctx.g; setCtx(null); setNameDlg({ mode: 'new', gameId: g.id, value: '' }) }}>{t('lb2.addcoll')}</button>
           {!isLocal(ctx.g.id) && <button className="pop-item" onClick={() => { setCtx(null); nav(`/store/${ctx.g.id}`) }}>{t('lb.viewstore')}</button>}
           {!isLocal(ctx.g.id) && isInstalled(ctx.g) && <button className="pop-item" onClick={() => { store.uninstall(ctx.g.id); setCtx(null) }}>{t('lb.uninstall')}</button>}
         </div>
@@ -369,8 +369,8 @@ const LibGame = observer(({ g }: { g: Game }) => {
             <div className="popover right">
               <button className="pop-item" onClick={() => { store.toggleFavorite(g.id); setGear(false) }}>{fav ? 'Remove from favorites' : 'Add to favorites'}</button>
               {!custom && installed && !running && <button className="pop-item" onClick={() => { store.uninstall(g.id); setGear(false) }}>{t('lb.uninstall')}</button>}
-              {!custom && <button className="pop-item" onClick={() => { setGear(false); setProps(true) }}>Properties…</button>}
-              {!custom && <button className="pop-item" onClick={() => { setGear(false); setRefund(true) }}>Request a refund…</button>}
+              {!custom && <button className="pop-item" onClick={() => { setGear(false); setProps(true) }}>{t('lb2.properties')}</button>}
+              {!custom && <button className="pop-item" onClick={() => { setGear(false); setRefund(true) }}>{t('lb2.refund')}</button>}
               {!custom && <button className="pop-item" onClick={() => { setGear(false); nav(`/store/${g.id}`) }}>{t('lb.viewstore')}</button>}
             </div>
           )}
@@ -383,7 +383,7 @@ const LibGame = observer(({ g }: { g: Game }) => {
         </div>
       )}
       <div className="gp-tabs">
-        {custom ? <span className="muted">Non-store game</span> : (
+        {custom ? <span className="muted">{t('lb2.nonstore')}</span> : (
           <>
             <Link to={`/store/${g.id}`}>{t('fr.storepage')}</Link>
             <Link to={`/community?hub=${g.id}`}>{t('lb.hub')}</Link>
@@ -421,7 +421,7 @@ const LibGame = observer(({ g }: { g: Game }) => {
                     <div className="avatars">{friends.map(f => <Link key={f.username} to={`/profile/${f.username}`} title={f.name}><Avatar f={{ name: f.name, status: f.presence.status }} size={34} /></Link>)}</div>
                   </>
                 ) : <div className="muted">{t('lb.nofriendsplay')}</div>}
-                <button className="link-btn viewall" onClick={() => (store.friendsOpen = true)}>View all friends who play</button>
+                <button className="link-btn viewall" onClick={() => (store.friendsOpen = true)}>{t('lb2.viewallf')}</button>
               </div>
             </div>
           )}

@@ -49,8 +49,8 @@ const QrPanel = observer(({ onDone }: { onDone: () => void }) => {
     <div className="auth-qr">
       <div className="auth-sub">{t('auth.qr')}</div>
       {req && state === 'wait' ? <Qr text={`${location.origin}${location.pathname}#/qr/${req.id}`} /> : <div className="qr qr-off">{state === 'wait' ? 'Loading…' : state === 'expired' ? 'Code expired' : 'Unavailable'}</div>}
-      {state !== 'wait' && <button className="btn small" onClick={() => setRound(round + 1)}>Get a new code</button>}
-      <p className="small muted">Open reSteam on a device you are already signed in on, then scan this code or open its link and approve the sign-in.</p>
+      {state !== 'wait' && <button className="btn small" onClick={() => setRound(round + 1)}>{t('au.newcode')}</button>}
+      <p className="small muted">{t('au.qrhelp')}</p>
     </div>
   )
 })
@@ -59,14 +59,14 @@ function RecoveryKey({ code, onDone }: { code: string; onDone: () => void }) {
   const [saved, setSaved] = useState(false)
   return (
     <div className="auth-card narrow">
-      <h1>Save your recovery key</h1>
-      <p>This is the only way back into your account if you forget your password. It is shown once and cannot be looked up later.</p>
+      <h1>{t('au.savekey')}</h1>
+      <p>{t('au.keydesc')}</p>
       <div className="recovery-code" data-testid="recovery-code">{code}</div>
       <div className="row gap">
-        <button className="btn" onClick={() => void navigator.clipboard?.writeText(code).then(() => store.toast('Recovery key copied'))}>Copy</button>
+        <button className="btn" onClick={() => void navigator.clipboard?.writeText(code).then(() => store.toast('Recovery key copied'))}>{t('au.copy')}</button>
       </div>
       <label className="check"><input type="checkbox" checked={saved} onChange={e => setSaved(e.target.checked)} /> I have stored my recovery key somewhere safe</label>
-      <button className="btn blue big" disabled={!saved} onClick={onDone}>Continue to reSteam</button>
+      <button className="btn blue big" disabled={!saved} onClick={onDone}>{t('au.continue')}</button>
     </div>
   )
 }
@@ -130,7 +130,7 @@ export const LoginPage = observer(() => {
             <label className="auth-sub" htmlFor="u">{mode === 'signin' ? t('auth.withname') : t('auth.account')}</label>
             <input id="u" className="input" name="username" autoComplete="username" autoFocus value={username} onChange={e => setUsername(e.target.value)} maxLength={24} />
             {mode === 'recover' && (<>
-              <label className="auth-sub" htmlFor="rc">Recovery key</label>
+              <label className="auth-sub" htmlFor="rc">{t('au.reckey')}</label>
               <input id="rc" className="input mono" placeholder="XXXXX-XXXXX-XXXXX-XXXXX" value={code} onChange={e => setCode(e.target.value.toUpperCase())} autoComplete="off" />
             </>)}
             <label className="auth-sub" htmlFor="p">{mode === 'recover' ? t('auth.password') : t('auth.password')}</label>
@@ -138,7 +138,7 @@ export const LoginPage = observer(() => {
             {mode !== 'signin' && (<>
               <label className="auth-sub" htmlFor="p2">{t('auth.confirm')}</label>
               <input id="p2" className="input" type="password" autoComplete="new-password" value={confirm} onChange={e => setConfirm(e.target.value)} />
-              <div className="small muted">Use at least 8 characters. Account names are 3–24 letters, numbers, dots, dashes or underscores.</div>
+              <div className="small muted">{t('au.pwhint')}</div>
             </>)}
             {mode !== 'recover' && <label className="check"><input type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)} /> {t('auth.remember')}</label>}
             {err && <div className="err" role="alert">{err}</div>}
@@ -168,17 +168,17 @@ export const QrApprove = observer(() => {
   return (
     <div className="auth-page">
       <div className="auth-card narrow">
-        <h1>Approve sign-in</h1>
-        {state === 'checking' && <p className="muted">Checking the request…</p>}
-        {state === 'gone' && <p>This sign-in request has expired. Go back to the other device and get a new code.</p>}
+        <h1>{t('au.approve')}</h1>
+        {state === 'checking' && <p className="muted">{t('au.checking')}</p>}
+        {state === 'gone' && <p>{t('au.expired')}</p>}
         {state === 'ready' && (<>
-          <p>Another browser is asking to sign in as <b>{store.name}</b>. Only approve this if you started it just now.</p>
+          <p>{t('au.asking')} <b>{store.name}</b>. Only approve this if you started it just now.</p>
           <div className="row gap">
-            <button className="btn blue" onClick={async () => { const r = await call('POST', `/auth/qr/${id}/approve`); if (r.error) setState('gone'); else setState('done') }}>Approve</button>
-            <Link className="btn" to="/store">Cancel</Link>
+            <button className="btn blue" onClick={async () => { const r = await call('POST', `/auth/qr/${id}/approve`); if (r.error) setState('gone'); else setState('done') }}>{t('au.approvebtn')}</button>
+            <Link className="btn" to="/store">{t('pf.cancel')}</Link>
           </div>
         </>)}
-        {state === 'done' && <p className="pos">Approved. The other device is now signed in.</p>}
+        {state === 'done' && <p className="pos">{t('au.approved')}</p>}
       </div>
     </div>
   )
