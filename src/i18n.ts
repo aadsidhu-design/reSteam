@@ -25,6 +25,7 @@ const en: Dict = {
   'wish.empty': 'Your wishlist is empty.', 'wish.title': "{name}'s wishlist",
   'user.profile': 'View my profile', 'user.signout': 'Sign out of account…', 'user.account': 'Account details', 'user.settings': 'Settings', 'user.downloads': 'Manage downloads',
 }
+export const STRINGS_CORE_ENGLISH = (): Dict => en
 const T: Record<Lang, Dict> = {
   english: en,
   spanish: {
@@ -183,6 +184,7 @@ const T: Record<Lang, Dict> = {
   },
 }
 
+export const STRINGS_CORE = (): Record<Lang, Dict> => T
 const KEY = 'resteam:lang'
 const detect = (): Lang => {
   try {

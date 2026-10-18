@@ -12,7 +12,7 @@
     "db:seed": "node scripts/seed.ts",
     "db:local": "wrangler d1 migrations apply resteam --local",
     "deploy": "npm run build && wrangler deploy",
-    "coverage": "node scripts/treemap.ts",
+    "coverage": "node scripts/coverage/index.ts",
     "check:css": "node scripts/css-collisions.ts",
     "typecheck": "tsc -b && tsc -p tsconfig.worker.json",
     "test:e2e": "node scripts/e2e.mjs && node scripts/e2e-games.mjs"

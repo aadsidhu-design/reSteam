@@ -1,0 +1,1227 @@
+{
+  "generated": "2026-10-18",
+  "commit": "14a768c",
+  "summary": {
+    "client": {
+      "d": 211,
+      "p": 12,
+      "m": 18,
+      "n": 241
+    },
+    "backend": {
+      "d": 74,
+      "p": 1,
+      "m": 15,
+      "n": 90
+    },
+    "visualAvg": 75.76923076923077,
+    "behaviorAvg": 72.84615384615384,
+    "endpoints": 98,
+    "tested": 68,
+    "checks": 176,
+    "routes": 21,
+    "dbTables": 28
+  },
+  "pages": [
+    {
+      "page": "Global header and nav",
+      "route": "(all)",
+      "real": "store.steampowered.com",
+      "method": "connected-browser",
+      "visual": 90,
+      "behavior": 82,
+      "verified": "2026-10-18",
+      "notes": "104 px bar, nav positions, active underline and top-row links measured. Install button replaced by Upload a game."
+    },
+    {
+      "page": "Store home",
+      "route": "/store",
+      "real": "/",
+      "method": "screenshot+css",
+      "visual": 80,
+      "behavior": 76,
+      "verified": "2026-10-18",
+      "notes": "Hero, 840+360 carousel with peeking slides, section order and spacing match. Art is procedural; fewer shelves."
+    },
+    {
+      "page": "Mega menus (6)",
+      "route": "(store nav)",
+      "real": "/ (open panels)",
+      "method": "connected-browser",
+      "visual": 72,
+      "behavior": 78,
+      "verified": "2026-10-18",
+      "notes": "Panel structure, headings, tiles, pills, expand control and animation match. Contents are reSteam’s own; Hardware has no products."
+    },
+    {
+      "page": "Game page",
+      "route": "/store/:id",
+      "real": "/app/:id",
+      "method": "screenshot+css",
+      "visual": 72,
+      "behavior": 72,
+      "verified": "2026-10-18",
+      "notes": "Backdrop, banner, breadcrumb, buy box, rails match. No trailers, DLC or system requirements."
+    },
+    {
+      "page": "Search results",
+      "route": "/store/browse",
+      "real": "/search/",
+      "method": "screenshot+css",
+      "visual": 88,
+      "behavior": 82,
+      "verified": "2026-10-18",
+      "notes": "Rows, filter panels, chips and sort match; filters are fewer than the real ~40."
+    },
+    {
+      "page": "Cart",
+      "route": "/cart",
+      "real": "/cart/",
+      "method": "connected-browser",
+      "visual": 85,
+      "behavior": 78,
+      "verified": "2026-10-18",
+      "notes": "Compared with an empty cart only; payment step is play money."
+    },
+    {
+      "page": "Wishlist",
+      "route": "/wishlist",
+      "real": "/wishlist/",
+      "method": "connected-browser",
+      "visual": 76,
+      "behavior": 68,
+      "verified": "2026-10-18",
+      "notes": "Header and empty state matched; populated rows not compared."
+    },
+    {
+      "page": "Community home",
+      "route": "/community",
+      "real": "steamcommunity.com",
+      "method": "screenshot+css",
+      "visual": 70,
+      "behavior": 62,
+      "verified": "2026-10-18",
+      "notes": "940 px column, panels and tabs match; no workshop, screenshots or broadcasts."
+    },
+    {
+      "page": "Discovery queue",
+      "route": "/explore",
+      "real": "/explore/",
+      "method": "screenshot+css",
+      "visual": 48,
+      "behavior": 60,
+      "verified": "2026-10-18",
+      "notes": "Only the home banner was compared; the queue page is modelled on its behavior."
+    },
+    {
+      "page": "Login",
+      "route": "/login",
+      "real": "login page",
+      "method": "network-capture",
+      "visual": 66,
+      "behavior": 86,
+      "verified": "2026-10-17",
+      "notes": "Form, QR sign-in handshake and recovery flow studied; visual treatment is approximate."
+    },
+    {
+      "page": "Footer",
+      "route": "(all)",
+      "real": "wishlist page footer",
+      "method": "connected-browser",
+      "visual": 74,
+      "behavior": 60,
+      "verified": "2026-10-18",
+      "notes": "Four-column layout matched; legal pages do not exist."
+    },
+    {
+      "page": "Loading and motion",
+      "route": "(all)",
+      "real": "stylesheets",
+      "method": "screenshot+css",
+      "visual": 94,
+      "behavior": 88,
+      "verified": "2026-10-18",
+      "notes": "Throbber, carousel fades, hover lifts and menu timings copied from the real CSS values."
+    },
+    {
+      "page": "Language menu",
+      "route": "(header)",
+      "real": "language pulldown",
+      "method": "connected-browser",
+      "visual": 70,
+      "behavior": 55,
+      "verified": "2026-10-18",
+      "notes": "12 of about 29 languages, chrome strings only; real store translates every page."
+    },
+    {
+      "page": "Community hub and posts",
+      "route": "/community?hub=",
+      "real": "steamcommunity.com/app/:id",
+      "method": "not-compared",
+      "visual": null,
+      "behavior": null,
+      "verified": "",
+      "notes": "Built from the earlier client study; not yet compared with the web hub."
+    },
+    {
+      "page": "Profile",
+      "route": "/profile",
+      "real": "steamcommunity.com/id/:name",
+      "method": "not-compared",
+      "visual": null,
+      "behavior": null,
+      "verified": "",
+      "notes": "Not yet compared."
+    },
+    {
+      "page": "Settings / account",
+      "route": "/settings/*",
+      "real": "store.steampowered.com/account",
+      "method": "not-compared",
+      "visual": null,
+      "behavior": null,
+      "verified": "",
+      "notes": "Not yet compared with the web account pages."
+    },
+    {
+      "page": "Library",
+      "route": "/library",
+      "real": "-",
+      "method": "no-web-equivalent",
+      "visual": null,
+      "behavior": null,
+      "verified": "",
+      "notes": "The real library lives in the desktop client; modelled on the earlier client study."
+    },
+    {
+      "page": "Downloads",
+      "route": "/downloads",
+      "real": "-",
+      "method": "no-web-equivalent",
+      "visual": null,
+      "behavior": null,
+      "verified": "",
+      "notes": "Client-only feature, here backed by real file downloads for uploaded builds."
+    }
+  ],
+  "endpoints": [
+    {
+      "method": "POST",
+      "path": "/auth/register",
+      "area": "Accounts",
+      "auth": false,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/auth/login",
+      "area": "Accounts",
+      "auth": false,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/auth/logout",
+      "area": "Accounts",
+      "auth": false,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "GET",
+      "path": "/auth/me",
+      "area": "Accounts",
+      "auth": true,
+      "write": false,
+      "tested": false
+    },
+    {
+      "method": "POST",
+      "path": "/auth/password",
+      "area": "Accounts",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/auth/recover",
+      "area": "Accounts",
+      "auth": false,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/auth/account",
+      "area": "Accounts",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/auth/qr/begin",
+      "area": "Accounts",
+      "auth": false,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/auth/qr/poll",
+      "area": "Accounts",
+      "auth": false,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "GET",
+      "path": "/auth/qr/:id",
+      "area": "Accounts",
+      "auth": true,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/auth/qr/:id/approve",
+      "area": "Accounts",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "GET",
+      "path": "/stats",
+      "area": "Community and stats",
+      "auth": false,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "GET",
+      "path": "/charts",
+      "area": "Community and stats",
+      "auth": false,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "GET",
+      "path": "/games/:id/reviews",
+      "area": "Community and stats",
+      "auth": false,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "PUT",
+      "path": "/games/:id/review",
+      "area": "Community and stats",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/games/:id/review",
+      "area": "Community and stats",
+      "auth": true,
+      "write": true,
+      "tested": false
+    },
+    {
+      "method": "POST",
+      "path": "/reviews/:id/vote",
+      "area": "Community and stats",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/reviews/:id/report",
+      "area": "Community and stats",
+      "auth": true,
+      "write": true,
+      "tested": false
+    },
+    {
+      "method": "GET",
+      "path": "/games/:id/posts",
+      "area": "Community and stats",
+      "auth": false,
+      "write": false,
+      "tested": false
+    },
+    {
+      "method": "POST",
+      "path": "/games/:id/posts",
+      "area": "Community and stats",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "GET",
+      "path": "/posts/:id",
+      "area": "Community and stats",
+      "auth": false,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/posts/:id/replies",
+      "area": "Community and stats",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/posts/:id/vote",
+      "area": "Community and stats",
+      "auth": true,
+      "write": true,
+      "tested": false
+    },
+    {
+      "method": "DELETE",
+      "path": "/posts/:id",
+      "area": "Community and stats",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/replies/:id",
+      "area": "Community and stats",
+      "auth": true,
+      "write": true,
+      "tested": false
+    },
+    {
+      "method": "POST",
+      "path": "/posts/:id/report",
+      "area": "Community and stats",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/replies/:id/report",
+      "area": "Community and stats",
+      "auth": true,
+      "write": true,
+      "tested": false
+    },
+    {
+      "method": "GET",
+      "path": "/community/feed",
+      "area": "Community and stats",
+      "auth": false,
+      "write": false,
+      "tested": false
+    },
+    {
+      "method": "GET",
+      "path": "/community/hubs",
+      "area": "Community and stats",
+      "auth": false,
+      "write": false,
+      "tested": false
+    },
+    {
+      "method": "GET",
+      "path": "/dev/genres",
+      "area": "Publishing and files",
+      "auth": false,
+      "write": false,
+      "tested": false
+    },
+    {
+      "method": "GET",
+      "path": "/dev/games",
+      "area": "Publishing and files",
+      "auth": true,
+      "write": false,
+      "tested": false
+    },
+    {
+      "method": "POST",
+      "path": "/dev/games",
+      "area": "Publishing and files",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "PUT",
+      "path": "/dev/games/:id",
+      "area": "Publishing and files",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "PUT",
+      "path": "/dev/games/:id/cover",
+      "area": "Publishing and files",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "PUT",
+      "path": "/dev/games/:id/shots/:n",
+      "area": "Publishing and files",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/dev/games/:id/shots",
+      "area": "Publishing and files",
+      "auth": true,
+      "write": true,
+      "tested": false
+    },
+    {
+      "method": "PUT",
+      "path": "/dev/games/:id/build",
+      "area": "Publishing and files",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "PUT",
+      "path": "/dev/games/:id/web",
+      "area": "Publishing and files",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/dev/games/:id/build",
+      "area": "Publishing and files",
+      "auth": true,
+      "write": true,
+      "tested": false
+    },
+    {
+      "method": "DELETE",
+      "path": "/dev/games/:id/web",
+      "area": "Publishing and files",
+      "auth": true,
+      "write": true,
+      "tested": false
+    },
+    {
+      "method": "PUT",
+      "path": "/dev/games/:id/discount",
+      "area": "Publishing and files",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "GET",
+      "path": "/games/:id/news",
+      "area": "Publishing and files",
+      "auth": false,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/dev/games/:id/news",
+      "area": "Publishing and files",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/dev/news/:id",
+      "area": "Publishing and files",
+      "auth": true,
+      "write": true,
+      "tested": false
+    },
+    {
+      "method": "POST",
+      "path": "/dev/games/:id/publish",
+      "area": "Publishing and files",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/dev/games/:id/unpublish",
+      "area": "Publishing and files",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/dev/games/:id",
+      "area": "Publishing and files",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "GET",
+      "path": "/games/:id/cover",
+      "area": "Publishing and files",
+      "auth": false,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "GET",
+      "path": "/games/:id/shots/:n",
+      "area": "Publishing and files",
+      "auth": false,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "GET",
+      "path": "/games/:id/download",
+      "area": "Publishing and files",
+      "auth": true,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/games/:id/play-token",
+      "area": "Publishing and files",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/games/:id/report",
+      "area": "Publishing and files",
+      "auth": true,
+      "write": true,
+      "tested": false
+    },
+    {
+      "method": "GET",
+      "path": "/games",
+      "area": "Store, cart, library",
+      "auth": false,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "GET",
+      "path": "/me",
+      "area": "Store, cart, library",
+      "auth": true,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "PUT",
+      "path": "/cart/:id",
+      "area": "Store, cart, library",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/cart/:id",
+      "area": "Store, cart, library",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "PUT",
+      "path": "/wishlist/:id",
+      "area": "Store, cart, library",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/wishlist/:id",
+      "area": "Store, cart, library",
+      "auth": true,
+      "write": true,
+      "tested": false
+    },
+    {
+      "method": "PUT",
+      "path": "/ignored/:id",
+      "area": "Store, cart, library",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/ignored/:id",
+      "area": "Store, cart, library",
+      "auth": true,
+      "write": true,
+      "tested": false
+    },
+    {
+      "method": "PUT",
+      "path": "/followed/:id",
+      "area": "Store, cart, library",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/followed/:id",
+      "area": "Store, cart, library",
+      "auth": true,
+      "write": true,
+      "tested": false
+    },
+    {
+      "method": "PUT",
+      "path": "/installed/:id",
+      "area": "Store, cart, library",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/installed/:id",
+      "area": "Store, cart, library",
+      "auth": true,
+      "write": true,
+      "tested": false
+    },
+    {
+      "method": "PUT",
+      "path": "/favorites/:id",
+      "area": "Store, cart, library",
+      "auth": true,
+      "write": true,
+      "tested": false
+    },
+    {
+      "method": "DELETE",
+      "path": "/favorites/:id",
+      "area": "Store, cart, library",
+      "auth": true,
+      "write": true,
+      "tested": false
+    },
+    {
+      "method": "POST",
+      "path": "/checkout",
+      "area": "Store, cart, library",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/wallet",
+      "area": "Store, cart, library",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/claim/:id",
+      "area": "Store, cart, library",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/redeem",
+      "area": "Store, cart, library",
+      "auth": true,
+      "write": true,
+      "tested": false
+    },
+    {
+      "method": "POST",
+      "path": "/gift",
+      "area": "Store, cart, library",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/playtime/:id",
+      "area": "Store, cart, library",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "PUT",
+      "path": "/profile",
+      "area": "Store, cart, library",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "GET",
+      "path": "/friends",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/friends/requests",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/friends/requests/:username/accept",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/friends/requests/:username",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": true,
+      "tested": false
+    },
+    {
+      "method": "DELETE",
+      "path": "/friends/:username",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": true,
+      "tested": false
+    },
+    {
+      "method": "GET",
+      "path": "/blocks",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": false,
+      "tested": false
+    },
+    {
+      "method": "POST",
+      "path": "/blocks/:username",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/blocks/:username",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "GET",
+      "path": "/users/search",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "GET",
+      "path": "/users/:username",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "PUT",
+      "path": "/presence",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/presence/playing",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/presence/ping",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": false,
+      "tested": false
+    },
+    {
+      "method": "GET",
+      "path": "/chats/:username",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/chats/:username",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/chats/:username/read",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": false,
+      "tested": false
+    },
+    {
+      "method": "GET",
+      "path": "/groups",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/groups",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "GET",
+      "path": "/groups/:id/messages",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/groups/:id/messages",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/groups/:id/invite",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": true,
+      "tested": false
+    },
+    {
+      "method": "POST",
+      "path": "/groups/:id/leave",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "GET",
+      "path": "/notifications",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/notifications/read",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": true,
+      "tested": false
+    },
+    {
+      "method": "GET",
+      "path": "/activity",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": false,
+      "tested": true
+    }
+  ],
+  "languages": [
+    {
+      "code": "schinese",
+      "name": "Chinese (Simplified)",
+      "have": 113,
+      "total": 113
+    },
+    {
+      "code": "english",
+      "name": "English",
+      "have": 113,
+      "total": 113
+    },
+    {
+      "code": "french",
+      "name": "French",
+      "have": 113,
+      "total": 113
+    },
+    {
+      "code": "german",
+      "name": "German",
+      "have": 113,
+      "total": 113
+    },
+    {
+      "code": "italian",
+      "name": "Italian",
+      "have": 113,
+      "total": 113
+    },
+    {
+      "code": "japanese",
+      "name": "Japanese",
+      "have": 113,
+      "total": 113
+    },
+    {
+      "code": "koreana",
+      "name": "Korean",
+      "have": 113,
+      "total": 113
+    },
+    {
+      "code": "polish",
+      "name": "Polish",
+      "have": 113,
+      "total": 113
+    },
+    {
+      "code": "brazilian",
+      "name": "Portuguese (Brazil)",
+      "have": 113,
+      "total": 113
+    },
+    {
+      "code": "russian",
+      "name": "Russian",
+      "have": 113,
+      "total": 113
+    },
+    {
+      "code": "spanish",
+      "name": "Spanish",
+      "have": 113,
+      "total": 113
+    },
+    {
+      "code": "turkish",
+      "name": "Turkish",
+      "have": 113,
+      "total": 113
+    }
+  ],
+  "textCoverage": [
+    {
+      "file": "About.tsx",
+      "translated": 0,
+      "literals": 8,
+      "pct": 0
+    },
+    {
+      "file": "App.tsx",
+      "translated": 0,
+      "literals": 2,
+      "pct": 0
+    },
+    {
+      "file": "Charts.tsx",
+      "translated": 0,
+      "literals": 2,
+      "pct": 0
+    },
+    {
+      "file": "Downloads.tsx",
+      "translated": 0,
+      "literals": 13,
+      "pct": 0
+    },
+    {
+      "file": "Explore.tsx",
+      "translated": 0,
+      "literals": 6,
+      "pct": 0
+    },
+    {
+      "file": "MegaMenu.tsx",
+      "translated": 0,
+      "literals": 28,
+      "pct": 0
+    },
+    {
+      "file": "Player.tsx",
+      "translated": 0,
+      "literals": 5,
+      "pct": 0
+    },
+    {
+      "file": "Profile.tsx",
+      "translated": 0,
+      "literals": 19,
+      "pct": 0
+    },
+    {
+      "file": "Reviews.tsx",
+      "translated": 0,
+      "literals": 17,
+      "pct": 0
+    },
+    {
+      "file": "Settings.tsx",
+      "translated": 0,
+      "literals": 49,
+      "pct": 0
+    },
+    {
+      "file": "ui.tsx",
+      "translated": 0,
+      "literals": 3,
+      "pct": 0
+    },
+    {
+      "file": "Developer.tsx",
+      "translated": 3,
+      "literals": 37,
+      "pct": 7.5
+    },
+    {
+      "file": "Library.tsx",
+      "translated": 10,
+      "literals": 56,
+      "pct": 15.151515151515152
+    },
+    {
+      "file": "Friends.tsx",
+      "translated": 9,
+      "literals": 38,
+      "pct": 19.148936170212767
+    },
+    {
+      "file": "StoreGame.tsx",
+      "translated": 9,
+      "literals": 33,
+      "pct": 21.428571428571427
+    },
+    {
+      "file": "Chrome.tsx",
+      "translated": 17,
+      "literals": 50,
+      "pct": 25.37313432835821
+    },
+    {
+      "file": "Community.tsx",
+      "translated": 9,
+      "literals": 26,
+      "pct": 25.71428571428571
+    },
+    {
+      "file": "StorePages.tsx",
+      "translated": 31,
+      "literals": 56,
+      "pct": 35.63218390804598
+    },
+    {
+      "file": "Auth.tsx",
+      "translated": 16,
+      "literals": 17,
+      "pct": 48.484848484848484
+    }
+  ],
+  "evidence": [
+    {
+      "when": "2026-10-17",
+      "tool": "capture_browser_scenario (network)",
+      "subject": "store home, signed out",
+      "result": "138 requests; saledata, userdata, GetItems batch API identified"
+    },
+    {
+      "when": "2026-10-17",
+      "tool": "real stylesheets via REA asset URLs",
+      "subject": "14 store stylesheets",
+      "result": "loading throbber, carousel, hover and menu timings extracted"
+    },
+    {
+      "when": "2026-10-18",
+      "tool": "capture_browser_scenario (screenshots)",
+      "subject": "home, game, search, community at 1400 px",
+      "result": "layout widths, heights and colors measured against ours"
+    },
+    {
+      "when": "2026-10-18",
+      "tool": "connected browser (CDP, signed in)",
+      "subject": "six store menus",
+      "result": "panel structure, headings, links and animation captured"
+    },
+    {
+      "when": "2026-10-18",
+      "tool": "connected browser (CDP, signed in)",
+      "subject": "cart, wishlist, language pulldown",
+      "result": "layouts and empty states captured; 29-language list read"
+    },
+    {
+      "when": "2026-10-18",
+      "tool": "font width fit",
+      "subject": "17 open fonts vs real nav text",
+      "result": "Albert Sans matched real widths at native size (scale 0.99 to 1.00)"
+    },
+    {
+      "when": "earlier",
+      "tool": "desktop client study (REA)",
+      "subject": "library, friends, downloads, settings",
+      "result": "client behaviors recorded in docs/rea-findings.md"
+    }
+  ]
+}
