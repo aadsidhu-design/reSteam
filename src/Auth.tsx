@@ -80,6 +80,8 @@ export const LoginPage = observer(() => {
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [code, setCode] = useState('')
+  const [guard, setGuard] = useState(false)
+  const [guardCode, setGuardCode] = useState('')
   const [remember, setRemember] = useState(true)
   const [err, setErr] = useState('')
   const [busy, setBusy] = useState(false)
@@ -90,7 +92,7 @@ export const LoginPage = observer(() => {
   if (store.account === 'in' && !newKey && !done.current && !registering.current) return <Navigate to={next} replace />
   if (store.account === 'loading') return <div className="auth-page"><Loading /></div>
 
-  const switchTo = (m: Mode) => { setMode(m); setErr(''); setPassword(''); setConfirm('') }
+  const switchTo = (m: Mode) => { setMode(m); setGuard(false); setErr(''); setPassword(''); setConfirm('') }
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
     setErr('')
@@ -98,8 +100,8 @@ export const LoginPage = observer(() => {
     setBusy(true)
     try {
       if (mode === 'signin') {
-        const r = await store.signIn(username.trim(), password, remember)
-        if (r) setErr(r); else nav(next, { replace: true })
+        const r = await store.signIn(username.trim(), password, remember, guard ? guardCode : undefined)
+        if (r.guard) { setGuard(true); setGuardCode('') } else if (r.error) setErr(r.error); else nav(next, { replace: true })
       } else if (mode === 'join') {
         registering.current = true
         const r = await store.register(username.trim(), password, remember)
@@ -140,9 +142,14 @@ export const LoginPage = observer(() => {
               <input id="p2" className="input" type="password" autoComplete="new-password" value={confirm} onChange={e => setConfirm(e.target.value)} />
               <div className="small muted">{t('au.pwhint')}</div>
             </>)}
+            {guard && mode === 'signin' && (<>
+              <label className="auth-sub" htmlFor="gc">{t('au.guardcode')}</label>
+              <input id="gc" className="input mono" autoFocus inputMode="numeric" autoComplete="one-time-code" placeholder="123456" value={guardCode} onChange={e => setGuardCode(e.target.value)} maxLength={12} />
+              <div className="small muted">{t('au.guardhint')}</div>
+            </>)}
             {mode !== 'recover' && <label className="check"><input type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)} /> {t('auth.remember')}</label>}
             {err && <div className="err" role="alert">{err}</div>}
-            <button className="btn blue big auth-submit" disabled={busy || !username.trim() || !password}>{mode === 'signin' ? t('auth.signin') : mode === 'join' ? t('auth.createbtn') : t('auth.changepw')}</button>
+            <button className="btn blue big auth-submit" disabled={busy || !username.trim() || !password || (guard && !guardCode.trim())}>{mode === 'signin' ? t('auth.signin') : mode === 'join' ? t('auth.createbtn') : t('auth.changepw')}</button>
           </form>
           <div className="auth-links">
             {mode === 'signin' && <><button className="link-btn" onClick={() => switchTo('recover')}>{t('auth.help')}</button><button className="link-btn" onClick={() => switchTo('join')}>{t('auth.newacct')}</button></>}

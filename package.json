@@ -17,8 +17,9 @@
     "coverage": "node scripts/coverage/index.ts",
     "check:css": "node scripts/css-collisions.ts",
     "typecheck": "tsc -b && tsc -p tsconfig.worker.json",
-    "test:e2e": "node scripts/e2e.mjs && node scripts/e2e-games.mjs && node scripts/e2e-extra.mjs",
-    "test:admin": "node scripts/e2e-admin.mjs"
+    "test:e2e": "node scripts/e2e.mjs && node scripts/e2e-games.mjs && node scripts/e2e-extra.mjs && node scripts/e2e-guard.mjs",
+    "test:admin": "node scripts/e2e-admin.mjs",
+    "test:guard": "node scripts/e2e-guard.mjs"
   },
   "dependencies": {
     "fflate": "^0.8.3",

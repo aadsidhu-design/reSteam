@@ -6,6 +6,7 @@ import { GAMES, fmt } from './data'
 import { store, type Privacy, type Settings as S } from './store'
 import { Icon } from './icons'
 import { Modal } from './ui'
+import { GuardSection } from './Guard'
 import './settings.css'
 
 const NAV: ([string, string, string] | null)[] = [
@@ -149,6 +150,7 @@ const SecurityPane = observer(() => {
     <>
       <h2>{t('auth.changepw')}</h2>
       <PasswordForm />
+      <GuardSection />
       <h2 className="mt">{t('se.session')}</h2>
       <Row label={t('user.signout')}><button className="btn small" onClick={() => void store.signOut().then(() => nav('/store'))}>{t('se.signout')}</button></Row>
       <h2 className="mt">{t('se.danger')}</h2>

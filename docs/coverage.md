@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `47b96c8`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `f2daf37`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -9,14 +9,14 @@ Generated 2026-10-18 from commit `47b96c8`. Run `npm run coverage` to refresh.
 | Measure | Value |
 | --- | --- |
 | Client behaviors replicated | 224 of 250 (13 partial, 13 not yet) |
-| Backend behaviors replicated | 80 of 90 (1 partial, 9 not yet) |
+| Backend behaviors replicated | 85 of 95 (1 partial, 9 not yet) |
 | Visual fidelity (average of compared pages) | 75 / 100 over 20 pages |
 | Behavior fidelity | 70 / 100 |
-| API endpoints | 111 (111 exercised by e2e checks) |
-| Automated checks | 283 |
+| API endpoints | 119 (119 exercised by e2e checks) |
+| Automated checks | 313 |
 | Client routes | 25 |
-| Database tables | 34 |
-| Languages | 12 (498 strings) |
+| Database tables | 36 |
+| Languages | 12 (520 strings) |
 
 ## Fidelity by page
 
@@ -111,6 +111,14 @@ Generated 2026-10-18 from commit `47b96c8`. Run `npm run coverage` to refresh.
 | GET | `/games/:id/download` | Publishing and files | yes | - | yes |
 | POST | `/games/:id/play-token` | Publishing and files | yes | yes | yes |
 | POST | `/games/:id/report` | Publishing and files | yes | yes | yes |
+| GET | `/auth/guard` | Accounts | yes | - | yes |
+| POST | `/auth/guard/setup` | Accounts | yes | yes | yes |
+| POST | `/auth/guard/enable` | Accounts | yes | yes | yes |
+| POST | `/auth/guard/disable` | Accounts | yes | yes | yes |
+| GET | `/auth/sessions` | Accounts | yes | - | yes |
+| DELETE | `/auth/sessions/:sid` | Accounts | yes | yes | yes |
+| POST | `/auth/sessions/revoke-others` | Accounts | yes | yes | yes |
+| GET | `/auth/events` | Accounts | yes | - | yes |
 | GET | `/games` | Store, cart, library | public | - | yes |
 | GET | `/me` | Store, cart, library | yes | - | yes |
 | PUT | `/cart/:id` | Store, cart, library | yes | yes | yes |
@@ -165,18 +173,18 @@ Generated 2026-10-18 from commit `47b96c8`. Run `npm run coverage` to refresh.
 
 | Language | Strings | Coverage |
 | --- | --- | --- |
-| Chinese (Simplified) | 498/498 | 100% |
-| English | 498/498 | 100% |
-| French | 498/498 | 100% |
-| German | 498/498 | 100% |
-| Italian | 498/498 | 100% |
-| Japanese | 498/498 | 100% |
-| Korean | 498/498 | 100% |
-| Polish | 498/498 | 100% |
-| Portuguese (Brazil) | 498/498 | 100% |
-| Russian | 498/498 | 100% |
-| Spanish | 498/498 | 100% |
-| Turkish | 498/498 | 100% |
+| Chinese (Simplified) | 520/520 | 100% |
+| English | 520/520 | 100% |
+| French | 520/520 | 100% |
+| German | 520/520 | 100% |
+| Italian | 520/520 | 100% |
+| Japanese | 520/520 | 100% |
+| Korean | 520/520 | 100% |
+| Polish | 520/520 | 100% |
+| Portuguese (Brazil) | 520/520 | 100% |
+| Russian | 520/520 | 100% |
+| Spanish | 520/520 | 100% |
+| Turkish | 520/520 | 100% |
 
 ## UI text going through the translator
 
@@ -198,13 +206,14 @@ Generated 2026-10-18 from commit `47b96c8`. Run `npm run coverage` to refresh.
 | Library.tsx | 59 | 12 | 83% |
 | Settings.tsx | 65 | 11 | 86% |
 | Friends.tsx | 43 | 4 | 91% |
-| Auth.tsx | 31 | 2 | 94% |
+| Auth.tsx | 33 | 2 | 94% |
 | Community.tsx | 38 | 2 | 95% |
 | Profile.tsx | 22 | 1 | 96% |
 | StoreGame.tsx | 46 | 2 | 96% |
 | Charts.tsx | 9 | 0 | 100% |
 | Downloads.tsx | 13 | 0 | 100% |
 | Explore.tsx | 6 | 0 | 100% |
+| Guard.tsx | 28 | 0 | 100% |
 | MegaMenu.tsx | 40 | 0 | 100% |
 | Player.tsx | 5 | 0 | 100% |
 | Specials.tsx | 6 | 0 | 100% |
@@ -591,7 +600,7 @@ Generated 2026-10-18 from commit `47b96c8`. Run `npm run coverage` to refresh.
 - [x] Hub stats
 - [x] Moderation tools
 
-**Protection** (10/12)
+**Protection** (15/17)
 
 - [x] Per-IP rate limit
 - [x] Per-user write limit
@@ -601,6 +610,11 @@ Generated 2026-10-18 from commit `47b96c8`. Run `npm run coverage` to refresh.
 - [x] Security headers
 - [x] CSP
 - [x] Bound SQL params
+- [x] reGuard (TOTP) second factor
+- [x] Backup codes
+- [x] Device list and sign-out
+- [x] Security log
+- [x] Code replay protection
 - [x] Generic 500s
 - [x] Dependency audit
 - [~] Exact (global) limits

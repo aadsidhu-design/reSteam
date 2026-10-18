@@ -12,10 +12,11 @@ const ls = (d: string) => readdirSync(new URL(d, root))
 
 // ---------------------------------------------------------------- API inventory
 interface Endpoint { method: string; path: string; area: string; auth: boolean; write: boolean; tested: boolean }
-const AREA: Record<string, string> = { 'auth.ts': 'Accounts', 'social.ts': 'Friends, chat, presence', 'community.ts': 'Community and stats', 'shop.ts': 'Store, cart, library', 'dev.ts': 'Publishing and files' }
-const e2eText = ['scripts/e2e.mjs', 'scripts/e2e-games.mjs', 'scripts/e2e-extra.mjs', 'scripts/e2e-admin.mjs'].map(read).join('\n')
+const AREA: Record<string, string> = { 'auth.ts': 'Accounts', 'guard.ts': 'Accounts', 'social.ts': 'Friends, chat, presence', 'community.ts': 'Community and stats', 'shop.ts': 'Store, cart, library', 'dev.ts': 'Publishing and files' }
+const e2eText = ['scripts/e2e.mjs', 'scripts/e2e-games.mjs', 'scripts/e2e-extra.mjs', 'scripts/e2e-admin.mjs', 'scripts/e2e-guard.mjs'].map(read).join('\n')
 const calls: { m: string; p: string }[] = []
 for (const m of e2eText.matchAll(/call\('(GET|POST|PUT|DELETE)',\s*([`'"])((?:(?!\2).)+)\2/g)) calls.push({ m: m[1], p: m[3].replace(/\$\{[^}]*\}/g, 'X').split('?')[0] })
+for (const m of e2eText.matchAll(/\breq\('(GET|POST|PUT|DELETE)',\s*([`'"])((?:(?!\2).)+)\2/g)) calls.push({ m: m[1], p: m[3].replace(/\$\{[^}]*\}/g, 'X').split('?')[0] })
 for (const m of e2eText.matchAll(/fetch\(`\$\{BASE\}\/api([^`]*)`(?:,\s*\{[^}]*method:\s*'(GET|POST|PUT|DELETE)')?/g)) calls.push({ m: m[2] ?? 'GET', p: m[1].replace(/\$\{[^}]*\}/g, 'X').split('?')[0] })
 for (const m of e2eText.matchAll(/api\(`?['"]?\/?([^`'"]*)/g)) void m
 const endpoints: Endpoint[] = []

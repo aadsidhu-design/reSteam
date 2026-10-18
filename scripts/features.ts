@@ -86,6 +86,6 @@ export const BACKEND: Group = {
   ],
   'Protection': [
     'Per-IP rate limit:d', 'Per-user write limit:d', 'New-user limit:d', 'Body size cap:d', 'Origin check:d', 'Security headers:d', 'CSP:d', 'Bound SQL params:d',
-    'Generic 500s:d', 'Dependency audit:d', 'Exact (global) limits:p', 'Abuse monitoring:m',
+    'reGuard (TOTP) second factor:d', 'Backup codes:d', 'Device list and sign-out:d', 'Security log:d', 'Code replay protection:d', 'Generic 500s:d', 'Dependency audit:d', 'Exact (global) limits:p', 'Abuse monitoring:m',
   ],
 }

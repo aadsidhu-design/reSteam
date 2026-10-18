@@ -258,12 +258,14 @@ class Store {
       }
     })
   }
-  async signIn(username: string, password: string, remember: boolean): Promise<string | null> {
-    const { data, error } = await call<{ user: User }>('POST', '/auth/login', { username, password, remember })
-    if (!data) return error ?? 'Could not sign in'
+  /** `guard: true` means the password was right and an authenticator or backup code is needed to finish. */
+  async signIn(username: string, password: string, remember: boolean, code?: string): Promise<{ error?: string; guard?: boolean }> {
+    const { data, error } = await call<{ user?: User; guard?: boolean }>('POST', '/auth/login', { username, password, remember, code })
+    if (!data) return { error: error ?? 'Could not sign in' }
+    if (data.guard) return { guard: true }
     const m = await api<Me>('GET', '/me')
     if (m) runInAction(() => this.enter(m))
-    return null
+    return {}
   }
   /** Resolves the one-time recovery key on success. */
   async register(username: string, password: string, remember: boolean): Promise<{ error?: string; recoveryCode?: string }> {

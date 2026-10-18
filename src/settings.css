@@ -105,3 +105,5 @@
 .pf-links b { color: #8f98a0; font-weight: 400; }
 .pf-links > a:hover { background: #ffffff0d; }
 .pf-stats { display: none; }
+.guard-secret { margin: 8px 0; padding: 10px 12px; background: rgba(0, 0, 0, .35); letter-spacing: .12em; font-size: 15px; word-break: break-all; user-select: all; }
+.guard-codes { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; margin: 10px 0; padding: 10px 12px; background: rgba(0, 0, 0, .35); font-size: 14px; user-select: all; }

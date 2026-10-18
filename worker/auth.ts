@@ -1,4 +1,5 @@
 import { purgeUserGames } from './dev'
+import { recordEvent, verifyGuard } from './guard'
 import {
   type AuthUser, type Ctx, type Env, type Route, USERNAME_RE, RESERVED,
   b64url, fail, fromHex, hex, json, pbkdf2, randomBytes, readJson, route, safeEqual, sha256Hex, tooMany,
@@ -50,8 +51,8 @@ async function createSession(c: Ctx, userId: string, remember: boolean): Promise
   const token = b64url(randomBytes(32))
   const now = Date.now()
   await c.env.DB.batch([
-    c.env.DB.prepare('INSERT INTO sessions (id, user_id, created_at, expires_at, last_seen, remember, agent) VALUES (?, ?, ?, ?, ?, ?, ?)')
-      .bind(await sha256Hex(token), userId, now, now + (remember ? 30 : 1) * DAY, now, remember ? 1 : 0, (c.req.headers.get('user-agent') ?? '').slice(0, 120)),
+    c.env.DB.prepare('INSERT INTO sessions (id, user_id, created_at, expires_at, last_seen, remember, agent, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
+      .bind(await sha256Hex(token), userId, now, now + (remember ? 30 : 1) * DAY, now, remember ? 1 : 0, (c.req.headers.get('user-agent') ?? '').slice(0, 120), ((c.req as Request & { cf?: { country?: string } }).cf?.country ?? '').slice(0, 2) || null),
     // keep only the newest sessions per account
     c.env.DB.prepare('DELETE FROM sessions WHERE user_id = ? AND id NOT IN (SELECT id FROM sessions WHERE user_id = ? ORDER BY created_at DESC LIMIT ?)').bind(userId, userId, MAX_SESSIONS),
   ])
@@ -90,7 +91,7 @@ async function limited(c: Ctx, kind: 'auth' | 'login', key: string) {
   return !(await l.limit({ key })).success
 }
 
-type Creds = { username: string; password: string; remember: boolean; current: string; next: string; recoveryCode: string; newPassword: string }
+type Creds = { username: string; password: string; code?: string; remember: boolean; current: string; next: string; recoveryCode: string; newPassword: string }
 
 export const authRoutes: Route[] = [
   route('POST', '/auth/register', { auth: false }, async c => {
@@ -126,15 +127,24 @@ export const authRoutes: Route[] = [
     const username = typeof b.username === 'string' ? b.username.trim().slice(0, 40) : ''
     if (await limited(c, 'auth', `ip:${c.ip}`) || await limited(c, 'login', `u:${username.toLowerCase()}`)) return tooMany()
     if (!username || typeof b.password !== 'string' || b.password.length > 128) return fail(401, 'Invalid account name or password')
-    const u = await c.env.DB.prepare('SELECT id, username, display_name, status, wallet, privacy, pass_hash, pass_salt, pass_iters FROM users WHERE username = ? COLLATE NOCASE').bind(username).first<{
-      id: string; username: string; display_name: string; status: string; wallet: number; privacy: string; pass_hash: string | null; pass_salt: string | null; pass_iters: number }>()
-    if (!(await verifyPassword(b.password, u, c.env)) || !u) return fail(401, 'Invalid account name or password')
+    const u = await c.env.DB.prepare('SELECT id, username, display_name, status, wallet, privacy, pass_hash, pass_salt, pass_iters, totp_enabled, totp_secret, totp_step FROM users WHERE username = ? COLLATE NOCASE').bind(username).first<{
+      id: string; username: string; display_name: string; status: string; wallet: number; privacy: string; pass_hash: string | null; pass_salt: string | null; pass_iters: number; totp_enabled: number; totp_secret: string | null; totp_step: number }>()
+    if (!(await verifyPassword(b.password, u, c.env)) || !u) {
+      if (u) await recordEvent(c, u.id, 'login_failed')
+      return fail(401, 'Invalid account name or password')
+    }
+    if (u.totp_enabled) {
+      // the password was right; now the second factor. The per-name login limiter above also bounds code guessing.
+      if (b.code === undefined || b.code === '') return json({ guard: true }, 200)
+      if (!(await verifyGuard(c.env, u.id, u, b.code))) { await recordEvent(c, u.id, 'guard_failed'); return fail(401, 'That reGuard code is not right') }
+    }
     const target = iterations(c.env)
     if (u.pass_iters < target) { // upgrade old hashes to the current cost while we have the password in hand
       const salt = randomBytes(16)
       c.wait(c.env.DB.prepare('UPDATE users SET pass_hash = ?, pass_salt = ?, pass_iters = ? WHERE id = ?').bind(hex(await pbkdf2(b.password, salt, target)), hex(salt), target, u.id).run())
     }
     const cookie = await createSession(c, u.id, b.remember !== false)
+    await recordEvent(c, u.id, 'login')
     return json({ user: publicUser(u) }, 200, { 'set-cookie': cookie })
   }),
 
@@ -215,6 +225,8 @@ export const authRoutes: Route[] = [
       db.prepare('DELETE FROM news_comments WHERE user_id = ?').bind(id),
       db.prepare('DELETE FROM play_tokens WHERE user_id = ?').bind(id),
       db.prepare('DELETE FROM qr_logins WHERE user_id = ?').bind(id),
+      db.prepare('DELETE FROM guard_backup WHERE user_id = ?').bind(id),
+      db.prepare('DELETE FROM login_events WHERE user_id = ?').bind(id),
       db.prepare('DELETE FROM sessions WHERE user_id = ?').bind(id),
       db.prepare('DELETE FROM users WHERE id = ?').bind(id),
     ])

@@ -1,6 +1,6 @@
 {
   "generated": "2026-10-18",
-  "commit": "47b96c8",
+  "commit": "f2daf37",
   "summary": {
     "client": {
       "d": 224,
@@ -9,18 +9,18 @@
       "n": 250
     },
     "backend": {
-      "d": 80,
+      "d": 85,
       "p": 1,
       "m": 9,
-      "n": 90
+      "n": 95
     },
     "visualAvg": 75.35,
     "behaviorAvg": 70.45,
-    "endpoints": 111,
-    "tested": 111,
-    "checks": 283,
+    "endpoints": 119,
+    "tested": 119,
+    "checks": 313,
     "routes": 25,
-    "dbTables": 34
+    "dbTables": 36
   },
   "pages": [
     {
@@ -743,6 +743,70 @@
     },
     {
       "method": "GET",
+      "path": "/auth/guard",
+      "area": "Accounts",
+      "auth": true,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/auth/guard/setup",
+      "area": "Accounts",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/auth/guard/enable",
+      "area": "Accounts",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/auth/guard/disable",
+      "area": "Accounts",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "GET",
+      "path": "/auth/sessions",
+      "area": "Accounts",
+      "auth": true,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/auth/sessions/:sid",
+      "area": "Accounts",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/auth/sessions/revoke-others",
+      "area": "Accounts",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "GET",
+      "path": "/auth/events",
+      "area": "Accounts",
+      "auth": true,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "GET",
       "path": "/games",
       "area": "Store, cart, library",
       "auth": false,
@@ -1138,74 +1202,74 @@
     {
       "code": "schinese",
       "name": "Chinese (Simplified)",
-      "have": 498,
-      "total": 498
+      "have": 520,
+      "total": 520
     },
     {
       "code": "english",
       "name": "English",
-      "have": 498,
-      "total": 498
+      "have": 520,
+      "total": 520
     },
     {
       "code": "french",
       "name": "French",
-      "have": 498,
-      "total": 498
+      "have": 520,
+      "total": 520
     },
     {
       "code": "german",
       "name": "German",
-      "have": 498,
-      "total": 498
+      "have": 520,
+      "total": 520
     },
     {
       "code": "italian",
       "name": "Italian",
-      "have": 498,
-      "total": 498
+      "have": 520,
+      "total": 520
     },
     {
       "code": "japanese",
       "name": "Japanese",
-      "have": 498,
-      "total": 498
+      "have": 520,
+      "total": 520
     },
     {
       "code": "koreana",
       "name": "Korean",
-      "have": 498,
-      "total": 498
+      "have": 520,
+      "total": 520
     },
     {
       "code": "polish",
       "name": "Polish",
-      "have": 498,
-      "total": 498
+      "have": 520,
+      "total": 520
     },
     {
       "code": "brazilian",
       "name": "Portuguese (Brazil)",
-      "have": 498,
-      "total": 498
+      "have": 520,
+      "total": 520
     },
     {
       "code": "russian",
       "name": "Russian",
-      "have": 498,
-      "total": 498
+      "have": 520,
+      "total": 520
     },
     {
       "code": "spanish",
       "name": "Spanish",
-      "have": 498,
-      "total": 498
+      "have": 520,
+      "total": 520
     },
     {
       "code": "turkish",
       "name": "Turkish",
-      "have": 498,
-      "total": 498
+      "have": 520,
+      "total": 520
     }
   ],
   "textCoverage": [
@@ -1307,9 +1371,9 @@
     },
     {
       "file": "Auth.tsx",
-      "translated": 31,
+      "translated": 33,
       "literals": 2,
-      "pct": 93.93939393939394
+      "pct": 94.28571428571428
     },
     {
       "file": "Community.tsx",
@@ -1344,6 +1408,12 @@
     {
       "file": "Explore.tsx",
       "translated": 6,
+      "literals": 0,
+      "pct": 100
+    },
+    {
+      "file": "Guard.tsx",
+      "translated": 28,
       "literals": 0,
       "pct": 100
     },

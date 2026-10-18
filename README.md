@@ -93,6 +93,8 @@ For later releases use `npm run ship`: it applies migrations, confirms none are 
 
 - There are no secrets in this repository. Configuration ids live in the git-ignored `wrangler.jsonc`.
 - Accounts use a username and password. Passwords are hashed with salted PBKDF2-SHA256; only a hash of each session token is stored, and the cookie is `HttpOnly; SameSite=Strict`.
+- **reGuard**: optional authenticator-app second factor (RFC 6238 TOTP, 6 digits, 30 s steps, ±1 step of clock drift). A code cannot be used twice, guessing is bounded by the per-name login limiter, and 8 one-time backup codes (stored only as hashes) are shown once. Turning it off needs the password and a code. Account settings list signed-in devices (sign out one or all others) and a recent security log. The TOTP secret is stored in D1 (encrypted at rest by Cloudflare), not additionally encrypted by the Worker.
+- The recovery key resets the password but does not switch reGuard off, so signing in afterwards still needs a code.
 - Each account gets a one-time recovery key (shown once, rotated on use). QR sign-in lets a signed-in device approve another browser.
 - Non-GET requests need `x-requested-with` and a same-origin `Origin`; login, registration and username lookups are throttled per IP and per name, and login errors are generic.
 - Uploaded web games run in an iframe with `sandbox="allow-scripts"` and a CSP that only allows their own files, behind short-lived play tokens, so they cannot read cookies or call the site's API. Covers and screenshots are checked by magic bytes and served with `sandbox` CSP. Zips are checked for size, file count, unpacked size and unsafe paths before anything is unpacked.
