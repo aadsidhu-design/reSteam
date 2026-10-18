@@ -1,6 +1,6 @@
 {
   "generated": "2026-10-18",
-  "commit": "350381c",
+  "commit": "8fa9762",
   "summary": {
     "client": {
       "d": 224,
@@ -1138,74 +1138,74 @@
     {
       "code": "schinese",
       "name": "Chinese (Simplified)",
-      "have": 451,
-      "total": 451
+      "have": 457,
+      "total": 457
     },
     {
       "code": "english",
       "name": "English",
-      "have": 451,
-      "total": 451
+      "have": 457,
+      "total": 457
     },
     {
       "code": "french",
       "name": "French",
-      "have": 451,
-      "total": 451
+      "have": 457,
+      "total": 457
     },
     {
       "code": "german",
       "name": "German",
-      "have": 451,
-      "total": 451
+      "have": 457,
+      "total": 457
     },
     {
       "code": "italian",
       "name": "Italian",
-      "have": 451,
-      "total": 451
+      "have": 457,
+      "total": 457
     },
     {
       "code": "japanese",
       "name": "Japanese",
-      "have": 451,
-      "total": 451
+      "have": 457,
+      "total": 457
     },
     {
       "code": "koreana",
       "name": "Korean",
-      "have": 451,
-      "total": 451
+      "have": 457,
+      "total": 457
     },
     {
       "code": "polish",
       "name": "Polish",
-      "have": 451,
-      "total": 451
+      "have": 457,
+      "total": 457
     },
     {
       "code": "brazilian",
       "name": "Portuguese (Brazil)",
-      "have": 451,
-      "total": 451
+      "have": 457,
+      "total": 457
     },
     {
       "code": "russian",
       "name": "Russian",
-      "have": 451,
-      "total": 451
+      "have": 457,
+      "total": 457
     },
     {
       "code": "spanish",
       "name": "Spanish",
-      "have": 451,
-      "total": 451
+      "have": 457,
+      "total": 457
     },
     {
       "code": "turkish",
       "name": "Turkish",
-      "have": 451,
-      "total": 451
+      "have": 457,
+      "total": 457
     }
   ],
   "textCoverage": [
@@ -1282,12 +1282,6 @@
       "pct": 70.1492537313433
     },
     {
-      "file": "Library.tsx",
-      "translated": 51,
-      "literals": 19,
-      "pct": 72.85714285714285
-    },
-    {
       "file": "StorePages.tsx",
       "translated": 65,
       "literals": 23,
@@ -1304,6 +1298,12 @@
       "translated": 14,
       "literals": 3,
       "pct": 82.35294117647058
+    },
+    {
+      "file": "Library.tsx",
+      "translated": 59,
+      "literals": 12,
+      "pct": 83.09859154929578
     },
     {
       "file": "Community.tsx",

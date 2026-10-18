@@ -409,6 +409,13 @@ const ROWS: Row[] = [
   ['lb2.timeplayed', 'Time played', 'Tiempo de juego', 'Temps de jeu', 'Spielzeit', 'Tempo di gioco', 'Tempo de jogo', 'プレイ時間', '플레이 시간', '游戏时间', 'Время в игре', 'Oynama süresi', 'Czas gry'],
   ['lb2.hideshelf', 'Hide this shelf', 'Ocultar esta estantería', 'Masquer cette étagère', 'Dieses Regal ausblenden', 'Nascondi questo scaffale', 'Ocultar esta prateleira', 'この棚を非表示', '이 선반 숨기기', '隐藏此栏目', 'Скрыть эту полку', 'Bu rafı gizle', 'Ukryj tę półkę'],
   ['lb2.nomatch', 'No games match.', 'Ningún juego coincide.', 'Aucun jeu ne correspond.', 'Keine passenden Spiele.', 'Nessun gioco corrisponde.', 'Nenhum jogo encontrado.', '一致するゲームはありません。', '일치하는 게임이 없습니다.', '没有匹配的游戏。', 'Подходящих игр нет.', 'Eşleşen oyun yok.', 'Brak pasujących gier.'],
+  ['lb2.renamecoll', 'Rename collection', 'Renombrar colección', 'Renommer la collection', 'Sammlung umbenennen', 'Rinomina raccolta', 'Renomear coleção', 'コレクション名を変更', '컬렉션 이름 변경', '重命名收藏夹', 'Переименовать коллекцию', 'Koleksiyonu yeniden adlandır', 'Zmień nazwę kolekcji'],
+  ['lb2.deletecoll', 'Delete collection', 'Eliminar colección', 'Supprimer la collection', 'Sammlung löschen', 'Elimina raccolta', 'Excluir coleção', 'コレクションを削除', '컬렉션 삭제', '删除收藏夹', 'Удалить коллекцию', 'Koleksiyonu sil', 'Usuń kolekcję'],
+  ['lb2.sortrecent', 'Sort by recent activity', 'Ordenar por actividad reciente', 'Trier par activité récente', 'Nach letzter Aktivität sortieren', 'Ordina per attività recente', 'Ordenar por atividade recente', '最近のアクティビティ順', '최근 활동순 정렬', '按最近活动排序', 'Сортировать по недавней активности', 'Son etkinliğe göre sırala', 'Sortuj według ostatniej aktywności'],
+  ['lb2.ready', 'Ready to play', 'Listo para jugar', 'Prêt à jouer', 'Spielbereit', 'Pronto per giocare', 'Pronto para jogar', 'プレイ可能', '플레이 준비 완료', '可以开玩', 'Готово к игре', 'Oynamaya hazır', 'Gotowe do gry'],
+  ['lb2.installopen', 'Install and open Downloads', 'Instalar y abrir Descargas', 'Installer et ouvrir Téléchargements', 'Installieren und Downloads öffnen', 'Installa e apri Download', 'Instalar e abrir Downloads', 'インストールしてダウンロードを開く', '설치하고 다운로드 열기', '安装并打开下载', 'Установить и открыть загрузки', 'Yükle ve İndirmeler’i aç', 'Zainstaluj i otwórz Pobieranie'],
+  ['lb2.paused', 'Paused', 'En pausa', 'En pause', 'Pausiert', 'In pausa', 'Pausado', '一時停止中', '일시 중지됨', '已暂停', 'Приостановлено', 'Duraklatıldı', 'Wstrzymano'],
+  ['lb2.managedl', 'Manage Downloads', 'Administrar descargas', 'Gérer les téléchargements', 'Downloads verwalten', 'Gestisci download', 'Gerenciar downloads', 'ダウンロードを管理', '다운로드 관리', '管理下载', 'Управление загрузками', 'İndirmeleri yönet', 'Zarządzaj pobieraniem'],
 ]
 
 export const PAGE_STRINGS: Record<Lang, Record<string, string>> = Object.fromEntries(

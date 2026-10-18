@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `350381c`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `8fa9762`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -16,7 +16,7 @@ Generated 2026-10-18 from commit `350381c`. Run `npm run coverage` to refresh.
 | Automated checks | 283 |
 | Client routes | 25 |
 | Database tables | 34 |
-| Languages | 12 (451 strings) |
+| Languages | 12 (457 strings) |
 
 ## Fidelity by page
 
@@ -165,18 +165,18 @@ Generated 2026-10-18 from commit `350381c`. Run `npm run coverage` to refresh.
 
 | Language | Strings | Coverage |
 | --- | --- | --- |
-| Chinese (Simplified) | 451/451 | 100% |
-| English | 451/451 | 100% |
-| French | 451/451 | 100% |
-| German | 451/451 | 100% |
-| Italian | 451/451 | 100% |
-| Japanese | 451/451 | 100% |
-| Korean | 451/451 | 100% |
-| Polish | 451/451 | 100% |
-| Portuguese (Brazil) | 451/451 | 100% |
-| Russian | 451/451 | 100% |
-| Spanish | 451/451 | 100% |
-| Turkish | 451/451 | 100% |
+| Chinese (Simplified) | 457/457 | 100% |
+| English | 457/457 | 100% |
+| French | 457/457 | 100% |
+| German | 457/457 | 100% |
+| Italian | 457/457 | 100% |
+| Japanese | 457/457 | 100% |
+| Korean | 457/457 | 100% |
+| Polish | 457/457 | 100% |
+| Portuguese (Brazil) | 457/457 | 100% |
+| Russian | 457/457 | 100% |
+| Spanish | 457/457 | 100% |
+| Turkish | 457/457 | 100% |
 
 ## UI text going through the translator
 
@@ -194,10 +194,10 @@ Generated 2026-10-18 from commit `350381c`. Run `npm run coverage` to refresh.
 | Developer.tsx | 32 | 22 | 59% |
 | Settings.tsx | 48 | 27 | 64% |
 | Chrome.tsx | 47 | 20 | 70% |
-| Library.tsx | 51 | 19 | 73% |
 | StorePages.tsx | 65 | 23 | 74% |
 | Friends.tsx | 37 | 10 | 79% |
 | Reviews.tsx | 14 | 3 | 82% |
+| Library.tsx | 59 | 12 | 83% |
 | Community.tsx | 34 | 5 | 87% |
 | Auth.tsx | 31 | 2 | 94% |
 | Profile.tsx | 22 | 1 | 96% |

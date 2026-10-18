@@ -231,8 +231,8 @@ export const Library = observer(() => {
             <option value="games">{t('lb2.games')}</option>
             <option value="software">{t('lb2.software')}</option>
           </select>
-          <button className={`fbtn ${store.recentSort ? 'on' : ''}`} onClick={() => (store.recentSort = !store.recentSort)} title="Sort by recent activity"><Icon name="clock" size={18} /></button>
-          <button className={`fbtn ${store.installedOnly ? 'on' : ''}`} onClick={() => (store.installedOnly = !store.installedOnly)} title="Ready to play"><Icon name="playCircle" size={18} /></button>
+          <button className={`fbtn ${store.recentSort ? 'on' : ''}`} onClick={() => (store.recentSort = !store.recentSort)} title={t('lb2.sortrecent')}><Icon name="clock" size={18} /></button>
+          <button className={`fbtn ${store.installedOnly ? 'on' : ''}`} onClick={() => (store.installedOnly = !store.installedOnly)} title={t('lb2.ready')}><Icon name="playCircle" size={18} /></button>
         </div>
         <div className="side-search popwrap" ref={filterRef}>
           <Icon name="search" size={20} className="ss-icon" />
@@ -251,8 +251,8 @@ export const Library = observer(() => {
             <div key={c.id} className="colsec">
               {section(c.id, c.name.toUpperCase(), list.filter(g => c.games.includes(g.id) && !store.favorites.includes(g.id)))}
               <span className="colbtns">
-                <button className="icon-btn" title="Rename collection" aria-label={`Rename ${c.name}`} onClick={() => setNameDlg({ mode: 'rename', id: c.id, value: c.name })}><Icon name="edit" size={14} /></button>
-                <button className="icon-btn" title="Delete collection" aria-label={`Delete ${c.name}`} onClick={() => store.deleteCollection(c.id)}><Icon name="trash" size={14} /></button>
+                <button className="icon-btn" title={t('lb2.renamecoll')} aria-label={`Rename ${c.name}`} onClick={() => setNameDlg({ mode: 'rename', id: c.id, value: c.name })}><Icon name="edit" size={14} /></button>
+                <button className="icon-btn" title={t('lb2.deletecoll')} aria-label={`Delete ${c.name}`} onClick={() => store.deleteCollection(c.id)}><Icon name="trash" size={14} /></button>
               </span>
             </div>
           ))}
@@ -279,7 +279,7 @@ export const Library = observer(() => {
         <div className="ctx popover" ref={ctxRef} style={{ position: 'fixed', left: ctx.x, top: ctx.y, minWidth: 220 }}>
           {isInstalled(ctx.g)
             ? <button className="pop-item" onClick={() => { setCtx(null); nav(`/library/${ctx.g.id}`); store.play(ctx.g.id) }} disabled={store.running !== null}>Play</button>
-            : !isLocal(ctx.g.id) && <button className="pop-item" onClick={() => { setCtx(null); store.install(ctx.g.id) }}>Install</button>}
+            : !isLocal(ctx.g.id) && <button className="pop-item" onClick={() => { setCtx(null); store.install(ctx.g.id) }}>{t('st.install')}</button>}
           <button className="pop-item" onClick={() => { store.toggleFavorite(ctx.g.id); setCtx(null) }}>{store.favorites.includes(ctx.g.id) ? 'Remove from favorites' : 'Add to favorites'}</button>
           {store.collections.map(c => c.games.includes(ctx.g.id)
             ? <button key={c.id} className="pop-item" onClick={() => { store.removeFromCollection(c.id, ctx.g.id); setCtx(null) }}>Remove from {c.name}</button>
@@ -340,7 +340,7 @@ const LibGame = observer(({ g }: { g: Game }) => {
               <button className="btn blue caret" onClick={() => setCaret(!caret)} aria-label="Install options"><Icon name="chevronDown" size={22} /></button>
               {caret && (
                 <div className="popover" style={{ left: 0 }}>
-                  <button className="pop-item" onClick={() => { setCaret(false); store.install(g.id); nav('/downloads') }}>Install and open Downloads</button>
+                  <button className="pop-item" onClick={() => { setCaret(false); store.install(g.id); nav('/downloads') }}>{t('lb2.installopen')}</button>
                   <button className="pop-item" onClick={() => { setCaret(false); nav(`/store/${g.id}`) }}>{t('lb.viewstore')}</button>
                 </div>
               )}
@@ -379,7 +379,7 @@ const LibGame = observer(({ g }: { g: Game }) => {
       {dl && (
         <div className="gp-progress">
           <div className="gp-prog-bar"><span style={{ width: `${dl.progress}%` }} /></div>
-          <div className="small muted">{dl.paused ? 'Paused' : dl.phase} · {Math.floor(dl.progress)}% · <Link to="/downloads">Manage Downloads</Link></div>
+          <div className="small muted">{dl.paused ? t('lb2.paused') : dl.phase} · {Math.floor(dl.progress)}% · <Link to="/downloads">{t('lb2.managedl')}</Link></div>
         </div>
       )}
       <div className="gp-tabs">
