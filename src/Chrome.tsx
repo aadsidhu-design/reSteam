@@ -15,8 +15,8 @@ function NavDrop({ to, label, active, items }: { to: string; label: string; acti
   const show = () => { window.clearTimeout(timer.current); setOpen(true) }
   const hide = () => { window.clearTimeout(timer.current); timer.current = window.setTimeout(() => setOpen(false), 120) }
   return (
-    <div className="gh-navitem" onMouseEnter={show} onMouseLeave={hide} onFocus={show} onBlur={hide}>
-      <NavLink to={to} className={active ? 'active' : ''} aria-haspopup="true" aria-expanded={open}>{label}</NavLink>
+    <div className="gh-navitem" onMouseEnter={show} onMouseLeave={hide} onFocus={e => { if (e.target.matches(':focus-visible')) show() }} onBlur={hide}>
+      <NavLink to={to} className={active ? 'active' : ''} aria-haspopup="true" aria-expanded={open} onClick={() => setOpen(false)}>{label}</NavLink>
       {open && (
         <div className="gh-drop" role="menu">
           {items.map(([text, href]) => <Link key={text + href} to={href} role="menuitem" onClick={() => setOpen(false)}>{text}</Link>)}
