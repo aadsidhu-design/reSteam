@@ -32,6 +32,7 @@ const Browse = ({ go }: { go: () => void }) => {
   const rows: [string, string, string?][] = [
     ['Store Home', '/store'],
     ['New Releases', '/store/browse?sort=new', 'Explore new content on reSteam'],
+    ['All Charts & Stats', '/charts', 'See what players own, play and wishlist'],
     ['Top Sellers', '/store/browse?sort=top', 'The games players own and review most'],
     ['Discounts & Events', '/store/browse?sale=1'],
     ['Free to Play', '/store/browse?free=1'],

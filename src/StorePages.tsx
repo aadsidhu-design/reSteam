@@ -54,12 +54,27 @@ export const Tags = ({ g, n = 4 }: { g: Game; n?: number }) => (
   <div className="tagrow">{g.tags.slice(0, n).map(t => <Link key={t} to={`/store/browse?tag=${encodeURIComponent(t)}`} className="tagchip">{t}</Link>)}</div>
 )
 
-const Card = ({ g }: { g: Game }) => (
-  <Link to={`/store/${g.id}`} className="scard">
-    <div className="scard-art"><Art game={g} kind="header" /></div>
-    <div className="scard-body"><div className="scard-title">{g.title}</div><Tags g={g} n={2} /><Price game={g} /></div>
-  </Link>
-)
+/** Hovering a capsule cycles through screenshots that fade into each other, like the real store's hover preview. */
+const Card = ({ g }: { g: Game }) => {
+  const [on, setOn] = useState(false)
+  const [i, setI] = useState(0)
+  useEffect(() => {
+    if (!on || store.settings.reduceMotion) return
+    const t = setInterval(() => setI(n => (n + 1) % 4), 1000)
+    return () => clearInterval(t)
+  }, [on])
+  return (
+    <Link to={`/store/${g.id}`} className={`scard ${on ? 'hover' : ''}`} onMouseEnter={() => { setI(0); setOn(true) }} onMouseLeave={() => setOn(false)}>
+      <div className="scard-art"><Art game={g} kind="header" /></div>
+      <div className="scard-body"><div className="scard-title">{g.title}</div><Tags g={g} n={2} /><Price game={g} /></div>
+      {on && (
+        <div className="scard-shots" aria-hidden>
+          {[0, 1, 2, 3].map(n => <div key={n} className={`scard-shot ${n === i ? 'on' : ''}`}><Art game={g} kind="shot" variant={n + 1} showTitle={false} /></div>)}
+        </div>
+      )}
+    </Link>
+  )
+}
 
 /* ---------- gift card modal ---------- */
 const GiftModal = observer(({ onClose }: { onClose: () => void }) => {
@@ -131,6 +146,7 @@ export const StoreHome = observer(() => {
   const [nPage, setNPage] = useState(0)
   const [tab, setTab] = useState<'new' | 'top' | 'upcoming' | 'sale' | 'free'>('new')
   const [hover, setHover] = useState<Game | null>(null)
+  const [shotHover, setShotHover] = useState<number | null>(null)
   const pool = GAMES.filter(g => !store.ignored.includes(g.id))
   const featured = useMemo(() => [...pool].sort((a, b) => b.reviews * b.rating - a.reviews * a.rating || b.owners - a.owners || b.discount - a.discount).slice(0, 8), [store.ignored.length, GAMES.reduce((n, g) => n + g.reviews, 0)])
   const sale = useMemo(() => pool.filter(g => g.discount > 0).sort((a, b) => b.discount - a.discount), [pool.length])
@@ -191,11 +207,11 @@ export const StoreHome = observer(() => {
           <button className="peek l" onClick={() => setIdx((idx + featured.length - 1) % featured.length)} aria-label="Previous featured game"><Art game={featured[(idx + featured.length - 1) % featured.length]} kind="wide" showTitle={false} /><Icon name="chevronLeft" size={44} /></button>
           <button className="peek r" onClick={() => setIdx((idx + 1) % featured.length)} aria-label="Next featured game"><Art game={featured[(idx + 1) % featured.length]} kind="wide" showTitle={false} /><Icon name="chevronRight" size={44} /></button>
           <div className="feat">
-            <Link to={`/store/${f.id}`} className="feat-main feat-fade" key={f.id}><Art game={f} kind="wide" variant={idx % 3} /></Link>
+            <Link to={`/store/${f.id}`} className="feat-main feat-fade" key={f.id}><Art game={f} kind="wide" variant={idx % 3} />{shotHover !== null && <div className="feat-shot" key={shotHover}><Art game={f} kind="shot" variant={shotHover} showTitle={false} /></div>}</Link>
             <div className="feat-panel">
               <div className="fp-title">{f.title}</div>
               <div className="fp-rev"><span className={reviewClass(f.rating, f.reviews)}>{reviewLabel(f.rating, f.reviews)}</span> {f.reviews >= 10 && <span className="muted">({compact(f.reviews)} Reviews)</span>}</div>
-              <div className="fp-shots">{[1, 2, 3, 4].map(n => <div key={n} className="fp-shot"><Art game={f} kind="shot" variant={n} showTitle={false} /></div>)}</div>
+              <div className="fp-shots" onMouseLeave={() => setShotHover(null)}>{[1, 2, 3, 4].map(n => <div key={n} className="fp-shot" onMouseEnter={() => setShotHover(n)}><Art game={f} kind="shot" variant={n} showTitle={false} /></div>)}</div>
               <div className="fp-rank"><svg width="40" height="34" viewBox="0 0 40 34" aria-hidden><path d="M2 20l9-9 7 6 14-14" fill="none" stroke="#a4d007" strokeWidth="3" /><rect x="4" y="22" width="7" height="11" fill="#fff" /><rect x="15" y="16" width="7" height="17" fill="#fff" /><rect x="26" y="9" width="7" height="24" fill="#fff" /></svg>
                 <div><div className="rk-t">{f.reviews > 0 ? (rank <= 3 ? 'Top Rated' : 'Popular') : 'Just added'}</div><div>{f.reviews > 0 ? `Ranked #${rank} by player reviews` : 'Be the first to review it'}</div></div></div>
               <div className="fp-foot">{f.price === 0 ? <span className="fp-free">Free to Play</span> : <CapPrice g={f} />}</div>

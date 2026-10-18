@@ -64,6 +64,8 @@ check('achievements are validated', (await dev.call('PUT', `/dev/games/${id}`, {
 check('a developer can define achievements', (await dev.call('PUT', `/dev/games/${id}`, { ...meta, achievements: 12 })).status === 200)
 check('discounts are bounded', (await dev.call('PUT', `/dev/games/${id}/discount`, { percent: 95 })).status === 400)
 check('only the owner can set a discount', (await other.call('PUT', `/dev/games/${id}/discount`, { percent: 10 })).status === 404)
+const ch = await fetch(`${BASE}/api/charts`).then(r => r.json())
+check('charts expose ranked lists from real activity', ['topselling', 'mostplayed', 'wishlisted', 'new'].every(k => Array.isArray(ch[k])) && ch.topselling.every((r, i, a) => i === 0 || a[i - 1].value >= r.value))
 check('publishing works', (await dev.call('POST', `/dev/games/${id}/publish`)).status === 200)
 check('wishlisting works', (await other.call('PUT', `/wishlist/${id}`)).status === 200)
 check('following works', (await other.call('PUT', `/followed/${id}`)).status === 200)

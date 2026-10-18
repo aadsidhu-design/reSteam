@@ -1,0 +1,12 @@
+.charts { padding: 24px 0 40px; }
+.ch-tabs { display: flex; gap: 6px; margin: 8px 0; }
+.ch-tabs button { background: #1b2838; border: 0; color: #8f98a0; padding: 10px 22px; font-size: 15px; transition: background-color .15s, color .15s; }
+.ch-tabs button.on { background: #2b4864; color: #fff; }
+.ch-list { display: grid; gap: 3px; }
+.ch-row { display: grid; grid-template-columns: 44px 160px 1fr 170px auto; gap: 14px; align-items: center; background: #16202d; color: #c6d4df; padding-right: 10px; transition: background-color .15s; }
+.ch-row:hover { background: #20364b; color: #fff; }
+.ch-rank { text-align: center; font-size: 20px; color: #8f98a0; }
+.ch-art { height: 60px; overflow: hidden; }
+.ch-main { display: grid; gap: 2px; }
+.ch-main b { font-size: 17px; font-weight: 600; color: #fff; }
+.ch-val { text-align: right; }

@@ -53,6 +53,20 @@ export const communityRoutes: Route[] = [
     return json({ stats: Object.fromEntries(results.map(r => [r.id, r])) }, 200, { 'cache-control': 'public, max-age=20' })
   }),
 
+  // ---- charts: ranked lists built only from real activity ----
+  route('GET', '/charts', { auth: false }, async c => {
+    const now = Date.now()
+    const base = "FROM games g WHERE g.status = 'published'"
+    const [sell, played, wished, fresh] = await c.env.DB.batch([
+      c.env.DB.prepare(`SELECT g.id AS gameId, (SELECT COUNT(*) FROM library l WHERE l.game_id = g.id) AS value ${base} ORDER BY value DESC, g.id LIMIT 25`),
+      c.env.DB.prepare(`SELECT g.id AS gameId, (SELECT COUNT(*) FROM users u WHERE u.playing_game = g.id AND u.playing_at > ?) AS value,
+        (SELECT COALESCE(SUM(l.playtime), 0) FROM library l WHERE l.game_id = g.id) AS minutes ${base} ORDER BY value DESC, minutes DESC, g.id LIMIT 25`).bind(now - 120_000),
+      c.env.DB.prepare(`SELECT g.id AS gameId, (SELECT COUNT(*) FROM wishlist w WHERE w.game_id = g.id) AS value ${base} ORDER BY value DESC, g.id LIMIT 25`),
+      c.env.DB.prepare(`SELECT g.id AS gameId, g.released AS value ${base} AND g.released != '' ORDER BY g.released DESC, g.id DESC LIMIT 25`),
+    ])
+    return json({ topselling: sell.results, mostplayed: played.results, wishlisted: wished.results, new: fresh.results }, 200, { 'cache-control': 'public, max-age=20' })
+  }),
+
   // ---- reviews ----
   route('GET', '/games/:id/reviews', { auth: false }, async c => {
     if (!(await gameExists(c))) return fail(404, 'no such game')
