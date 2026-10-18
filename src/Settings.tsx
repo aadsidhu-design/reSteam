@@ -79,7 +79,7 @@ const Account = observer(() => {
             <button className="abtn" onClick={() => setModal('funds')}>+ Add funds to your reSteam Wallet</button>
             <div className="acct-wallet"><a>{t('se.wallet')}</a><b>{fmt(store.wallet)}</b></div>
             <div className="acct-rule" />
-            <p className="muted small">Wallet funds are play money. No payment methods exist on this account.</p>
+            <p className="muted small">{t('set.playmoney')}</p>
           </div>
           <div className="acct-btns">
             <button className="abtn" onClick={() => setModal('licenses')}>{t('se.viewlic')}</button>
@@ -108,22 +108,22 @@ const Account = observer(() => {
       {modal === 'funds' && <AddFunds onClose={() => setModal(null)} />}
       {modal === 'licenses' && (
         <Modal title={t('se.licenses')} onClose={() => setModal(null)} width={520}>
-          <p className="muted small">Games in your library and the product codes you have activated.</p>
-          <div className="lic-list">{store.ownedGames.map(g => <div key={g.id} className="lic-row"><b>{g.title}</b><span className="muted small">{g.price === 0 ? 'Free to play' : fmt(g.price)}</span></div>)}</div>
-          {store.ownedGames.length === 0 && <p className="muted">No games yet.</p>}
+          <p className="muted small">{t('set.licdesc')}</p>
+          <div className="lic-list">{store.ownedGames.map(g => <div key={g.id} className="lic-row"><b>{g.title}</b><span className="muted small">{g.price === 0 ? t('st.freetoplay') : fmt(g.price)}</span></div>)}</div>
+          {store.ownedGames.length === 0 && <p className="muted">{t('set.nogames')}</p>}
         </Modal>
       )}
       {modal === 'privacy' && (
         <Modal title={t('se.privacy')} onClose={() => setModal(null)} width={420}>
-          <label className="small muted">Who can see your profile, games and activity</label>
+          <label className="small muted">{t('set.whosees')}</label>
           <select className="input" value={store.privacy} onChange={e => void store.setPrivacy(e.target.value as Privacy)}>
             <option value="public">{t('se.public')}</option><option value="friends">{t('se.friendsonly')}</option><option value="private">{t('se.private')}</option>
           </select>
           <p className="muted small" style={{ marginTop: 12 }}>Public profiles show your name, level and recent games to everyone. Friends only limits that to your friends. Private shows only your name.</p>
         </Modal>
       )}
-      {modal === 'details' && <Modal title="Account Details" onClose={() => setModal(null)} width={420}>
-        <dl className="kv"><dt>Display name</dt><dd>{store.name}</dd><dt>{t('auth.account')}</dt><dd>{store.user?.username}</dd><dt>Games owned</dt><dd>{store.owned.length}</dd></dl>
+      {modal === 'details' && <Modal title={t('set.acctdetails')} onClose={() => setModal(null)} width={420}>
+        <dl className="kv"><dt>{t('set.dispname')}</dt><dd>{store.name}</dd><dt>{t('auth.account')}</dt><dd>{store.user?.username}</dd><dt>{t('set.gamesowned')}</dt><dd>{store.owned.length}</dd></dl>
       </Modal>}
     </>
   )
@@ -136,7 +136,7 @@ const Storage = observer(() => {
     <>
       <Row label={t('se.localdrive')} hint="Space used by installed games"><b>{store.storageUsedGb.toFixed(1)} GB</b> <span className="muted">of {total} GB</span></Row>
       <div className="stbar"><span style={{ width: `${Math.min(100, (store.storageUsedGb / total) * 100)}%` }} /></div>
-      {list.length === 0 && <p className="muted">No games are installed.</p>}
+      {list.length === 0 && <p className="muted">{t('set.nonei')}</p>}
       {list.map(g => <Row key={g.id} label={g.title} hint={`${g.sizeGb.toFixed(1)} GB`}><button className="btn small" disabled={store.running === g.id} onClick={() => store.uninstall(g.id)}>Uninstall</button></Row>)}
     </>
   )

@@ -1,6 +1,6 @@
 {
   "generated": "2026-10-18",
-  "commit": "f888f72",
+  "commit": "e55c33b",
   "summary": {
     "client": {
       "d": 224,
@@ -1138,74 +1138,74 @@
     {
       "code": "schinese",
       "name": "Chinese (Simplified)",
-      "have": 464,
-      "total": 464
+      "have": 472,
+      "total": 472
     },
     {
       "code": "english",
       "name": "English",
-      "have": 464,
-      "total": 464
+      "have": 472,
+      "total": 472
     },
     {
       "code": "french",
       "name": "French",
-      "have": 464,
-      "total": 464
+      "have": 472,
+      "total": 472
     },
     {
       "code": "german",
       "name": "German",
-      "have": 464,
-      "total": 464
+      "have": 472,
+      "total": 472
     },
     {
       "code": "italian",
       "name": "Italian",
-      "have": 464,
-      "total": 464
+      "have": 472,
+      "total": 472
     },
     {
       "code": "japanese",
       "name": "Japanese",
-      "have": 464,
-      "total": 464
+      "have": 472,
+      "total": 472
     },
     {
       "code": "koreana",
       "name": "Korean",
-      "have": 464,
-      "total": 464
+      "have": 472,
+      "total": 472
     },
     {
       "code": "polish",
       "name": "Polish",
-      "have": 464,
-      "total": 464
+      "have": 472,
+      "total": 472
     },
     {
       "code": "brazilian",
       "name": "Portuguese (Brazil)",
-      "have": 464,
-      "total": 464
+      "have": 472,
+      "total": 472
     },
     {
       "code": "russian",
       "name": "Russian",
-      "have": 464,
-      "total": 464
+      "have": 472,
+      "total": 472
     },
     {
       "code": "spanish",
       "name": "Spanish",
-      "have": 464,
-      "total": 464
+      "have": 472,
+      "total": 472
     },
     {
       "code": "turkish",
       "name": "Turkish",
-      "have": 464,
-      "total": 464
+      "have": 472,
+      "total": 472
     }
   ],
   "textCoverage": [
@@ -1282,12 +1282,6 @@
       "pct": 73.86363636363636
     },
     {
-      "file": "Settings.tsx",
-      "translated": 56,
-      "literals": 19,
-      "pct": 74.66666666666667
-    },
-    {
       "file": "Reviews.tsx",
       "translated": 14,
       "literals": 3,
@@ -1298,6 +1292,12 @@
       "translated": 59,
       "literals": 12,
       "pct": 83.09859154929578
+    },
+    {
+      "file": "Settings.tsx",
+      "translated": 65,
+      "literals": 11,
+      "pct": 85.52631578947368
     },
     {
       "file": "Community.tsx",
