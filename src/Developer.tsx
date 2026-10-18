@@ -131,7 +131,7 @@ const News = ({ g }: { g: Mine }) => {
   useEffect(() => { void load() }, [load])
   return (
     <div className="dv-slot dv-news">
-      <div className="grow"><b>{t('dv.news')}</b><div className="muted small">Posts appear on your store page and notify players who follow the game.</div>
+      <div className="grow"><b>{t('dv.news')}</b><div className="muted small">{t('dv.newshint')}</div>
         <input className="input" placeholder={t('dv.headline')} maxLength={120} value={title} onChange={e => { setTitle(e.target.value); setErr('') }} />
         <textarea className="input" rows={3} placeholder={t('dv.whatsnew')} maxLength={6000} value={body} onChange={e => { setBody(e.target.value); setErr('') }} />
         {err && <div className="err small">{err}</div>}
@@ -173,7 +173,7 @@ const Release = ({ g, done }: { g: Mine; done: (r: { error?: string }) => Promis
   return (
     <div className="dv-slot dv-news">
       <div className="grow"><b>Release an update <span className="muted small">(current version {g.version ?? 1})</span></b>
-        <div className="muted small">Upload the new files above first, then describe what changed. Everyone who owns the game is notified and the notes appear in the news hub.</div>
+        <div className="muted small">{t('dv.releasehint')}</div>
         <textarea className="input" rows={3} maxLength={2000} placeholder="What changed in this version?" value={notes} onChange={e => { setNotes(e.target.value); setErr('') }} />
         {err && <div className="err small">{err}</div>}
         <button className="btn small blue" disabled={notes.trim().length < 5} onClick={async () => { const r = await call('POST', `/dev/games/${g.id}/release`, { notes }); if (r.error) setErr(r.error); else { setNotes(''); store.toast(t('dv.released')); await done({}) } }}>{t('dv.release')}</button>
