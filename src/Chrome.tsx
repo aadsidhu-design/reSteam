@@ -41,6 +41,9 @@ export const Header = observer(() => {
         )}
         {store.account === 'in' ? (
           <div className="gh-right" ref={ref}>
+            <Link to="/developer" className="gh-install"><Icon name="plus" size={13} /> Upload a game</Link>
+            <Link to="/wishlist" className="gh-link">Wishlist ({store.wishlist.length})</Link>
+            <Link to="/cart" className="gh-link"><Icon name="cart" size={15} /> Cart ({store.cart.length})</Link>
             <div className="popwrap">
               <button className="gh-icon" onClick={() => { setMenu(menu === 'bell' ? null : 'bell') }} aria-label="Notifications">
                 <Icon name="bell" size={20} />
@@ -91,6 +94,7 @@ export const Header = observer(() => {
           </div>
         ) : store.account === 'out' ? (
           <div className="gh-right">
+            <Link to="/developer" className="gh-install"><Icon name="plus" size={13} /> Upload a game</Link>
             <Link className="gh-login" to={`/login?next=${encodeURIComponent(path)}`}>login</Link>
             <span className="gh-sep">|</span>
             <Link className="gh-login" to={`/login?mode=join&next=${encodeURIComponent(path)}`}>join</Link>

@@ -10,6 +10,7 @@ import { ProfilePage } from './Profile'
 import { LoginPage, QrApprove, RequireAuth } from './Auth'
 import { About } from './About'
 import { Player } from './Player'
+import { Explore } from './Explore'
 import { Developer } from './Developer'
 import { GAMES } from './data'
 import { store } from './store'
@@ -31,6 +32,7 @@ const App = observer(() => {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/qr/:id" element={<QrApprove />} />
             <Route path="/about" element={<About />} />
+            <Route path="/explore" element={guard(<Explore />)} />
             <Route path="/play/:id" element={guard(<Player />)} />
             <Route path="/developer" element={guard(<Developer />)} />
             <Route path="/library" element={guard(<Library />)} />

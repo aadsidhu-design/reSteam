@@ -48,6 +48,9 @@ export const StoreGame = observer(() => {
   const friends = store.friendsPlaying(g.id)
 
   return (
+    <div className="sg-wrap">
+    <div className="sg-bd" aria-hidden><Art game={g} kind="hero" showTitle={false} /></div>
+    {!store.signedIn && <div className="notsigned"><div><Link className="btn" to={`/login?next=${encodeURIComponent(`/store/${g.id}`)}`}>Sign in</Link><span><b>You're not signed in!</b>Sign in to reSteam to wishlist, follow, purchase and see recommendations</span></div></div>}
     <div className="container sgame">
       <div className="crumbs"><Link to="/store/browse">All Games</Link> &gt; <Link to={`/store/browse?genre=${encodeURIComponent(g.genre[0])}`}>{g.genre[0]} Games</Link> &gt; <span>{g.title}</span></div>
       <div className="sg-title"><h1>{g.title}</h1><Link to={`/community?hub=${g.id}`} className="hubbtn">Community Hub</Link></div>
@@ -70,12 +73,14 @@ export const StoreGame = observer(() => {
       </div>
 
       <div className="sg-signed">
+        {!store.signedIn ? <div className="sg-btns small"><span><Link to={`/login?next=${encodeURIComponent(`/store/${g.id}`)}`}><b>Sign in</b></Link> to add this item to your wishlist, follow it, or mark it as ignored</span></div> : (
         <div className="sg-btns">
           <button className={`btn ${wished ? 'blue' : ''}`} onClick={() => store.toggleWishlist(g.id)} disabled={owned}>{wished ? 'On Wishlist ✓' : 'Add to your wishlist'}</button>
           <button className={`btn ${store.followed.includes(g.id) ? 'blue' : ''}`} onClick={() => { store.toggleFollow(g.id); store.toast(store.followed.includes(g.id) ? `Following ${g.title}` : `Unfollowed ${g.title}`) }}>{store.followed.includes(g.id) ? 'Following ✓' : 'Follow'}</button>
           <button className={`btn ${store.ignored.includes(g.id) ? 'red' : ''}`} onClick={() => { store.toggleIgnore(g.id); store.toast(store.ignored.includes(g.id) ? `${g.title} is now ignored and will be hidden from the store` : `${g.title} is no longer ignored`) }}>{store.ignored.includes(g.id) ? 'Ignored ✓' : 'Ignore'}</button>
           {friends.length > 0 && <span className="muted small">{friends.map(f => f.name).join(', ')} playing now</span>}
         </div>
+        )}
         <button className="sharebtn" aria-label="Copy link" title="Copy link" onClick={() => { void navigator.clipboard?.writeText(location.href); store.toast('Link copied') }}><Icon name="share" size={20} /></button>
       </div>
 
@@ -132,6 +137,7 @@ export const StoreGame = observer(() => {
       {similar.length > 0 && (<><h2>More like this</h2><div className="cards">{similar.map(s => (
         <Link key={s.id} to={`/store/${s.id}`} className="scard"><div className="scard-art"><Art game={s} kind="header" /></div><div className="scard-body"><div className="scard-title">{s.title}</div><Tags g={s} n={2} /><Price game={s} /></div></Link>))}</div></>)}
       <div className="muted small" style={{ margin: '20px 0 40px' }}>{fmt(priceOf(g))} · {g.dev}</div>
+    </div>
     </div>
   )
 })

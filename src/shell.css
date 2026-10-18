@@ -1,23 +1,26 @@
-/* ---- global web header / footer ---- */
-.gheader { flex: none; background: linear-gradient(#171a21, #171a21); height: 72px; position: relative; z-index: 30; box-shadow: 0 1px 0 #00000066; }
-.gh-inner { max-width: 1280px; height: 100%; margin: 0 auto; padding: 0 16px; display: flex; align-items: center; gap: 22px; }
-.gh-logo { display: flex; align-items: center; gap: 10px; color: #fff; font-size: 26px; font-weight: 700; letter-spacing: -.01em; }
+/* ---- global web header / footer (measured from the real store: 104px, #171d25, 1200px content) ---- */
+.gheader { flex: none; background: #171d25; height: 104px; position: relative; z-index: 402; }
+.gh-inner { max-width: 1200px; height: 100%; margin: 0 auto; position: relative; display: block; }
+.gh-logo { position: absolute; left: 0; top: 32px; display: flex; align-items: center; gap: 10px; color: #fff; font-size: 24px; font-weight: 700; letter-spacing: .02em; }
 .gh-logo:hover { color: #fff; }
-.gh-nav { display: flex; gap: 2px; margin-left: 14px; }
-.gh-nav a { color: #b8b6b4; font-weight: 600; font-size: 14px; letter-spacing: .03em; padding: 10px 14px; border-radius: 2px; text-transform: uppercase; }
-.gh-nav a:hover { color: #fff; background: #ffffff0c; }
-.gh-nav a.active { color: #fff; box-shadow: inset 0 -3px 0 var(--accent); }
-.gh-right { display: flex; align-items: center; gap: 10px; }
-.gh-login { color: #b8b6b4; font-size: 13px; }
-.gh-login:hover { color: #fff; text-decoration: underline; }
+.gh-nav { position: absolute; left: 200px; top: 0; display: flex; }
+.gh-nav a { position: relative; display: block; padding: 45px 7px 7px; line-height: 16px; font-size: 16px; font-weight: 600; color: #fff; text-transform: uppercase; letter-spacing: .01em; }
+.gh-nav a:hover { color: #fff; }
+.gh-nav a.active { color: #1a9fff; }
+.gh-nav a.active::after { content: ''; position: absolute; left: 7px; right: 7px; bottom: 5px; height: 3px; background: #1a9fff; }
+.gh-right { position: absolute; right: 0; top: 4px; height: 26px; display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.gh-login { color: #b8b6b4; font-size: 12px; }
+.gh-login:hover { color: #fff; text-decoration: none; }
 .gh-sep { color: #555b63; }
-.gh-icon { position: relative; background: none; border: 0; color: #b8b6b4; width: 34px; height: 34px; border-radius: 3px; display: grid; place-items: center; }
-.gh-icon:hover { color: #fff; background: #ffffff12; }
-.gh-user { display: flex; align-items: center; gap: 8px; background: #2a2f38; border: 0; color: #c7d5e0; padding: 0 10px; height: 34px; border-radius: 3px; font-weight: 600; }
-.gh-user:hover { background: #343b46; color: #fff; }
-.gh-wallet { background: none; border: 0; color: #8fa3b3; height: 34px; padding: 0 6px; font-weight: 600; }
+.gh-icon { position: relative; background: none; border: 0; color: #b8b6b4; width: 26px; height: 24px; border-radius: 2px; display: grid; place-items: center; }
+.gh-icon:hover { color: #fff; }
+.gh-link { color: #b8b6b4; font-size: 12px; display: inline-flex; gap: 4px; align-items: center; }
+.gh-link:hover { color: #fff; }
+.gh-user { display: flex; align-items: center; gap: 6px; background: none; border: 0; color: #b8b6b4; padding: 0 4px; height: 24px; font-size: 12px; font-weight: 400; }
+.gh-user:hover { color: #fff; }
+.gh-wallet { background: none; border: 0; color: #b8b6b4; height: 24px; padding: 0 4px; font-size: 12px; }
 .gh-wallet:hover { color: #fff; }
-.gh-dl { display: flex; align-items: center; gap: 8px; background: #232830; border: 0; color: #9fb4c4; height: 30px; padding: 0 10px; border-radius: 3px; }
+.gh-dl { position: absolute; right: 0; top: 66px; display: flex; align-items: center; gap: 8px; background: #232830; border: 0; color: #9fb4c4; height: 30px; padding: 0 10px; border-radius: 3px; }
 .gh-dl:hover { color: #fff; }
 .gh-dl-bar { width: 70px; height: 4px; background: #0008; border-radius: 2px; overflow: hidden; display: block; }
 .gh-dl-bar span { display: block; height: 100%; background: var(--accent); transition: width .25s linear; }
@@ -50,3 +53,5 @@
 }
 .pagefade { animation: pagefade-in .25s ease-out; }
 @keyframes pagefade-in { from { opacity: 0; } }
+.gh-install { display: inline-flex; align-items: center; height: 21px; padding: 0 9px 0 10px; margin-right: 3px; background: linear-gradient(#799905, #536904); color: #e5e4dc; font-size: 11px; border-radius: 2px; }
+.gh-install:hover { color: #fff; filter: brightness(1.12); }

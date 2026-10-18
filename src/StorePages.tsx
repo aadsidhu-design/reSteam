@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, NavLink, Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { ALL_TAGS, GAMES, GENRES, compact, fmt, priceOf, reviewLabel, type Game } from './data'
 import { store } from './store'
@@ -80,10 +80,7 @@ export const StoreLayout = observer(() => {
     <div className="subnav">
       <div className="subnav-in">
         {Object.entries(MENUS).map(([label, items]) => <NavMenu key={label} label={label} items={items} />)}
-        <div className="grow" />
         <SearchBox />
-        <NavLink to="/wishlist" className="wishlink"><Icon name="star" size={18} /> Wishlist <span className="muted small">{store.wishlist.length}</span></NavLink>
-        <NavLink to="/cart" className="wishlink"><Icon name="cart" size={20} /> {store.cart.length > 0 && <span className="cart-count">{store.cart.length}</span>}</NavLink>
       </div>
     </div>
     <div className={`store-page ${flat ? 'flat' : ''}`}><Outlet /></div>
@@ -151,6 +148,20 @@ const Head = ({ title, more, children }: { title: string; more?: string; childre
   <div className="sec-head2"><h2>{title}{children}</h2>{more && <Link to={more} className="seebtn">See More</Link>}</div>
 )
 
+const DevBanner = () => (
+  <Link to="/developer" className="promo" aria-label="Upload your game">
+    <svg viewBox="0 0 1200 190" preserveAspectRatio="xMidYMid slice" className="promo-svg">
+      <defs><linearGradient id="dvb" x1="0" x2="1"><stop offset="0" stopColor="#173a5e" /><stop offset=".55" stopColor="#1e5a8a" /><stop offset="1" stopColor="#2a2f6e" /></linearGradient></defs>
+      <rect width="1200" height="190" fill="url(#dvb)" />
+      {Array.from({ length: 22 }, (_, i) => <circle key={i} cx={(i * 131) % 1200} cy={((i * 71) % 170) + 10} r={3 + (i % 4) * 2} fill="#ffffff" opacity={0.06 + (i % 3) * 0.03} />)}
+      <text x="60" y="78" fontSize="30" fontWeight="700" fill="#9fd4ff" fontStyle="italic">reSteam Create</text>
+      <text x="58" y="146" fontSize="64" fontWeight="800" fill="#fff">Publish your game</text>
+      <rect x="760" y="64" width="380" height="64" rx="32" fill="#1a9fff" />
+      <text x="950" y="105" textAnchor="middle" fontSize="24" fontWeight="800" fill="#fff">PLAY IN THE BROWSER OR DOWNLOAD</text>
+    </svg>
+  </Link>
+)
+
 export const StoreHome = observer(() => {
   const [idx, setIdx] = useState(0)
   const [paused, setPaused] = useState(false)
@@ -216,7 +227,8 @@ export const StoreHome = observer(() => {
           <button className="giftbtn" onClick={() => setGift(true)}><span className="giftart"><Icon name="gift" size={26} /></span> Send a Gift Card</button>
         </div>
         <div className="feat-wrap" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-          <Arrows onPrev={() => setIdx((idx + featured.length - 1) % featured.length)} onNext={() => setIdx((idx + 1) % featured.length)} />
+          <button className="peek l" onClick={() => setIdx((idx + featured.length - 1) % featured.length)} aria-label="Previous featured game"><Art game={featured[(idx + featured.length - 1) % featured.length]} kind="wide" showTitle={false} /><Icon name="chevronLeft" size={44} /></button>
+          <button className="peek r" onClick={() => setIdx((idx + 1) % featured.length)} aria-label="Next featured game"><Art game={featured[(idx + 1) % featured.length]} kind="wide" showTitle={false} /><Icon name="chevronRight" size={44} /></button>
           <div className="feat">
             <Link to={`/store/${f.id}`} className="feat-main feat-fade" key={f.id}><Art game={f} kind="wide" variant={idx % 3} /></Link>
             <div className="feat-panel">
@@ -231,6 +243,8 @@ export const StoreHome = observer(() => {
         </div>
         <Dots n={featured.length} i={idx} set={setIdx} />
       </section>
+
+      <section className="container"><DevBanner /></section>
 
       <section className="container sec">
         <Head title="Discounts & Events" more="/store/browse?sale=1" />
@@ -268,8 +282,8 @@ export const StoreHome = observer(() => {
         <div className="queue">
           <div className="q-text">
             <h3>Explore Your Discovery Queue</h3>
-            <p>Browse top-selling, new and recommended titles picked for you.</p>
-            <Link to="/store/browse?sort=top" className="btn bright">Start exploring</Link>
+            <p>{store.signedIn ? 'Browse popular, new and recommended titles picked for you.' : 'Sign in to discover top-selling, new and recommended titles.'}</p>
+            {store.signedIn ? <Link to="/explore" className="btn bright">Start exploring</Link> : <Link to="/login?next=/explore" className="btn bright">Sign in</Link>}
           </div>
           <div className="q-shots">{[2, 4, 6].map((v, i) => <div key={v} className={`q-shot s${i}`}><Art game={byReviews[i]} kind="shot" variant={v} showTitle={false} /></div>)}</div>
         </div>

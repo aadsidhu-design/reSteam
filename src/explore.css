@@ -1,0 +1,12 @@
+.dq-page { padding: 28px 0 40px; }
+.dq-head { display: flex; justify-content: space-between; align-items: baseline; }
+.dq-head h1 { margin: 0 0 10px; }
+.dq-bar { height: 4px; background: #0008; margin-bottom: 14px; }
+.dq-bar span { display: block; height: 100%; background: #1a9fff; transition: width .3s ease-out; }
+.dq-card { display: grid; grid-template-columns: minmax(0, 1fr) 360px; background: #0e1722; }
+.dq-art { display: block; overflow: hidden; aspect-ratio: 1200 / 680; }
+.dq-side { background: linear-gradient(#27435f, #1b2e42); padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; }
+.dq-title { font-size: 20px; font-weight: 600; color: #fff; }
+.dq-price { margin-top: auto; }
+.dq-actions { display: flex; gap: 10px; margin-top: 14px; align-items: center; }
+.dq-done { display: flex; gap: 10px; margin-top: 16px; }
