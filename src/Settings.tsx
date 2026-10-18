@@ -54,12 +54,12 @@ const DeleteAccount = ({ onClose }: { onClose: () => void }) => {
   const [pw, setPw] = useState('')
   const [err, setErr] = useState('')
   return (
-    <Modal title="Delete account" onClose={onClose} width={440}>
-      <p>This permanently deletes your account, library, wallet, friends and messages. It cannot be undone. Enter your password to confirm.</p>
+    <Modal title={t('set.deltitle')} onClose={onClose} width={440}>
+      <p>{t('set.deldesc')}</p>
       <form onSubmit={async e => { e.preventDefault(); const r = await store.deleteAccount(pw); if (r) setErr(r); else nav('/store') }}>
-        <input className="input" type="password" autoFocus autoComplete="current-password" placeholder="Password" value={pw} onChange={e => { setPw(e.target.value); setErr('') }} />
+        <input className="input" type="password" autoFocus autoComplete="current-password" placeholder={t('auth.password')} value={pw} onChange={e => { setPw(e.target.value); setErr('') }} />
         {err && <div className="err">{err}</div>}
-        <div className="modal-actions"><button type="button" className="btn" onClick={onClose}>Cancel</button><button className="btn red" disabled={!pw}>Delete my account</button></div>
+        <div className="modal-actions"><button type="button" className="btn" onClick={onClose}>{t('pf.cancel')}</button><button className="btn red" disabled={!pw}>{t('set.delconfirm')}</button></div>
       </form>
     </Modal>
   )

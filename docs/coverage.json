@@ -1,6 +1,6 @@
 {
   "generated": "2026-10-18",
-  "commit": "8fa9762",
+  "commit": "0cebb7c",
   "summary": {
     "client": {
       "d": 224,
@@ -1138,74 +1138,74 @@
     {
       "code": "schinese",
       "name": "Chinese (Simplified)",
-      "have": 457,
-      "total": 457
+      "have": 460,
+      "total": 460
     },
     {
       "code": "english",
       "name": "English",
-      "have": 457,
-      "total": 457
+      "have": 460,
+      "total": 460
     },
     {
       "code": "french",
       "name": "French",
-      "have": 457,
-      "total": 457
+      "have": 460,
+      "total": 460
     },
     {
       "code": "german",
       "name": "German",
-      "have": 457,
-      "total": 457
+      "have": 460,
+      "total": 460
     },
     {
       "code": "italian",
       "name": "Italian",
-      "have": 457,
-      "total": 457
+      "have": 460,
+      "total": 460
     },
     {
       "code": "japanese",
       "name": "Japanese",
-      "have": 457,
-      "total": 457
+      "have": 460,
+      "total": 460
     },
     {
       "code": "koreana",
       "name": "Korean",
-      "have": 457,
-      "total": 457
+      "have": 460,
+      "total": 460
     },
     {
       "code": "polish",
       "name": "Polish",
-      "have": 457,
-      "total": 457
+      "have": 460,
+      "total": 460
     },
     {
       "code": "brazilian",
       "name": "Portuguese (Brazil)",
-      "have": 457,
-      "total": 457
+      "have": 460,
+      "total": 460
     },
     {
       "code": "russian",
       "name": "Russian",
-      "have": 457,
-      "total": 457
+      "have": 460,
+      "total": 460
     },
     {
       "code": "spanish",
       "name": "Spanish",
-      "have": 457,
-      "total": 457
+      "have": 460,
+      "total": 460
     },
     {
       "code": "turkish",
       "name": "Turkish",
-      "have": 457,
-      "total": 457
+      "have": 460,
+      "total": 460
     }
   ],
   "textCoverage": [
@@ -1270,16 +1270,16 @@
       "pct": 59.25925925925925
     },
     {
-      "file": "Settings.tsx",
-      "translated": 48,
-      "literals": 27,
-      "pct": 64
-    },
-    {
       "file": "Chrome.tsx",
       "translated": 47,
       "literals": 20,
       "pct": 70.1492537313433
+    },
+    {
+      "file": "Settings.tsx",
+      "translated": 53,
+      "literals": 22,
+      "pct": 70.66666666666667
     },
     {
       "file": "StorePages.tsx",

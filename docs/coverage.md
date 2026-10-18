@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `8fa9762`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `0cebb7c`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -16,7 +16,7 @@ Generated 2026-10-18 from commit `8fa9762`. Run `npm run coverage` to refresh.
 | Automated checks | 283 |
 | Client routes | 25 |
 | Database tables | 34 |
-| Languages | 12 (457 strings) |
+| Languages | 12 (460 strings) |
 
 ## Fidelity by page
 
@@ -165,18 +165,18 @@ Generated 2026-10-18 from commit `8fa9762`. Run `npm run coverage` to refresh.
 
 | Language | Strings | Coverage |
 | --- | --- | --- |
-| Chinese (Simplified) | 457/457 | 100% |
-| English | 457/457 | 100% |
-| French | 457/457 | 100% |
-| German | 457/457 | 100% |
-| Italian | 457/457 | 100% |
-| Japanese | 457/457 | 100% |
-| Korean | 457/457 | 100% |
-| Polish | 457/457 | 100% |
-| Portuguese (Brazil) | 457/457 | 100% |
-| Russian | 457/457 | 100% |
-| Spanish | 457/457 | 100% |
-| Turkish | 457/457 | 100% |
+| Chinese (Simplified) | 460/460 | 100% |
+| English | 460/460 | 100% |
+| French | 460/460 | 100% |
+| German | 460/460 | 100% |
+| Italian | 460/460 | 100% |
+| Japanese | 460/460 | 100% |
+| Korean | 460/460 | 100% |
+| Polish | 460/460 | 100% |
+| Portuguese (Brazil) | 460/460 | 100% |
+| Russian | 460/460 | 100% |
+| Spanish | 460/460 | 100% |
+| Turkish | 460/460 | 100% |
 
 ## UI text going through the translator
 
@@ -192,8 +192,8 @@ Generated 2026-10-18 from commit `8fa9762`. Run `npm run coverage` to refresh.
 | Achievements.tsx | 1 | 2 | 33% |
 | NewReleases.tsx | 3 | 4 | 43% |
 | Developer.tsx | 32 | 22 | 59% |
-| Settings.tsx | 48 | 27 | 64% |
 | Chrome.tsx | 47 | 20 | 70% |
+| Settings.tsx | 53 | 22 | 71% |
 | StorePages.tsx | 65 | 23 | 74% |
 | Friends.tsx | 37 | 10 | 79% |
 | Reviews.tsx | 14 | 3 | 82% |
