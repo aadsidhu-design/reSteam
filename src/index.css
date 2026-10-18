@@ -122,3 +122,4 @@ select.input { appearance: none; background-image: linear-gradient(45deg, transp
 .shelf-row { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
 .shelf-row::-webkit-scrollbar { display: none; }
 .art-img { object-fit: cover; }
+kbd { background: #2b3138; border: 1px solid #00000066; border-bottom-width: 2px; border-radius: 3px; padding: 1px 7px; font: 600 12px var(--font); color: #dfe3e6; }

@@ -47,17 +47,26 @@ export const socialRoutes: Route[] = [
   route('GET', '/friends', {}, async c => {
     const me = c.user!.id, now = Date.now()
     const [rel, unread] = await c.env.DB.batch([
-      c.env.DB.prepare(`SELECT u.username, u.display_name, u.status, u.last_seen, u.playing_game, u.playing_at, f.status AS rel, f.created_at
+      c.env.DB.prepare(`SELECT u.username, u.display_name, u.status, u.last_seen, u.playing_game, u.playing_at, f.status AS rel, f.created_at, f.nickname
                         FROM friendships f JOIN users u ON u.id = f.friend_id WHERE f.user_id = ? ORDER BY u.username COLLATE NOCASE`).bind(me),
       c.env.DB.prepare('SELECT u.username, COUNT(*) AS n FROM dms d JOIN users u ON u.id = d.sender_id WHERE d.recipient_id = ? AND d.read_at IS NULL GROUP BY u.username').bind(me),
     ])
     const unreadBy = Object.fromEntries((unread.results as { username: string; n: number }[]).map(r => [r.username.toLowerCase(), r.n]))
-    const rows = rel.results as (UserRow & { rel: string; created_at: number })[]
+    const rows = rel.results as (UserRow & { rel: string; created_at: number; nickname: string | null })[]
     return json({
-      friends: rows.filter(r => r.rel === 'accepted').map(r => ({ ...card(r), presence: presenceOf(r, now), unread: unreadBy[r.username.toLowerCase()] ?? 0, since: r.created_at })),
+      friends: rows.filter(r => r.rel === 'accepted').map(r => ({ ...card(r), presence: presenceOf(r, now), unread: unreadBy[r.username.toLowerCase()] ?? 0, since: r.created_at, nickname: r.nickname })),
       incoming: rows.filter(r => r.rel === 'pending_in').map(r => ({ ...card(r), at: r.created_at })),
       outgoing: rows.filter(r => r.rel === 'pending_out').map(r => ({ ...card(r), at: r.created_at })),
     })
+  }),
+
+  route('PUT', '/friends/:username/nickname', {}, async c => {
+    const f = await friendOf(c, c.params.username)
+    if (!f) return fail(404, 'That person is not your friend')
+    const b = await readJson<{ nickname: string }>(c.req)
+    const nick = cleanText(b.nickname, 32)
+    await c.env.DB.prepare('UPDATE friendships SET nickname = ? WHERE user_id = ? AND friend_id = ?').bind(nick || null, c.user!.id, f.id).run()
+    return json({ ok: true, nickname: nick || null })
   }),
 
   route('POST', '/friends/requests', {}, async c => {

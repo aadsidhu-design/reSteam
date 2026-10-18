@@ -16,6 +16,7 @@ import { NewReleases } from './NewReleases'
 import { Specials } from './Specials'
 import { NewsHub } from './NewsHub'
 import { Admin } from './Admin'
+import { Shortcuts } from './Shortcuts'
 import { Developer } from './Developer'
 import { GAMES } from './data'
 import { store } from './store'
@@ -68,6 +69,7 @@ const App = observer(() => {
       {store.running !== null && store.settings.fpsCounter && store.settings.overlay && <div className="fps-overlay">FPS {58 + (store.running % 5)} · {GAMES.find(g => g.id === store.running)?.title ?? 'Game'}</div>}
       <FriendsWindow />
       <FriendsDock />
+      <Shortcuts />
       <Toasts />
     </div>
   )

@@ -20,7 +20,7 @@ const Row = observer(({ f, onMenu, onOpen }: { f: Friend; onMenu: (e: React.Mous
   <button className="frow" draggable onDragStart={e => { e.dataTransfer.setData('text/friend', f.username); e.dataTransfer.effectAllowed = 'copy' }} onClick={onOpen} onContextMenu={e => onMenu(e, f)}>
     <Avatar f={{ name: f.name, status: f.presence.status }} size={46} />
     <div className="finfo">
-      <div className={`fname st-${f.presence.status}`}>{f.name}</div>
+      <div className={`fname st-${f.presence.status}`}>{f.nickname || f.name}{f.nickname && <span className="fnick"> ({f.name})</span>}</div>
       <div className="fstatus">{statusLine(f)}</div>
     </div>
     {f.unread > 0 && <span className="fbadge">{f.unread}</span>}
@@ -133,7 +133,7 @@ export const FriendsWindow = observer(() => {
         {favs.length > 0 ? (
           <div className={`ffav ${dropHot ? 'hot' : ''}`} onDragOver={e => { e.preventDefault(); setDropHot(true) }} onDragLeave={() => setDropHot(false)} onDrop={dropFav}>
             {favs.map(f => (
-              <button key={f.username} className="fav-chip" onClick={() => void store.openChat(f.username)} onContextMenu={e => openMenu(e, f)} title={`${f.name} — ${statusLine(f)}`}><Avatar f={{ name: f.name, status: f.presence.status }} size={40} /><span>{f.name}</span></button>
+              <button key={f.username} className="fav-chip" onClick={() => void store.openChat(f.username)} onContextMenu={e => openMenu(e, f)} title={`${f.nickname || f.name} — ${statusLine(f)}`}><Avatar f={{ name: f.name, status: f.presence.status }} size={40} /><span>{f.nickname || f.name}</span></button>
             ))}
           </div>
         ) : !store.hints.drag && store.friends.length > 0 && (
@@ -214,6 +214,7 @@ export const FriendsWindow = observer(() => {
         <div className="popover" ref={ctxRef} style={{ position: 'fixed', left: Math.min(ctx.x, window.innerWidth - 250), top: Math.min(ctx.y, window.innerHeight - 280), minWidth: 230, zIndex: 90 }}>
           <button className="pop-item" onClick={() => { void store.openChat(ctx.f.username); setCtx(null) }}>{t('fr.msg')}</button>
           <button className="pop-item" onClick={() => { store.toggleFavFriend(ctx.f.username); setCtx(null) }}>{store.favFriends.includes(ctx.f.username) ? 'Remove from Favorites' : 'Add to Favorites'}</button>
+          <button className="pop-item" onClick={() => { const f = ctx.f; setCtx(null); const n = window.prompt(`Nickname for ${f.name} (only you see it; leave empty to clear):`, f.nickname ?? ''); if (n !== null) void store.setNickname(f.username, n).then(e => e && store.toast(e)) }}>Set Nickname…</button>
           <button className="pop-item" onClick={() => { nav(`/profile/${ctx.f.username}`); setCtx(null) }}>{t('fr.viewprofile')}</button>
           {ctx.f.presence.gameId && <button className="pop-item" onClick={() => { nav(`/store/${ctx.f.presence.gameId}`); setCtx(null) }}>{t('fr.storepage')}</button>}
           {ctx.f.presence.gameId && store.owned.includes(ctx.f.presence.gameId) && <button className="pop-item" onClick={() => { nav(`/library/${ctx.f.presence.gameId}`); setCtx(null) }}>{t('fr.viewlib')}</button>}
@@ -245,6 +246,8 @@ function GroupModal({ onClose }: { onClose: () => void }) {
   )
 }
 
+const EMOJI = ['😀', '😂', '😍', '😎', '😢', '😡', '👍', '👎', '🙏', '🔥', '🎮', '🏆', '❤️', '🎉', '👀', '🤔', '😴', '🤝', '🍕', '☕']
+
 const ChatWindow = observer(({ id }: { id: string }) => {
   const nav = useNavigate()
   const isGroup = id.startsWith('g:')
@@ -253,13 +256,14 @@ const ChatWindow = observer(({ id }: { id: string }) => {
   const friend = isGroup ? undefined : store.friend(id)
   const [text, setText] = useState('')
   const [inviting, setInviting] = useState(false)
+  const [emoji, setEmoji] = useState(false)
   const end = useRef<HTMLDivElement>(null)
   const msgs = isGroup ? store.groupMessages[gid] ?? [] : store.chats[id] ?? []
   const typing = !isGroup && store.typing[id]
   useEffect(() => { end.current?.scrollIntoView() }, [msgs.length, typing])
   useEffect(() => { if (!isGroup && friend && friend.unread > 0) store.markRead(id) }, [isGroup, id, friend?.unread]) // eslint-disable-line react-hooks/exhaustive-deps
   if (!friend && !grp) return null
-  const title = grp ? grp.name : friend!.name
+  const title = grp ? grp.name : (friend!.nickname || friend!.name)
   const members = store.groupMembers[gid] ?? []
   const nameOf = (from: string) => members.find(m => m.username.toLowerCase() === from.toLowerCase())?.name ?? from
   const gameId = friend?.presence.gameId
@@ -294,7 +298,9 @@ const ChatWindow = observer(({ id }: { id: string }) => {
         {typing && <div className="muted small">{friend!.name} is typing…</div>}
         <div ref={end} />
       </div>
+      {emoji && <div className="emoji-pop">{EMOJI.map(e => <button key={e} type="button" onClick={() => { setText(text + e); setEmoji(false) }}>{e}</button>)}</div>}
       <form className="chat-form" onSubmit={async e => { e.preventDefault(); const t = text; setText(''); const err = isGroup ? await store.sendGroup(gid, t) : await store.send(id, t); if (err) setText(t) }}>
+        <button type="button" className="icon-btn emoji-btn" onClick={() => setEmoji(!emoji)} aria-label="Emoji">🙂</button>
         <input className="input" maxLength={500} placeholder={friend?.presence.status === 'offline' ? `${friend.name} is offline — they will see this later` : t('friends.send')} value={text}
           onChange={e => { setText(e.target.value); if (friend) store.sendTyping(friend.username) }} />
       </form>

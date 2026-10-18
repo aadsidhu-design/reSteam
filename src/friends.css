@@ -58,3 +58,11 @@
 .chat-title { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
 .chat-title .small { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .chat-invite { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px; background: #252b34; }
+
+.fnick { color: #7b858f; font-size: 14px; }
+.chat-form { display: flex; gap: 6px; align-items: center; }
+.chat-form .input { flex: 1; }
+.emoji-btn { font-size: 20px; width: 34px; }
+.emoji-pop { display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px; padding: 6px 10px; background: #252b34; }
+.emoji-pop button { background: none; border: 0; font-size: 20px; padding: 2px; border-radius: 3px; }
+.emoji-pop button:hover { background: #ffffff1a; }

@@ -4,7 +4,7 @@ import { ALL_TAGS, GAMES, GENRES, LOCAL_ID, isLocal, priceOf, type Game, type Pr
 export interface User { username: string; name: string }
 export interface ChatMessage { id?: number; from: 'me' | string; text: string; at: number }
 export interface FriendPresence { status: Presence; gameId?: number | null; lastSeen?: number | null }
-export interface Friend { username: string; name: string; presence: FriendPresence; unread: number; since?: number }
+export interface Friend { username: string; name: string; nickname?: string | null; presence: FriendPresence; unread: number; since?: number }
 export interface FriendRequest { username: string; name: string; at: number }
 export interface Group { id: string; name: string; mine: boolean; members: number }
 export interface GroupMember { username: string; name: string }
@@ -542,6 +542,11 @@ class Store {
   }
   async acceptRequest(username: string) { await call('POST', `/friends/requests/${encodeURIComponent(username)}/accept`); await this.refreshFriends() }
   async declineRequest(username: string) { await call('DELETE', `/friends/requests/${encodeURIComponent(username)}`); await this.refreshFriends() }
+  async setNickname(username: string, nickname: string): Promise<string | null> {
+    const { error } = await call('PUT', `/friends/${encodeURIComponent(username)}/nickname`, { nickname })
+    if (!error) await this.refreshFriends()
+    return error ?? null
+  }
   async removeFriend(username: string) {
     this.closeChat(username)
     await call('DELETE', `/friends/${encodeURIComponent(username)}`)

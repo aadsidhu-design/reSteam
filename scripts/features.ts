@@ -8,7 +8,7 @@ export const CLIENT: Group = {
     'Notification bell:d', 'Unread count badge:d', 'Notifications popover:d',
     'Mark all read:d', 'Account menu:d', 'Balance chip:d', 'Add a Game menu:d',
     'Add non-store game:d', 'Activate a product:d', 'Manage Downloads button:d', 'Mini download progress:d', 'Floating Friends & Chat bar:d',
-    'Toast notifications:d', 'Loading throbber:d', 'Carousel crossfade:d', 'Hover motion:d', 'Keyboard shortcuts:m',
+    'Toast notifications:d', 'Loading throbber:d', 'Carousel crossfade:d', 'Hover motion:d', 'Keyboard shortcuts:d',
   ],
   'Library': [
     'Home button:d', 'Grid view toggle:d', 'Category dropdown:d', 'Platform filter:p', 'Recent sort toggle:d', 'Ready-to-play toggle:d', 'Library search:d',
@@ -41,7 +41,7 @@ export const CLIENT: Group = {
     'Friends window:d', 'Profile header:d', 'Status menu:d', 'Drag hint:d', 'FRIENDS bar:d', 'Friend search:d', 'Add a friend:d', 'Collapsible groups:d',
     'A-Z sort:d', 'Friend rows:d', 'Last online text:d', 'Right-click menu:d', 'Profile pages for others:d', 'Chat window:d', 'Typing indicator:d',
     'Group chats list:d', 'Create group chat:d', 'Group chat window:d', 'Pending requests:d', 'Remove friend:d', 'Offline messaging:d', 'Unread badges:d', 'Accept / ignore requests:d',
-    'Voice chat:m', 'Screenshot sharing:m', 'Emoji and stickers:m', 'Nicknames:m', 'Block user:d', 'Friend activity feed:d',
+    'Voice chat:m', 'Screenshot sharing:m', 'Emoji and stickers:p', 'Nicknames:d', 'Block user:d', 'Friend activity feed:d',
     'Drag to pin friends:d', 
     'Favorites strip:d', 'Add to Favorites menu:d',
   ],

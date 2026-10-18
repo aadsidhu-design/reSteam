@@ -1,11 +1,11 @@
 {
   "generated": "2026-10-18",
-  "commit": "6b42ad4",
+  "commit": "3d693b7",
   "summary": {
     "client": {
-      "d": 222,
-      "p": 12,
-      "m": 16,
+      "d": 224,
+      "p": 13,
+      "m": 13,
       "n": 250
     },
     "backend": {
@@ -16,9 +16,9 @@
     },
     "visualAvg": 75.35,
     "behaviorAvg": 70.45,
-    "endpoints": 109,
-    "tested": 109,
-    "checks": 270,
+    "endpoints": 110,
+    "tested": 110,
+    "checks": 274,
     "routes": 25,
     "dbTables": 34
   },
@@ -926,6 +926,14 @@
       "tested": true
     },
     {
+      "method": "PUT",
+      "path": "/friends/:username/nickname",
+      "area": "Friends, chat, presence",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
       "method": "POST",
       "path": "/friends/requests",
       "area": "Friends, chat, presence",
@@ -1218,6 +1226,12 @@
       "pct": 0
     },
     {
+      "file": "Shortcuts.tsx",
+      "translated": 0,
+      "literals": 1,
+      "pct": 0
+    },
+    {
       "file": "Versions.tsx",
       "translated": 0,
       "literals": 11,
@@ -1292,8 +1306,8 @@
     {
       "file": "Friends.tsx",
       "translated": 37,
-      "literals": 8,
-      "pct": 82.22222222222221
+      "literals": 10,
+      "pct": 78.72340425531915
     },
     {
       "file": "Reviews.tsx",

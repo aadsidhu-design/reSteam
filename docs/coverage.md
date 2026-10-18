@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `6b42ad4`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `3d693b7`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -8,12 +8,12 @@ Generated 2026-10-18 from commit `6b42ad4`. Run `npm run coverage` to refresh.
 
 | Measure | Value |
 | --- | --- |
-| Client behaviors replicated | 222 of 250 (12 partial, 16 not yet) |
+| Client behaviors replicated | 224 of 250 (13 partial, 13 not yet) |
 | Backend behaviors replicated | 78 of 90 (1 partial, 11 not yet) |
 | Visual fidelity (average of compared pages) | 75 / 100 over 20 pages |
 | Behavior fidelity | 70 / 100 |
-| API endpoints | 109 (109 exercised by e2e checks) |
-| Automated checks | 270 |
+| API endpoints | 110 (110 exercised by e2e checks) |
+| Automated checks | 274 |
 | Client routes | 25 |
 | Database tables | 34 |
 | Languages | 12 (368 strings) |
@@ -134,6 +134,7 @@ Generated 2026-10-18 from commit `6b42ad4`. Run `npm run coverage` to refresh.
 | POST | `/playtime/:id` | Store, cart, library | yes | yes | yes |
 | PUT | `/profile` | Store, cart, library | yes | yes | yes |
 | GET | `/friends` | Friends, chat, presence | yes | - | yes |
+| PUT | `/friends/:username/nickname` | Friends, chat, presence | yes | yes | yes |
 | POST | `/friends/requests` | Friends, chat, presence | yes | yes | yes |
 | POST | `/friends/requests/:username/accept` | Friends, chat, presence | yes | yes | yes |
 | DELETE | `/friends/requests/:username` | Friends, chat, presence | yes | yes | yes |
@@ -184,6 +185,7 @@ Generated 2026-10-18 from commit `6b42ad4`. Run `npm run coverage` to refresh.
 | Admin.tsx | 0 | 9 | 0% |
 | App.tsx | 0 | 2 | 0% |
 | NewsHub.tsx | 0 | 18 | 0% |
+| Shortcuts.tsx | 0 | 1 | 0% |
 | Versions.tsx | 0 | 11 | 0% |
 | ui.tsx | 0 | 3 | 0% |
 | Community.tsx | 11 | 28 | 28% |
@@ -196,7 +198,7 @@ Generated 2026-10-18 from commit `6b42ad4`. Run `npm run coverage` to refresh.
 | Settings.tsx | 48 | 27 | 64% |
 | Chrome.tsx | 47 | 20 | 70% |
 | Profile.tsx | 18 | 5 | 78% |
-| Friends.tsx | 37 | 8 | 82% |
+| Friends.tsx | 37 | 10 | 79% |
 | Reviews.tsx | 14 | 3 | 82% |
 | StoreGame.tsx | 35 | 7 | 83% |
 | Charts.tsx | 9 | 0 | 100% |
@@ -210,7 +212,7 @@ Generated 2026-10-18 from commit `6b42ad4`. Run `npm run coverage` to refresh.
 
 ### Client UI
 
-**Window chrome** (25/26)
+**Window chrome** (26/26)
 
 - [x] Global header
 - [x] Footer
@@ -237,7 +239,7 @@ Generated 2026-10-18 from commit `6b42ad4`. Run `npm run coverage` to refresh.
 - [x] Loading throbber
 - [x] Carousel crossfade
 - [x] Hover motion
-- [ ] Keyboard shortcuts
+- [x] Keyboard shortcuts
 
 **Library** (28/32)
 
@@ -387,7 +389,7 @@ Generated 2026-10-18 from commit `6b42ad4`. Run `npm run coverage` to refresh.
 - [~] Age rating box
 - [~] Platform icons
 
-**Friends & Chat** (28/32)
+**Friends & Chat** (29/32)
 
 - [x] Friends window
 - [x] Profile header
@@ -412,15 +414,15 @@ Generated 2026-10-18 from commit `6b42ad4`. Run `npm run coverage` to refresh.
 - [x] Offline messaging
 - [x] Unread badges
 - [x] Accept / ignore requests
+- [x] Nicknames
 - [x] Block user
 - [x] Friend activity feed
 - [x] Drag to pin friends
 - [x] Favorites strip
 - [x] Add to Favorites menu
+- [~] Emoji and stickers
 - [ ] Voice chat
 - [ ] Screenshot sharing
-- [ ] Emoji and stickers
-- [ ] Nicknames
 
 **Community** (27/28)
 

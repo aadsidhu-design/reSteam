@@ -156,6 +156,10 @@ check('more friends can be invited', (await a.call('POST', `/groups/${grp.data.g
 check('the invitee is notified', (await c.call('GET', '/notifications')).data.notifications.some(n => n.kind === 'group_invite'))
 check('notifications can be marked read', (await c.call('POST', '/notifications/read')).status === 200 && (await c.call('GET', '/notifications')).data.notifications.every(n => n.read))
 check('the block list is empty by default', (await a.call('GET', '/blocks')).data.blocked?.length === 0 || (await a.call('GET', '/blocks')).status === 200)
+check('a nickname can be given to a friend', (await a.call('PUT', `/friends/${b.username}/nickname`, { nickname: 'Buddy' })).status === 200)
+check('the nickname shows only on my list', (await a.call('GET', '/friends')).data.friends.find(f => f.username === b.username).nickname === 'Buddy' && (await b.call('GET', '/friends')).data.friends.find(f => f.username === a.username).nickname === null)
+check('a nickname can be cleared', (await a.call('PUT', `/friends/${b.username}/nickname`, { nickname: '' })).data.nickname === null)
+check('strangers cannot be nicknamed', (await a.call('PUT', `/friends/nobody_here/nickname`, { nickname: 'x' })).status === 404)
 check('a friend can be removed', (await a.call('DELETE', `/friends/${b.username}`)).status === 200 && !(await a.call('GET', '/friends')).data.friends.some(f => f.username === b.username))
 
 for (const u of [a, b, c]) await u.call('DELETE', '/auth/account', { password: 'correct-horse-9' })
