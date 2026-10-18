@@ -49,6 +49,7 @@ interface LocalState {
   installedOnly: boolean
   recentSort: boolean
   groups: GroupChat[]
+  viewed: number[]
 }
 
 const DEFAULT_SETTINGS: Settings = {
@@ -113,6 +114,7 @@ class Store {
   installedOnly = false
   recentSort = false
   groups: GroupChat[] = []
+  viewed: number[] = []
   // session
   queue: DownloadItem[] = []
   speedHistory: number[] = []
@@ -140,12 +142,14 @@ class Store {
       }
       const l: LocalState = {
         settings: this.settings, customGames: this.customGames, hints: this.hints, readNotifs: this.readNotifs, posts: this.posts,
-        shelves: this.shelves, libraryGrid: this.libraryGrid, installedOnly: this.installedOnly, recentSort: this.recentSort, groups: this.groups,
+        shelves: this.shelves, libraryGrid: this.libraryGrid, installedOnly: this.installedOnly, recentSort: this.recentSort, groups: this.groups, viewed: this.viewed,
       }
       try { localStorage.setItem(KEY, JSON.stringify(s)); localStorage.setItem(LOCAL, JSON.stringify(l)) } catch { /* storage unavailable */ }
     })
     autorun(() => {
-      document.documentElement.style.fontSize = `${16 * this.settings.uiScale}px`
+      // everything is sized in px, so scale with zoom and tell the layout how tall the zoomed window may be
+      document.body.style.zoom = String(this.settings.uiScale)
+      document.documentElement.style.setProperty('--ui-scale', String(this.settings.uiScale))
       document.documentElement.classList.toggle('reduce-motion', this.settings.reduceMotion)
     })
   }
@@ -232,6 +236,8 @@ class Store {
     return err
   }
 
+  view(id: number) { this.viewed = [id, ...this.viewed.filter(x => x !== id)].slice(0, 12) }
+
   // ---- library ----
   toggleFavorite(id: number) {
     const had = this.favorites.includes(id)
@@ -275,7 +281,7 @@ class Store {
       return
     }
     const mb = sizeMb(d.id)
-    const baseSeconds = Math.min(40, Math.max(8, mb / 1024 * 1.2))
+    const baseSeconds = Math.min(45, Math.max(14, mb / 1024 * 1.2)) // keeps shown speeds under ~130 MB/s
     const natural = mb / baseSeconds
     const speed = Math.min(this.settings.bandwidthLimit || Infinity, natural * (0.85 + Math.random() * 0.3))
     d.speed = speed

@@ -1,0 +1,43 @@
+.settings { display: grid; grid-template-columns: 300px 1fr; min-height: 100%; background: #171a21; }
+.srail { background: #23252c; padding: 22px 0; display: flex; flex-direction: column; }
+.stitle { color: #4b9df8; font-weight: 800; font-size: 22px; letter-spacing: .02em; padding: 0 24px 20px; }
+.srail hr { border: 0; border-top: 1px solid #3a3d44; margin: 8px 22px; width: calc(100% - 44px); }
+.sitem { display: flex; align-items: center; gap: 16px; padding: 12px 24px; color: #cfd3d8; font-size: 18px; }
+.sitem:hover { background: #ffffff0d; color: #fff; }
+.sitem.active { background: #3a4458; color: #fff; }
+.sbody { padding: 28px 40px 80px; max-width: 900px; }
+.sbody h1 { font-size: 34px; font-weight: 800; color: #fff; margin: 0 0 24px; }
+.acct-top { display: flex; align-items: center; gap: 22px; margin-bottom: 22px; }
+.acct-name { font-size: 28px; color: #6bc0f0; }
+.acct-status { color: #4e8fb4; font-size: 20px; }
+.tiles3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 18px; }
+.tile3 { background: #23262e; border: 0; color: #dfe3e6; padding: 28px 12px 22px; display: grid; justify-items: center; gap: 8px; font-size: 18px; }
+.tile3:hover { background: #2b303a; }
+.tile3 b { font-weight: 500; font-size: 20px; }
+.infobox { display: flex; align-items: center; gap: 16px; background: #23262e; padding: 26px 24px; margin-bottom: 12px; font-size: 20px; }
+.srow { display: flex; align-items: center; justify-content: space-between; gap: 24px; background: #23262e; padding: 16px 22px; margin-bottom: 10px; }
+.sl { font-size: 18px; color: #dfe3e6; }
+.sctl { display: flex; align-items: center; gap: 12px; }
+.sctl .input { width: 180px; }
+.sbar { height: 10px; background: #0007; border-radius: 5px; overflow: hidden; margin: -2px 0 16px; }
+.sbar span { display: block; height: 100%; background: linear-gradient(90deg, #2f7fe0, #5aa8ff); }
+
+.profile { min-height: 100%; background: radial-gradient(900px 400px at 20% 0, #2b4a6d66, transparent 70%), #161c26; }
+.pf-wrap { max-width: 1000px; margin: 0 auto; padding: 36px 24px 80px; }
+.pf-head { display: flex; gap: 28px; align-items: flex-start; background: #0b121cb0; padding: 26px; }
+.pf-head h1 { font-size: 30px; margin: 0 0 4px; color: #fff; }
+.pf-btns { display: flex; gap: 10px; margin-top: 18px; }
+.pf-level { text-align: center; }
+.lvl { width: 56px; height: 56px; border: 3px solid #8650ac; border-radius: 50%; display: grid; place-items: center; font-size: 24px; color: #fff; font-weight: 700; }
+.pf-cols { display: grid; grid-template-columns: 1fr 280px; gap: 24px; margin-top: 24px; }
+.pf-cols h2 { color: #fff; font-size: 17px; text-transform: none; letter-spacing: .02em; font-weight: 600; margin: 0 0 8px; }
+.pf-cols h2.mt { margin-top: 24px; }
+.pf-hrs { margin-bottom: 10px; }
+.pf-game { display: flex; gap: 14px; align-items: center; background: #0b121c; padding: 8px; margin-bottom: 8px; color: var(--text); }
+.pf-game:hover { background: #12202f; color: #fff; }
+.pf-art { width: 184px; height: 86px; flex: none; overflow: hidden; }
+.pf-gname { font-size: 18px; color: #fff; }
+.pf-stats { background: #0b121cb0; padding: 14px 18px; display: grid; gap: 10px; }
+.pf-stats > div { display: flex; justify-content: space-between; color: #8ba6bd; font-size: 17px; }
+.pf-stats b { color: #fff; }
+.fps-overlay { position: fixed; left: 12px; top: 88px; background: #000a; color: #9fe870; font: 700 14px/1 monospace; padding: 6px 10px; border-radius: 3px; z-index: 90; }

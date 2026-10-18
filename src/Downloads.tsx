@@ -6,7 +6,7 @@ import { Art } from './art'
 import { Icon } from './icons'
 import './downloads.css'
 
-const mbps = (mb: number) => (mb <= 0 ? '0 bps' : `${(mb * 8).toFixed(1)} Mbps`)
+const rate = (mb: number) => (mb <= 0 ? '0 bps' : `${mb.toFixed(1)} MB/s`)
 const gameOf = (id: number) => GAMES.find(g => g.id === id)!
 
 const eta = (progress: number, speed: number, sizeMb: number) => {
@@ -41,8 +41,8 @@ export const Downloads = observer(() => {
         {cur && <div className="dl-banner-art"><Art game={cur} kind="hero" showTitle={false} /></div>}
         <Graph />
         <div className="dl-stats">
-          <div className="dl-stat"><span className="dl-ico blue"><Icon name="download" size={14} /></span><div><div className="caps">Network</div><b>{mbps(speed)}</b></div></div>
-          <div className="dl-stat"><span className="dl-ico blue"><Icon name="download" size={14} /></span><div><div className="caps">Peak</div><b>{mbps(store.peakSpeed)}</b></div></div>
+          <div className="dl-stat"><span className="dl-ico blue"><Icon name="download" size={14} /></span><div><div className="caps">Network</div><b>{rate(speed)}</b></div></div>
+          <div className="dl-stat"><span className="dl-ico blue"><Icon name="download" size={14} /></span><div><div className="caps">Peak</div><b>{rate(store.peakSpeed)}</b></div></div>
           <div className="dl-stat"><span className="dl-ico green">▬</span><div><div className="caps">Disk usage</div><b>{speed > 0 ? `${(speed * 0.9).toFixed(1)} MB/s` : '0 bps'}</b></div></div>
         </div>
         <button className="sq-btn dl-gear" onClick={() => nav('/settings/downloads')} aria-label="Download settings"><Icon name="gear" size={20} /></button>
