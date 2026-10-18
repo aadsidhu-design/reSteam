@@ -50,7 +50,7 @@ const Meta = ({ initial, genres, onSave, onCancel, label }: {
       </div>
       <label>Tags <span className="muted small">comma separated, up to 10</span><input className="input" value={tags} onChange={e => setTags(e.target.value)} placeholder="Relaxing, Pixel Graphics, Singleplayer" /></label>
       <label>{t('dv.price')} <span className="muted small">0 makes it free to claim. Wallet funds are play money.</span><input className="input" type="number" min="0" max="100" step="0.01" value={price} onChange={e => setPrice(e.target.value)} /></label>
-      <label>{t('sg.achievements')} <span className="muted small">0 to 50. Players unlock them as they play.</span><input className="input" type="number" min="0" max="50" step="1" value={ach} onChange={e => setAch(e.target.value)} /></label>
+      <label>{t('sg.achievements')} <span className="muted small">{t('dv.achrange')}</span><input className="input" type="number" min="0" max="50" step="1" value={ach} onChange={e => setAch(e.target.value)} /></label>
       {err && <div className="err">{err}</div>}
       <div className="modal-actions"><button type="button" className="btn" onClick={onCancel}>Cancel</button><button className="btn blue">{label}</button></div>
     </form>
@@ -231,7 +231,7 @@ export const Developer = observer(() => {
     <div className="container dev-page">
       <div className="dv-top"><div><h1>{t('dev.title')}</h1><p className="muted">Anyone with an account can publish here. Web builds run inside reSteam; downloadable builds are delivered from storage. Everything you upload is public once published.</p></div>
         <button className="btn blue big" onClick={() => setCreating(true)}>{t('dev.new')}</button></div>
-      {games === null ? <Loading /> : games.length === 0 ? <div className="dv-empty">You have not created a game yet. Choose <b>New game</b>, fill in the details, upload a build and publish.</div>
+      {games === null ? <Loading /> : games.length === 0 ? <div className="dv-empty">{t('dv.emptygames')}</div>
         : games.map(g => <GameCard key={g.id} g={g} genres={genres} reload={reload} />)}
       {creating && <Modal title="New game" onClose={() => setCreating(false)} width={560}>
         <Meta genres={genres} label={t('dv.createdraft')} onCancel={() => setCreating(false)} onSave={async m => { const r = await call('POST', '/dev/games', m); if (r.error) return r.error; setCreating(false); await reload(); return null }} /></Modal>}
