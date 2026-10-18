@@ -224,7 +224,7 @@ export const StoreHome = observer(() => {
               <div className="fp-shots" onMouseLeave={() => setShotHover(null)}>{[1, 2, 3, 4].map(n => <div key={n} className="fp-shot" onMouseEnter={() => setShotHover(n)}><Art game={f} kind="shot" variant={n} showTitle={false} /></div>)}</div>
               <div className="fp-rank"><svg width="40" height="34" viewBox="0 0 40 34" aria-hidden><path d="M2 20l9-9 7 6 14-14" fill="none" stroke="#a4d007" strokeWidth="3" /><rect x="4" y="22" width="7" height="11" fill="#fff" /><rect x="15" y="16" width="7" height="17" fill="#fff" /><rect x="26" y="9" width="7" height="24" fill="#fff" /></svg>
                 <div><div className="rk-t">{f.reviews > 0 ? (rank <= 3 ? 'Top Rated' : 'Popular') : 'Just added'}</div><div>{f.reviews > 0 ? `Ranked #${rank} by player reviews` : 'Be the first to review it'}</div></div></div>
-              <div className="fp-foot">{f.price === 0 ? <span className="fp-free">Free to Play</span> : <CapPrice g={f} />}</div>
+              <div className="fp-foot">{f.price === 0 ? <span className="fp-free">{tr('st.freetoplay')}</span> : <CapPrice g={f} />}</div>
             </div>
           </div>
         </div>
@@ -268,9 +268,9 @@ export const StoreHome = observer(() => {
       <section className="container">
         <div className="queue">
           <div className="q-text">
-            <h3>Explore Your Discovery Queue</h3>
+            <h3>{tr('st.discoverq')}</h3>
             <p>{store.signedIn ? 'Browse popular, new and recommended titles picked for you.' : 'Sign in to discover top-selling, new and recommended titles.'}</p>
-            {store.signedIn ? <Link to="/explore" className="btn bright">Start exploring</Link> : <Link to="/login?next=/explore" className="btn bright">Sign in</Link>}
+            {store.signedIn ? <Link to="/explore" className="btn bright">{tr('st.startexplore')}</Link> : <Link to="/login?next=/explore" className="btn bright">Sign in</Link>}
           </div>
           <div className="q-shots">{[2, 4, 6].map((v, i) => <div key={v} className={`q-shot s${i}`}><Art game={byReviews[i]} kind="shot" variant={v} showTitle={false} /></div>)}</div>
         </div>
@@ -434,7 +434,7 @@ export const Browse = observer(() => {
           <Panel title={tr('browse.ntag')} open0>
             {tagCounts.filter(([t]) => t.toLowerCase().includes(tagQ.toLowerCase())).slice(0, tagQ ? 12 : 6).map(([t, n]) => (
               <div key={t} className="chk tagline"><label><input type="checkbox" checked={tag === t} onChange={() => set('tag', tag === t ? null : t)} /> {t} <i>{n}</i></label>
-                <button className="excl" onClick={() => set('notag', noTag === t ? null : t)} aria-label={`Exclude ${t}`} title="Exclude">−</button></div>
+                <button className="excl" onClick={() => set('notag', noTag === t ? null : t)} aria-label={`${tr('st.exclude')} ${t}`} title={tr('st.exclude')}>−</button></div>
             ))}
             <input className="tagsearch" placeholder="search for more tags" value={tagQ} onChange={e => setTagQ(e.target.value)} aria-label="Search tags" />
           </Panel>
@@ -475,7 +475,7 @@ export const Cart = observer(() => {
         <h1 className="cart-h1">{tr('ct.thanks')}</h1>
         <p className="muted">{tr('ct.added')}</p>
         {gs.map(g => <div key={g.id} className="cart-item"><div className="ci-art"><Art game={g} kind="header" /></div><div className="grow"><b>{g.title}</b></div>
-          <button className="btn blue" onClick={() => { store.install(g.id); nav('/downloads') }}>Install</button></div>)}
+          <button className="btn blue" onClick={() => { store.install(g.id); nav('/downloads') }}>{tr('st.install')}</button></div>)}
         <p><Link to="/library" className="btn green">{tr('ct.golib')}</Link></p>
       </div>
     )
