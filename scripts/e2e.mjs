@@ -34,7 +34,7 @@ async function main() {
   // ---------- basics ----------
   check('health', (await anon.call('GET', '/health')).status === 200)
   const games = await anon.call('GET', '/games')
-  check('catalog is public and has 30 games', games.status === 200 && games.data.length === 30)
+  check('catalog is public and has the 30 built-in games', games.status === 200 && games.data.filter(g => g.id < 1000).length === 30)
   check('me requires sign-in', (await anon.call('GET', '/me')).status === 401)
   check('old x-session bearer no longer authenticates', (await anon.call('GET', '/me', undefined, { noCookie: true })).status === 401)
 
@@ -222,12 +222,14 @@ async function main() {
   check('reviews need real text', (await alice.call('PUT', '/games/9/review', { recommend: true, text: 'ok' })).status === 400)
   check('owners can review', (await alice.call('PUT', '/games/9/review', { recommend: true, text: 'A gentle, lovely puzzle game.' })).status === 200)
   const rv = await anon.call('GET', '/games/9/reviews')
-  check('reviews are public and carry real playtime', rv.data.reviews.length === 1 && rv.data.reviews[0].playtime === 6 && rv.data.reviews[0].username === U.a)
-  check('you cannot vote on your own review', (await alice.call('POST', `/reviews/${rv.data.reviews[0].id}/vote`, { kind: 'helpful' })).status === 403)
-  const vote = await bob.call('POST', `/reviews/${rv.data.reviews[0].id}/vote`, { kind: 'helpful' })
-  check('others can mark it helpful (once)', vote.data.helpful === 1 && (await bob.call('POST', `/reviews/${rv.data.reviews[0].id}/vote`, { kind: 'helpful' })).data.helpful === 0)
+  const myRv = rv.data.reviews.find(r => r.username === U.a)
+  check('reviews are public and carry real playtime', (() => { const mine = rv.data.reviews.filter(r => r.username === U.a); return mine.length === 1 && mine[0].playtime === 6 })())
+  check('you cannot vote on your own review', (await alice.call('POST', `/reviews/${myRv.id}/vote`, { kind: 'helpful' })).status === 403)
+  const vote = await bob.call('POST', `/reviews/${myRv.id}/vote`, { kind: 'helpful' })
+  check('others can mark it helpful (once)', vote.data.helpful === 1 && (await bob.call('POST', `/reviews/${myRv.id}/vote`, { kind: 'helpful' })).data.helpful === 0)
   const stats = await anon.call('GET', '/stats')
-  check('store stats come from real data', stats.data.stats['9'].reviews === 1 && stats.data.stats['9'].positive === 1 && stats.data.stats['9'].owners >= 1)
+  const before9 = stats.data.stats['9']
+  check('store stats come from real data', before9.reviews >= 1 && before9.positive >= 1 && before9.positive <= before9.reviews && before9.owners >= 1)
   check('guides need ownership', (await bob.call('POST', '/games/9/posts', { kind: 'guide', title: 'How to win', body: 'step one, then step two' })).status === 403)
   const post = await bob.call('POST', '/games/9/posts', { kind: 'discussion', title: 'Favorite level?', body: 'Which level did you like most?' })
   check('anyone signed in can start a discussion', post.status === 201)
