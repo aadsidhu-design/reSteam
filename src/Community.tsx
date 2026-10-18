@@ -51,10 +51,10 @@ const NewPost = observer(({ g, kind, onClose, onDone }: { g: Game; kind: Kind; o
         setBusy(false)
         if (error || !data) setErr(error ?? 'Could not post'); else onDone(data.id)
       }}>
-        <input className="input" autoFocus placeholder="Title" maxLength={120} value={title} onChange={e => { setTitle(e.target.value); setErr('') }} />
+        <input className="input" autoFocus placeholder={t('cm2.title')} maxLength={120} value={title} onChange={e => { setTitle(e.target.value); setErr('') }} />
         <textarea className="input" rows={8} style={{ marginTop: 10 }} placeholder={kind === 'guide' ? 'Explain what you know. Guides can only be written by owners of the game.' : 'What do you want to talk about?'} maxLength={10000} value={body} onChange={e => { setBody(e.target.value); setErr('') }} />
         {err && <div className="err">{err}</div>}
-        <div className="modal-actions"><button type="button" className="btn" onClick={onClose}>Cancel</button><button className="btn blue" disabled={busy || title.trim().length < 3 || body.trim().length < 10}>{t('cm.post')}</button></div>
+        <div className="modal-actions"><button type="button" className="btn" onClick={onClose}>{t('pf.cancel')}</button><button className="btn blue" disabled={busy || title.trim().length < 3 || body.trim().length < 10}>{t('cm.post')}</button></div>
       </form>
     </Modal>
   )
@@ -107,7 +107,7 @@ const PostView = observer(({ id, onBack }: { id: number; onBack: () => void }) =
           {err && <div className="err">{err}</div>}
           <button className="btn blue" disabled={text.trim().length < 1}>{t('cm.postreply')}</button>
         </form>
-      ) : <p className="muted"><Link to={`/login?next=${encodeURIComponent(`/community?hub=${post.gameId}&post=${id}`)}`}>Sign in</Link> to reply.</p>}
+      ) : <p className="muted"><Link to={`/login?next=${encodeURIComponent(`/community?hub=${post.gameId}&post=${id}`)}`}>{t('auth.signin')}</Link> {t('cm2.toreply')}</p>}
     </div>
   )
 })
