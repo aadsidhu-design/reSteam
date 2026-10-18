@@ -58,7 +58,7 @@ const AddFriend = observer(() => {
   return (
     <div className="fextra">
       <form onSubmit={e => { e.preventDefault(); if (q.trim()) void add(q.trim()) }}>
-        <input className="input" autoFocus placeholder="Search by account name" value={q} onChange={e => setQ(e.target.value)} />
+        <input className="input" autoFocus placeholder={t('fr.searchacct')} value={q} onChange={e => setQ(e.target.value)} />
       </form>
       {msg && <div className={`small ${msg.ok ? 'pos' : 'err'}`}>{msg.text}</div>}
       {results.map(u => {
@@ -126,7 +126,7 @@ export const FriendsWindow = observer(() => {
               )}
             </div>
             <span className="grow" />
-            <button className="icon-btn" onClick={() => (store.friendsOpen = false)} aria-label="Close friends list"><Icon name="close" size={20} /></button>
+            <button className="icon-btn" onClick={() => (store.friendsOpen = false)} aria-label={t('fr.closelist')}><Icon name="close" size={20} /></button>
           </div>
         </div>
 
@@ -137,15 +137,15 @@ export const FriendsWindow = observer(() => {
             ))}
           </div>
         ) : !store.hints.drag && store.friends.length > 0 && (
-          <div className={`fhint ${dropHot ? 'hot' : ''}`} onDragOver={e => { e.preventDefault(); setDropHot(true) }} onDragLeave={() => setDropHot(false)} onDrop={dropFav}><span>Drag Friends &amp; Chats here for easy access</span><button className="gotit" onClick={() => (store.hints.drag = true)}>GOT IT!</button></div>
+          <div className={`fhint ${dropHot ? 'hot' : ''}`} onDragOver={e => { e.preventDefault(); setDropHot(true) }} onDragLeave={() => setDropHot(false)} onDrop={dropFav}><span>{t('fr.drag')}</span><button className="gotit" onClick={() => (store.hints.drag = true)}>{t('fr.gotit')}</button></div>
         )}
 
         <div className="fbar">
           <span>{t('friends.friends')}</span><span className="grow" />
-          <button className="icon-btn" onClick={() => { setSearching(!searching); setSearch('') }} aria-label="Search friends"><Icon name="search" size={22} /></button>
+          <button className="icon-btn" onClick={() => { setSearching(!searching); setSearch('') }} aria-label={t('fr.searchf')}><Icon name="search" size={22} /></button>
           <button className="icon-btn" onClick={() => setAdding(!adding)} aria-label={t('friends.add')}><Icon name="personAdd" size={24} /></button>
         </div>
-        {searching && <div className="fextra"><input className="input" autoFocus placeholder="Search friends" value={search} onChange={e => setSearch(e.target.value)} /></div>}
+        {searching && <div className="fextra"><input className="input" autoFocus placeholder={t('fr.searchf')} value={search} onChange={e => setSearch(e.target.value)} /></div>}
         {adding && <AddFriend />}
 
         <div className="flist">
@@ -168,14 +168,14 @@ export const FriendsWindow = observer(() => {
                 <button className="gtoggle" onClick={() => setCollapsed({ ...collapsed, [name]: !collapsed[name] })}>
                   <Icon name={collapsed[name] ? 'chevronRight' : 'chevronDown'} size={18} /> {name} <span className="muted">({items.length})</span>
                 </button>
-                {gi === groups.findIndex(g => g[1].length > 0) && <button className="icon-btn az" onClick={() => setSortAsc(!sortAsc)} aria-label="Sort A to Z" title="Sort A to Z">A↓Z</button>}
+                {gi === groups.findIndex(g => g[1].length > 0) && <button className="icon-btn az" onClick={() => setSortAsc(!sortAsc)} aria-label={t('fr.sort')} title={t('fr.sort')}>A↓Z</button>}
               </div>
               {!collapsed[name] && items.map(f => <Row key={f.username} f={f} onMenu={openMenu} onOpen={() => void store.openChat(f.username)} />)}
             </div>
           ))}
           {store.outgoing.length > 0 && (
             <div>
-              <div className="ghead"><span className="gtoggle">Pending <span className="muted">({store.outgoing.length})</span></span></div>
+              <div className="ghead"><span className="gtoggle">{t('fr.pending')} <span className="muted">({store.outgoing.length})</span></span></div>
               {store.outgoing.map(r => (
                 <div key={r.username} className="frow static dim">
                   <Avatar f={{ name: r.name }} size={46} ring={false} />
@@ -186,20 +186,20 @@ export const FriendsWindow = observer(() => {
             </div>
           )}
           {store.friends.length === 0 && store.incoming.length === 0 && store.outgoing.length === 0 && (
-            <p className="muted fempty">No friends yet. Use <b>Add a friend</b> (the + person icon) to find someone by account name.</p>
+            <p className="muted fempty">{t('fr.nofriends')}</p>
           )}
-          {store.friends.length > 0 && list.length === 0 && <p className="muted fempty">No friends match.</p>}
+          {store.friends.length > 0 && list.length === 0 && <p className="muted fempty">{t('fr.nomatch')}</p>}
         </div>
 
         <div className="gbar">
           <button className="gtoggle" onClick={() => setCollapsed({ ...collapsed, groups: !collapsed.groups })}><Icon name={collapsed.groups ? 'chevronRight' : 'chevronDown'} size={18} /> {t('friends.groups')}</button>
           <span className="grow" />
-          <button className="icon-btn round" onClick={() => setNewGroup(true)} aria-label="Start a group chat"><Icon name="plus" size={22} /></button>
+          <button className="icon-btn round" onClick={() => setNewGroup(true)} aria-label={t('fr.startgroup')}><Icon name="plus" size={22} /></button>
         </div>
         {!collapsed.groups && (
           <div className="gbody">
             {store.groups.length === 0 ? (
-              <p className="muted">Any group chats you are part of will be listed here.<br />You can start a chat with friends or join a group chat.</p>
+              <p className="muted">{t('fr.nogroups')}</p>
             ) : store.groups.map(g => (
               <button key={g.id} className="frow" onClick={() => void store.openChat(`g:${g.id}`)}>
                 <div className="gicon"><Icon name="group" size={24} /></div>
@@ -212,13 +212,13 @@ export const FriendsWindow = observer(() => {
 
       {ctx && (
         <div className="popover" ref={ctxRef} style={{ position: 'fixed', left: Math.min(ctx.x, window.innerWidth - 250), top: Math.min(ctx.y, window.innerHeight - 280), minWidth: 230, zIndex: 90 }}>
-          <button className="pop-item" onClick={() => { void store.openChat(ctx.f.username); setCtx(null) }}>Send Message</button>
+          <button className="pop-item" onClick={() => { void store.openChat(ctx.f.username); setCtx(null) }}>{t('fr.msg')}</button>
           <button className="pop-item" onClick={() => { store.toggleFavFriend(ctx.f.username); setCtx(null) }}>{store.favFriends.includes(ctx.f.username) ? 'Remove from Favorites' : 'Add to Favorites'}</button>
-          <button className="pop-item" onClick={() => { nav(`/profile/${ctx.f.username}`); setCtx(null) }}>View Profile</button>
-          {ctx.f.presence.gameId && <button className="pop-item" onClick={() => { nav(`/store/${ctx.f.presence.gameId}`); setCtx(null) }}>Store Page</button>}
-          {ctx.f.presence.gameId && store.owned.includes(ctx.f.presence.gameId) && <button className="pop-item" onClick={() => { nav(`/library/${ctx.f.presence.gameId}`); setCtx(null) }}>View Game in Library</button>}
-          <button className="pop-item" onClick={() => { const f = ctx.f; setCtx(null); if (confirm(`Remove ${f.name} from your friends?`)) void store.removeFriend(f.username) }}>Remove Friend</button>
-          <button className="pop-item" onClick={() => { const f = ctx.f; setCtx(null); if (confirm(`Block ${f.name}? They will be removed from your friends and cannot message you.`)) void store.block(f.username) }}>Block All Communication</button>
+          <button className="pop-item" onClick={() => { nav(`/profile/${ctx.f.username}`); setCtx(null) }}>{t('fr.viewprofile')}</button>
+          {ctx.f.presence.gameId && <button className="pop-item" onClick={() => { nav(`/store/${ctx.f.presence.gameId}`); setCtx(null) }}>{t('fr.storepage')}</button>}
+          {ctx.f.presence.gameId && store.owned.includes(ctx.f.presence.gameId) && <button className="pop-item" onClick={() => { nav(`/library/${ctx.f.presence.gameId}`); setCtx(null) }}>{t('fr.viewlib')}</button>}
+          <button className="pop-item" onClick={() => { const f = ctx.f; setCtx(null); if (confirm(`Remove ${f.name} from your friends?`)) void store.removeFriend(f.username) }}>{t('fr.removef')}</button>
+          <button className="pop-item" onClick={() => { const f = ctx.f; setCtx(null); if (confirm(`Block ${f.name}? They will be removed from your friends and cannot message you.`)) void store.block(f.username) }}>{t('fr.block')}</button>
         </div>
       )}
       {newGroup && <GroupModal onClose={() => setNewGroup(false)} />}
@@ -231,16 +231,16 @@ function GroupModal({ onClose }: { onClose: () => void }) {
   const [picked, setPicked] = useState<string[]>([])
   const [err, setErr] = useState('')
   return (
-    <Modal title="Start a group chat" onClose={onClose}>
-      <input className="input" autoFocus placeholder="Group name" value={name} maxLength={30} onChange={e => setName(e.target.value)} />
+    <Modal title={t('fr.startgroup')} onClose={onClose}>
+      <input className="input" autoFocus placeholder={t('fr.groupname')} value={name} maxLength={30} onChange={e => setName(e.target.value)} />
       <div className="pick-list">
-        {store.friends.length === 0 && <div className="muted small">Add some friends first.</div>}
+        {store.friends.length === 0 && <div className="muted small">{t('fr.addfirst')}</div>}
         {store.friends.map(f => (
           <label key={f.username} className="pick"><input type="checkbox" checked={picked.includes(f.username)} onChange={() => setPicked(picked.includes(f.username) ? picked.filter(x => x !== f.username) : [...picked, f.username])} /> <Avatar f={{ name: f.name }} size={26} ring={false} /> {f.name}</label>
         ))}
       </div>
       {err && <div className="err">{err}</div>}
-      <div className="modal-actions"><button className="btn" onClick={onClose}>Cancel</button><button className="btn blue" disabled={picked.length === 0} onClick={async () => { const e = await store.createGroup(name, picked); if (e) setErr(e); else onClose() }}>Create</button></div>
+      <div className="modal-actions"><button className="btn" onClick={onClose}>Cancel</button><button className="btn blue" disabled={picked.length === 0} onClick={async () => { const e = await store.createGroup(name, picked); if (e) setErr(e); else onClose() }}>{t('fr.create')}</button></div>
     </Modal>
   )
 }
@@ -272,14 +272,14 @@ const ChatWindow = observer(({ id }: { id: string }) => {
         <div className="chat-title"><b>{title}</b>{friend && <span className="small muted">{statusLine(friend)}</span>}{grp && members.length > 0 && <span className="small muted">{members.map(m => m.name).join(', ')}</span>}</div>
         <span className="grow" />
         {friend && <button className="link-btn small" onClick={() => nav(`/profile/${friend.username}`)}>Profile</button>}
-        {gameId && <button className="link-btn small" onClick={() => nav(`/store/${gameId}`)}>Store Page</button>}
-        {grp && <button className="link-btn small" onClick={() => setInviting(!inviting)}>Invite</button>}
-        {grp && <button className="link-btn small" onClick={() => void store.leaveGroup(gid)}>Leave</button>}
-        <button className="icon-btn" onClick={() => store.closeChat(id)} aria-label="Close chat"><Icon name="close" size={18} /></button>
+        {gameId && <button className="link-btn small" onClick={() => nav(`/store/${gameId}`)}>{t('fr.storepage')}</button>}
+        {grp && <button className="link-btn small" onClick={() => setInviting(!inviting)}>{t('fr.invite')}</button>}
+        {grp && <button className="link-btn small" onClick={() => void store.leaveGroup(gid)}>{t('fr.leave')}</button>}
+        <button className="icon-btn" onClick={() => store.closeChat(id)} aria-label={t('fr.closechat')}><Icon name="close" size={18} /></button>
       </div>
       {inviting && grp && (
         <div className="chat-invite">
-          {invitable.length === 0 ? <span className="small muted">All your friends are already here.</span> : invitable.map(f => (
+          {invitable.length === 0 ? <span className="small muted">{t('fr.allhere')}</span> : invitable.map(f => (
             <button key={f.username} className="btn small" onClick={async () => { const e = await store.inviteToGroup(gid, f.username); if (e) store.toast(e); else setInviting(false) }}>{f.name}</button>
           ))}
         </div>

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { t } from './i18n'
 import { Link } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { compact, reviewLabel, type Game } from './data'
@@ -31,11 +32,11 @@ export const ReviewCard = observer(({ r, onChange, game }: { r: Review; onChange
         <div className="muted small">Posted: {new Date(r.at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</div>
         <p className="rv-text">{r.text}</p>
         <div className="rv-foot">
-          <span className="muted small">Was this review helpful?</span>
+          <span className="muted small">{t('rv.helpful')}</span>
           <button className={`btn small ${voted ? 'blue' : ''}`} disabled={self} onClick={() => void vote()} title={self ? 'You cannot vote on your own review' : undefined}>Yes</button>
           <span className="muted small">{helpful} {helpful === 1 ? 'person' : 'people'} found this review helpful</span>
-          {self && onChange && <button className="link-btn small" onClick={async () => { if (confirm('Delete your review?')) { await call('DELETE', `/games/${r.gameId}/review`); onChange() } }}>Delete</button>}
-          {!self && store.signedIn && <button className="link-btn small" onClick={async () => { if (confirm('Report this review to the moderators?')) { const e = await call('POST', `/reviews/${r.id}/report`, { reason: 'reported by a user' }); store.toast(e.error ?? 'Reported. Thank you.') } }}>Report</button>}
+          {self && onChange && <button className="link-btn small" onClick={async () => { if (confirm('Delete your review?')) { await call('DELETE', `/games/${r.gameId}/review`); onChange() } }}>{t('rv.delete')}</button>}
+          {!self && store.signedIn && <button className="link-btn small" onClick={async () => { if (confirm('Report this review to the moderators?')) { const e = await call('POST', `/reviews/${r.id}/report`, { reason: 'reported by a user' }); store.toast(e.error ?? 'Reported. Thank you.') } }}>{t('rv.report')}</button>}
         </div>
       </div>
     </div>
@@ -60,7 +61,7 @@ const WriteReview = observer(({ g, mine, onSaved }: { g: Game; mine?: Review; on
       if (error) setErr(error); else { setErr(''); store.toast(mine ? 'Review updated' : 'Review posted'); void store.loadStats(); onSaved() }
     }}>
       <div className="rv-write-h">{mine ? 'Edit your review' : `Write a review for ${g.title}`}</div>
-      <textarea className="input" rows={4} maxLength={8000} placeholder="Please describe what you liked or disliked about this game and whether you recommend it to others." value={text} onChange={e => { setText(e.target.value); setErr('') }} />
+      <textarea className="input" rows={4} maxLength={8000} placeholder={t('rv.ph')} value={text} onChange={e => { setText(e.target.value); setErr('') }} />
       <div className="rv-write-row">
         <button type="button" className={`btn ${recommend === true ? 'blue' : ''}`} onClick={() => setRecommend(true)}><Icon name="thumbUp" size={16} /> Yes</button>
         <button type="button" className={`btn ${recommend === false ? 'red' : ''}`} onClick={() => setRecommend(false)}><span className="flip"><Icon name="thumbUp" size={16} /></span> No</button>
@@ -86,10 +87,10 @@ export const GameReviews = observer(({ g }: { g: Game }) => {
   const positivePct = g.reviews > 0 ? g.rating : 0
   return (
     <>
-      <h2 className="ul">Customer reviews</h2>
+      <h2 className="ul">{t('rv.title')}</h2>
       <div className="rv-sum">
-        <div><span className="muted small">Overall</span><br /><span className={reviewClass(g.rating, g.reviews)}>{reviewLabel(g.rating, g.reviews)}</span></div>
-        <div><span className="muted small">Total reviews</span><br />{compact(g.reviews)}</div>
+        <div><span className="muted small">{t('rv.overall')}</span><br /><span className={reviewClass(g.rating, g.reviews)}>{reviewLabel(g.rating, g.reviews)}</span></div>
+        <div><span className="muted small">{t('rv.total')}</span><br />{compact(g.reviews)}</div>
       </div>
       {g.reviews > 0 && <>
         <div className="rv-bar" title={`${positivePct}% positive`}><span style={{ width: `${positivePct}%` }} /></div>
@@ -97,8 +98,8 @@ export const GameReviews = observer(({ g }: { g: Game }) => {
       </>}
       <WriteReview g={g} mine={mine} onSaved={() => void load()} />
       <div className="rv-filters">
-        <label>Show <select value={filter} onChange={e => setFilter(e.target.value as typeof filter)} aria-label="Filter reviews"><option value="all">All reviews</option><option value="positive">Positive</option><option value="negative">Negative</option></select></label>
-        <label>Sort <select value={sort} onChange={e => setSort(e.target.value as typeof sort)} aria-label="Sort reviews"><option value="helpful">Most helpful</option><option value="recent">Most recent</option></select></label>
+        <label>{t('rv.show')} <select value={filter} onChange={e => setFilter(e.target.value as typeof filter)} aria-label="Filter reviews"><option value="all">{t('sg.allrev')}</option><option value="positive">{t('rv.pos')}</option><option value="negative">{t('rv.neg')}</option></select></label>
+        <label>{t('rv.sort')} <select value={sort} onChange={e => setSort(e.target.value as typeof sort)} aria-label="Sort reviews"><option value="helpful">{t('rv.mosth')}</option><option value="recent">{t('rv.mostr')}</option></select></label>
       </div>
       <div className="rv-list one">
         {list === null && <Loading text="Loading reviews" />}

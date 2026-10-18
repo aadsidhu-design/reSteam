@@ -17,7 +17,7 @@ const GameNews = ({ g }: { g: Game }) => {
   if (news.length === 0) return null
   return (
     <>
-      <h2 className="ul">Recent news</h2>
+      <h2 className="ul">{t('sg.news')}</h2>
       {news.slice(0, 3).map(n => (
         <div className="news-item" key={n.id}><b>{n.title}</b><div className="muted small">{new Date(n.at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} · {n.author}</div><p>{n.body}</p></div>
       ))}
@@ -35,8 +35,8 @@ const Media = ({ g }: { g: Game }) => {
       <div className="media-main">
         {shot(i, i === 0)}
         {real === 0 && i < 2 && <div className="play-over"><Icon name="play" size={54} /></div>}
-        <button className="m-arrow l" onClick={() => setI((i + thumbs.length - 1) % thumbs.length)} aria-label="Previous"><Icon name="chevronLeft" size={30} /></button>
-        <button className="m-arrow r" onClick={() => setI((i + 1) % thumbs.length)} aria-label="Next"><Icon name="chevronRight" size={30} /></button>
+        <button className="m-arrow l" onClick={() => setI((i + thumbs.length - 1) % thumbs.length)} aria-label={t('sg.prev')}><Icon name="chevronLeft" size={30} /></button>
+        <button className="m-arrow r" onClick={() => setI((i + 1) % thumbs.length)} aria-label={t('sg.next')}><Icon name="chevronRight" size={30} /></button>
       </div>
       <div className="thumbs">{thumbs.map(n => (
         <button key={n} className={`thumb ${n === i ? 'on' : ''}`} onClick={() => setI(n)} aria-label={`Media ${n + 1}`}>
@@ -53,7 +53,7 @@ export const StoreGame = observer(() => {
   const g = GAMES.find(x => x.id === Number(id))
   const [allTags, setAllTags] = useState(false)
     useEffect(() => { if (g) store.view(g.id) }, [g])
-  if (!g) return <div className="container"><h1>This item is not available.</h1><Link to="/store">Back to the store</Link></div>
+  if (!g) return <div className="container"><h1>{t('sg.unavail')}</h1><Link to="/store">{t('dq.back')}</Link></div>
 
   const owned = store.owned.includes(g.id)
   const inCart = store.cart.includes(g.id)
@@ -77,12 +77,12 @@ export const StoreGame = observer(() => {
           <div className="sg-cap"><Art game={g} kind="header" /></div>
           <p className="sg-desc">{g.blurb}</p>
           <dl className="sg-kv">
-            <dt>All reviews:</dt><dd><span className={reviewClass(g.rating, g.reviews)}>{reviewLabel(g.rating, g.reviews)}</span>{g.reviews >= 10 && <span className="muted"> ({compact(g.reviews)})</span>}</dd>
-            <dt>Release date:</dt><dd>{new Date(g.released).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</dd>
-            <dt>Developer:</dt><dd><Link to={`/store/browse?q=${encodeURIComponent(g.dev)}`}>{g.dev}</Link></dd>
-            <dt>Publisher:</dt><dd><Link to={`/store/browse?q=${encodeURIComponent(g.publisher)}`}>{g.publisher}</Link></dd>
+            <dt>{t('sg.allrev')}:</dt><dd><span className={reviewClass(g.rating, g.reviews)}>{reviewLabel(g.rating, g.reviews)}</span>{g.reviews >= 10 && <span className="muted"> ({compact(g.reviews)})</span>}</dd>
+            <dt>{t('sg.release')}:</dt><dd>{new Date(g.released).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</dd>
+            <dt>{t('sg.dev')}:</dt><dd><Link to={`/store/browse?q=${encodeURIComponent(g.dev)}`}>{g.dev}</Link></dd>
+            <dt>{t('sg.pub')}:</dt><dd><Link to={`/store/browse?q=${encodeURIComponent(g.publisher)}`}>{g.publisher}</Link></dd>
           </dl>
-          <div className="sg-tags"><div className="muted small">Popular user-defined tags for this product:</div>
+          <div className="sg-tags"><div className="muted small">{t('sg.tags')}</div>
             <div className="tagrow">{(allTags ? g.tags : g.tags.slice(0, 5)).map(t => <Link key={t} to={`/store/browse?tag=${encodeURIComponent(t)}`} className="tagchip">{t}</Link>)}
               <button className="tagchip plus" onClick={() => setAllTags(!allTags)} aria-label="Toggle tags">{allTags ? '–' : '+'}</button></div></div>
         </div>
@@ -97,7 +97,7 @@ export const StoreGame = observer(() => {
           {friends.length > 0 && <span className="muted small">{friends.map(f => f.name).join(', ')} playing now</span>}
         </div>
         )}
-        <button className="sharebtn" aria-label="Copy link" title="Copy link" onClick={() => { void navigator.clipboard?.writeText(location.href); store.toast('Link copied') }}><Icon name="share" size={20} /></button>
+        <button className="sharebtn" aria-label={t('sg.copy')} title={t('sg.copy')} onClick={() => { void navigator.clipboard?.writeText(location.href); store.toast('Link copied') }}><Icon name="share" size={20} /></button>
       </div>
 
       <div className="sg-body">
@@ -108,22 +108,22 @@ export const StoreGame = observer(() => {
               {g.discount > 0 && <span className="bb-pct">-{g.discount}%</span>}
               <span className="bb-price">{g.discount > 0 && <s>{fmt(g.price)}</s>}<b>{fmt(priceOf(g))}</b></span>
               {owned ? (
-                installed ? <button className="btn play" onClick={() => nav(`/library/${g.id}`)}>Play in Library</button>
-                  : queued ? <Link to="/downloads" className="btn blue">Installing…</Link>
+                installed ? <button className="btn play" onClick={() => nav(`/library/${g.id}`)}>{t('sg.playlib')}</button>
+                  : queued ? <Link to="/downloads" className="btn blue">{t('sg.installing')}</Link>
                   : <button className="btn blue" onClick={() => { store.install(g.id); nav('/downloads') }}><Icon name="download" size={18} /> Install</button>
               ) : g.price === 0 ? <button className="btn addcart" onClick={() => { store.claimFree(g.id); store.toast(`${g.title} was added to your library`) }}>{t('game.play')}</button>
-                : inCart ? <Link to="/cart" className="btn addcart">In cart — View cart</Link>
+                : inCart ? <Link to="/cart" className="btn addcart">{t('sg.incart')}</Link>
                 : <button className="btn addcart" onClick={() => store.addToCart(g.id)}>{t('game.addcart')}</button>}
             </div>
           </div>
 
-          <h2 className="ul">About This Game</h2>
+          <h2 className="ul">{t('sg.about')}</h2>
           <div className="about">
             <div className="about-img"><Art game={g} kind="wide" variant={3} showTitle={false} /></div>
-            <p><b>Overview</b> – {g.blurb}</p>
+            <p><b>{t('sg.overview')}</b> – {g.blurb}</p>
             <p>{g.title} is a {g.genre.join(' / ').toLowerCase()} game from {g.dev}. It has {g.achievements} achievements and takes up about {g.sizeGb.toFixed(1)} GB once installed.</p>
             <div className="about-img"><Art game={g} kind="wide" variant={5} showTitle={false} /></div>
-            <p><b>Features</b> – {g.tags.join(', ')}.</p>
+            <p><b>{t('sg.features')}</b> – {g.tags.join(', ')}.</p>
           </div>
 
           <GameNews g={g} />
@@ -138,20 +138,20 @@ export const StoreGame = observer(() => {
             <div className="feat-row"><span className="fi">☷</span>{compact(g.owners)} {g.owners === 1 ? 'owner' : 'owners'} on reSteam</div>
           </div>
           <div className="rail-box"><div className="muted small">Achievements</div>
-            <div className="ach-tiles">{[0, 1, 2, 3].map(n => <div key={n} className="ach-tile"><Art game={g} kind="icon" variant={n} /></div>)}<Link to={`/library/${g.id}`} className="ach-more">View all<br />{g.achievements}</Link></div></div>
+            <div className="ach-tiles">{[0, 1, 2, 3].map(n => <div key={n} className="ach-tile"><Art game={g} kind="icon" variant={n} /></div>)}<Link to={`/library/${g.id}`} className="ach-more">{t('sg.viewall')}<br />{g.achievements}</Link></div></div>
           <div className="rail-box details">
-            <div><span>TITLE:</span> {g.title}</div>
-            <div><span>GENRE:</span> {g.genre.map((x, i) => <span key={x}><Link to={`/store/browse?genre=${encodeURIComponent(x)}`}>{x}</Link>{i < g.genre.length - 1 ? ', ' : ''}</span>)}</div>
-            <div><span>DEVELOPER:</span> <Link to={`/store/browse?q=${encodeURIComponent(g.dev)}`}>{g.dev}</Link></div>
-            <div><span>PUBLISHER:</span> <Link to={`/store/browse?q=${encodeURIComponent(g.publisher)}`}>{g.publisher}</Link></div>
-            <div><span>RELEASE DATE:</span> {new Date(g.released).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+            <div><span>{t('sg.title').toUpperCase()}:</span> {g.title}</div>
+            <div><span>{t('sg.genre').toUpperCase()}:</span> {g.genre.map((x, i) => <span key={x}><Link to={`/store/browse?genre=${encodeURIComponent(x)}`}>{x}</Link>{i < g.genre.length - 1 ? ', ' : ''}</span>)}</div>
+            <div><span>{t('sg.dev').toUpperCase()}:</span> <Link to={`/store/browse?q=${encodeURIComponent(g.dev)}`}>{g.dev}</Link></div>
+            <div><span>{t('sg.pub').toUpperCase()}:</span> <Link to={`/store/browse?q=${encodeURIComponent(g.publisher)}`}>{g.publisher}</Link></div>
+            <div><span>{t('sg.release').toUpperCase()}:</span> {new Date(g.released).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
           </div>
-          <Link to={`/community?hub=${g.id}`} className="rail-link">Visit the community hub</Link>
+          <Link to={`/community?hub=${g.id}`} className="rail-link">{t('sg.hubvisit')}</Link>
           <Link to={`/store/browse?q=${encodeURIComponent(g.dev)}`} className="rail-link">More from {g.dev}</Link>
         </aside>
       </div>
 
-      {similar.length > 0 && (<><h2>More like this</h2><div className="cards">{similar.map(s => (
+      {similar.length > 0 && (<><h2>{t('sg.more')}</h2><div className="cards">{similar.map(s => (
         <Link key={s.id} to={`/store/${s.id}`} className="scard"><div className="scard-art"><Art game={s} kind="header" /></div><div className="scard-body"><div className="scard-title">{s.title}</div><Tags g={s} n={2} /><Price game={s} /></div></Link>))}</div></>)}
       <div className="muted small" style={{ margin: '20px 0 40px' }}>{fmt(priceOf(g))} · {g.dev}</div>
     </div>
