@@ -13,11 +13,12 @@ import './community.css'
 type Kind = 'discussion' | 'guide'
 interface Post { id: number; gameId: number; kind: Kind; title: string; body: string; at: number; username: string; name: string; replies: number; votes: number; mine: boolean }
 interface Reply { id: number; body: string; at: number; username: string; name: string }
-interface FeedItem { type: 'review' | 'discussion' | 'guide'; at: number; score: number; item: Review | Post }
+interface NewsRow { id: number; title: string; body: string; at: number; author: string }
+interface FeedItem { type: 'review' | 'discussion' | 'guide' | 'news'; at: number; score: number; item: Review | Post | NewsRow }
 interface Hub { gameId: number; posts: number; guides: number; reviews: number; playing: number; owners: number }
 
-const TABS = ['All', 'Discussions', 'Guides', 'Reviews'] as const
-const TAB_KEY: Record<string, string> = { All: 'comm.all', Discussions: 'comm.discussions', Guides: 'comm.guides', Reviews: 'comm.reviews' }
+const TABS = ['All', 'Discussions', 'Guides', 'Reviews', 'News'] as const
+const TAB_KEY: Record<string, string> = { All: 'comm.all', Discussions: 'comm.discussions', Guides: 'comm.guides', Reviews: 'comm.reviews', News: 'comm.news' }
 type Tab = (typeof TABS)[number]
 const gameOf = (id: number) => GAMES.find(g => g.id === id)
 
@@ -135,19 +136,21 @@ export const Community = observer(() => {
     setFeed(null)
     const sort = popular ? 'popular' : 'recent'
     if (hubGame) {
-      const [rv, ps] = await Promise.all([
+      const [rv, ps, nw] = await Promise.all([
         tab === 'All' || tab === 'Reviews' ? api<{ reviews: Review[] }>('GET', `/games/${hubGame.id}/reviews?sort=${popular ? 'helpful' : 'recent'}`) : null,
-        tab !== 'Reviews' ? api<{ posts: Post[] }>('GET', `/games/${hubGame.id}/posts?sort=${sort}${tab === 'Discussions' ? '&kind=discussion' : tab === 'Guides' ? '&kind=guide' : ''}`) : null,
+        tab !== 'Reviews' && tab !== 'News' ? api<{ posts: Post[] }>('GET', `/games/${hubGame.id}/posts?sort=${sort}${tab === 'Discussions' ? '&kind=discussion' : tab === 'Guides' ? '&kind=guide' : ''}`) : null,
+        tab === 'All' || tab === 'News' ? api<{ news: NewsRow[] }>('GET', `/games/${hubGame.id}/news`) : null,
       ])
       const items: FeedItem[] = [
         ...(rv?.reviews ?? []).map(r => ({ type: 'review' as const, at: r.at, score: r.helpful, item: r })),
         ...(ps?.posts ?? []).map(p => ({ type: p.kind, at: p.at, score: p.votes + p.replies, item: p })),
+        ...(nw?.news ?? []).map(n => ({ type: 'news' as const, at: n.at, score: 1e9, item: n })),
       ]
       setFeed(items.sort((a, b) => (popular ? b.score - a.score || b.at - a.at : b.at - a.at)))
     } else {
       const r = await api<{ items: FeedItem[] }>('GET', `/community/feed?sort=${sort}`)
       const all = r?.items ?? []
-      setFeed(all.filter(i => tab === 'All' || (tab === 'Discussions' && i.type === 'discussion') || (tab === 'Guides' && i.type === 'guide') || (tab === 'Reviews' && i.type === 'review')))
+      setFeed(all.filter(i => tab === 'All' || (tab === 'Discussions' && i.type === 'discussion') || (tab === 'Guides' && i.type === 'guide') || (tab === 'Reviews' && i.type === 'review') || (tab === 'News' && i.type === 'news')))
     }
   }, [hubGame, tab, popular])
   useEffect(() => { void loadFeed() }, [loadFeed])
@@ -172,8 +175,13 @@ export const Community = observer(() => {
         {hubGame ? (
           <>
             <div className="hub-top"><h1>{hubGame.title}</h1><Link to={`/store/${hubGame.id}`} className="storepage">Store Page</Link></div>
+            <div className="cm-tabs hubtabs">{TABS.map(tb => <button key={tb} className={tb === tab ? 'on' : ''} onClick={() => setParams('tab', tb === 'All' ? null : tb)}>{t(TAB_KEY[tb])}</button>)}
+              <span className="grow" />
+              <button className="btn small" onClick={() => store.needLogin() || setWriting('discussion')}>New discussion</button>
+              <button className="btn small" disabled={store.signedIn && !store.owned.includes(hubGame.id)} title={store.signedIn && !store.owned.includes(hubGame.id) ? 'Only owners can write guides' : undefined} onClick={() => store.needLogin() || setWriting('guide')}>Write a guide</button>
+            </div>
             <div className="hub-banner">
-              <div className="hub-stats"><span className="ingame">{compact(hubGame.playing)} In-Game</span><span>{compact(hubGame.owners)} owner{hubGame.owners === 1 ? '' : 's'}</span><span>{compact(hubGame.reviews)} review{hubGame.reviews === 1 ? '' : 's'}</span>{friendsIn > 0 && <span className="pos">{friendsIn} friend{friendsIn === 1 ? '' : 's'} playing</span>}</div>
+              <div className="hub-stats"><span className="ingame">{compact(hubGame.playing)} In-Game</span><span>{compact(hubGame.owners)} owner{hubGame.owners === 1 ? '' : 's'}</span><span>{compact(hubGame.reviews)} review{hubGame.reviews === 1 ? '' : 's'}</span><button className="link-btn" onClick={() => store.toggleFollow(hubGame.id)}>{store.followed.includes(hubGame.id) ? 'Following' : 'Follow'}</button>{friendsIn > 0 && <span className="pos">{friendsIn} friend{friendsIn === 1 ? '' : 's'} playing</span>}</div>
               <div className="hub-main">
                 <div className="hub-cap"><Art game={hubGame} kind="header" /></div>
                 <div><p>{hubGame.blurb}</p>
@@ -181,11 +189,7 @@ export const Community = observer(() => {
                     <button className="link-btn" onClick={() => { const n = new URLSearchParams(sp); n.delete('hub'); n.delete('tab'); setSp(n) }}>All of the community</button></div></div>
               </div>
             </div>
-            <div className="cm-tabs hubtabs">{TABS.map(tb => <button key={tb} className={tb === tab ? 'on' : ''} onClick={() => setParams('tab', tb === 'All' ? null : tb)}>{t(TAB_KEY[tb])}</button>)}
-              <span className="grow" />
-              <button className="btn small" onClick={() => store.needLogin() || setWriting('discussion')}>New discussion</button>
-              <button className="btn small" disabled={store.signedIn && !store.owned.includes(hubGame.id)} title={store.signedIn && !store.owned.includes(hubGame.id) ? 'Only owners can write guides' : undefined} onClick={() => store.needLogin() || setWriting('guide')}>Write a guide</button>
-            </div>
+            <div className="popular-note">Most popular community and official content for the past week.</div>
           </>
         ) : (
           <>
@@ -228,7 +232,9 @@ export const Community = observer(() => {
 
         {feed === null && <Loading />}
         <div className="cm-grid one">
-          {items.slice(0, shown).map(i => i.type === 'review'
+          {items.slice(0, shown).map(i => i.type === 'news'
+            ? <div className="cc news-card" key={`n${(i.item as NewsRow).id}`}><div className="g-title">News</div><div className="nc-body"><b>{(i.item as NewsRow).title}</b><div className="muted small">{ago((i.item as NewsRow).at)} · {(i.item as NewsRow).author}</div><p>{(i.item as NewsRow).body}</p></div></div>
+            : i.type === 'review'
             ? <FeedReview key={`r${(i.item as Review).id}`} r={i.item as Review} />
             : <PostCard key={`p${(i.item as Post).id}`} p={i.item as Post} showGame={!hubGame} onOpen={() => { const p = i.item as Post; const n = new URLSearchParams(sp); n.set('hub', String(p.gameId)); n.set('post', String(p.id)); setSp(n) }} />)}
         </div>

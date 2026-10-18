@@ -23,6 +23,7 @@ const en: Dict = {
   'game.signin': 'Sign in',
   'cart.title': 'Your Shopping Cart', 'cart.empty': 'Your cart is empty.', 'cart.continue': 'Continue Shopping', 'cart.pay': 'Continue to payment', 'cart.total': 'Estimated total',
   'wish.empty': 'Your wishlist is empty.', 'wish.title': "{name}'s wishlist",
+  'settings.title': "{name}'s Account",
   'user.profile': 'View my profile', 'user.signout': 'Sign out of account…', 'user.account': 'Account details', 'user.settings': 'Settings', 'user.downloads': 'Manage downloads',
 }
 export const STRINGS_CORE_ENGLISH = (): Dict => en

@@ -34,7 +34,7 @@ export const CLIENT: Group = {
     'Search with suggestions:d', 'Wishlist link:d', 'Sale hero banner:d', 'Featured carousel:d', 'Carousel info panel:d', 'Send a Gift Card:d',
     'Special offers:d', 'Browse by genre:d', 'Top sellers tabs:d', 'Free to play row:d', 'Game page media viewer:p', 'Game page description:d',
     'Review summary:d', 'Popular tags:d', 'Buy box:d', 'Follow / Ignore:d', 'Customer reviews:d', 'Write a review:d', 'Helpful votes:d', 'More like this:d',
-    'Discovery Queue:d', 'Charts and stats:d', 'Hover screenshot previews:d', 'Cart page:d', 'Checkout:d', 'Wishlist page:d', 'Free-to-play claim:d', 'Discount badges:d',
+    'Discovery Queue:d', 'Charts and stats:d', 'Account page layout:d', 'Profile layout:d', 'Hub news and follow:d', 'Hover screenshot previews:d', 'Cart page:d', 'Checkout:d', 'Wishlist page:d', 'Free-to-play claim:d', 'Discount badges:d',
     'Search results rows:d', 'Narrow-by filter panels:d', 'Sort options:d', 'Active filter chips:d', 'Excluded titles notice:d', 'Ignore hides games:d', 'Follow list:d', 'Payment step:d', 'Cart recommendations:d', 'Discovery queue banner:d', 'Promo banner:p', 'Featured tag grids:d', 'Top new releases:d', 'Popular tabs with preview:d', 'DLC list:p', 'Handheld compatibility box:p', 'Right rail details:d', 'Age rating box:p', 'Platform icons:p',
   ],
   'Friends & Chat': [

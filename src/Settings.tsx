@@ -1,11 +1,11 @@
 import { useState, type ReactNode } from 'react'
 import { t } from './i18n'
-import { NavLink, Navigate, useNavigate, useParams } from 'react-router-dom'
+import { Link, NavLink, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { GAMES, fmt } from './data'
 import { store, type Privacy, type Settings as S } from './store'
 import { Icon } from './icons'
-import { Avatar, Modal } from './ui'
+import { Modal } from './ui'
 import './settings.css'
 
 const NAV: ([string, string, string] | null)[] = [
@@ -65,25 +65,54 @@ const DeleteAccount = ({ onClose }: { onClose: () => void }) => {
   )
 }
 
+const Bar = ({ icon, children }: { icon: Parameters<typeof Icon>[0]['name']; children: ReactNode }) => <div className="acct-bar"><Icon name={icon} size={18} /> {children}</div>
+
 const Account = observer(() => {
   const nav = useNavigate()
-  const [modal, setModal] = useState<null | 'funds' | 'privacy' | 'details'>(null)
-  const me = { name: store.name, status: store.status }
+  const [modal, setModal] = useState<null | 'funds' | 'privacy' | 'details' | 'licenses'>(null)
   return (
     <>
-      <div className="acct-top">
-        <Avatar f={me} size={88} ring={false} />
-        <div className="grow"><div className="acct-name">{store.name}</div><div className="acct-status">{store.status === 'offline' ? 'Invisible' : store.status === 'away' ? 'Away' : 'Online'}</div></div>
-        <button className="btn" onClick={() => nav('/profile')}>View Profile</button>
+      <div className="acct-sec">
+        <Bar icon="cart">Store &amp; Purchase History</Bar>
+        <div className="acct-cols">
+          <div>
+            <button className="abtn" onClick={() => setModal('funds')}>+ Add funds to your reSteam Wallet</button>
+            <div className="acct-wallet"><a>Wallet Balance</a><b>{fmt(store.wallet)}</b></div>
+            <div className="acct-rule" />
+            <p className="muted small">Wallet funds are play money. No payment methods exist on this account.</p>
+          </div>
+          <div className="acct-btns">
+            <button className="abtn" onClick={() => setModal('licenses')}>View licenses and product key activations</button>
+            <button className="abtn" onClick={() => nav('/settings/store')}>Update store preferences</button>
+            <button className="abtn" onClick={() => nav('/developer')}>Manage your published games</button>
+          </div>
+        </div>
       </div>
-      <div className="tiles3">
-        <button className="tile3" onClick={() => setModal('funds')}><Icon name="card" size={46} /><b>Add Funds</b><span className="muted">Current Balance: {fmt(store.wallet)}</span></button>
-        <button className="tile3" onClick={() => setModal('privacy')}><Icon name="eyeOff" size={46} /><b>Privacy Settings</b><span className="muted">Who can see your profile</span></button>
-        <button className="tile3" onClick={() => setModal('details')}><Icon name="edit" size={46} /><b>Account Details</b><span className="muted">Name, security</span></button>
+      <div className="acct-sec">
+        <Bar icon="person">Account Info</Bar>
+        <div className="acct-cols">
+          <dl className="kv">
+            <dt>Account name</dt><dd>{store.user?.username}</dd>
+            <dt>Display name</dt><dd>{store.name}</dd>
+            <dt>Games owned</dt><dd>{store.owned.length}</dd>
+            <dt>Email address</dt><dd className="muted">Not collected</dd>
+          </dl>
+          <div className="acct-btns">
+            <button className="abtn" onClick={() => nav('/profile')}>View my profile</button>
+            <button className="abtn" onClick={() => setModal('privacy')}>Privacy settings</button>
+            <button className="abtn" onClick={() => nav('/settings/security')}>Change password</button>
+            <button className="abtn" onClick={() => { store.friendsOpen = true }}>Add friends</button>
+          </div>
+        </div>
       </div>
-      <div className="infobox"><span className="sl">Account name</span><span className="muted grow">{store.user?.username}</span><button className="btn" onClick={() => { store.friendsOpen = true }}>Add Friends</button></div>
-      <div className="infobox"><span className="sl">Email Address</span><span className="muted grow">Not collected</span></div>
       {modal === 'funds' && <AddFunds onClose={() => setModal(null)} />}
+      {modal === 'licenses' && (
+        <Modal title="Licenses" onClose={() => setModal(null)} width={520}>
+          <p className="muted small">Games in your library and the product codes you have activated.</p>
+          <div className="lic-list">{store.ownedGames.map(g => <div key={g.id} className="lic-row"><b>{g.title}</b><span className="muted small">{g.price === 0 ? 'Free to play' : fmt(g.price)}</span></div>)}</div>
+          {store.ownedGames.length === 0 && <p className="muted">No games yet.</p>}
+        </Modal>
+      )}
       {modal === 'privacy' && (
         <Modal title="Privacy Settings" onClose={() => setModal(null)} width={420}>
           <label className="small muted">Who can see your profile, games and activity</label>
@@ -165,13 +194,19 @@ export const SettingsPage = observer(() => {
   if (!cur) return <Navigate to="/settings/account" replace />
   return (
     <div className="settings">
-      <aside className="srail">
-        <div className="stitle">RESTEAM SETTINGS</div>
-        {NAV.map((n, i) => n === null ? <hr key={i} /> : (
-          <NavLink key={n[0]} to={`/settings/${n[0]}`} className="sitem"><Icon name={n[2]} size={22} /> {n[1].includes('.') ? t(n[1]) : n[1]}</NavLink>
-        ))}
-      </aside>
-      <section className="sbody"><h1>{cur.title}</h1>{cur.el()}</section>
+      <div className="settings-in">
+        <div className="acct-crumbs"><Link to="/store">Home</Link> &gt; <span>Account</span></div>
+        <h1 className="acct-h1">{t('settings.title', { name: store.name })}</h1>
+        <div className="acct-sub">Account name: {store.user?.username}</div>
+        <div className="settings-grid">
+          <aside className="srail">
+            {NAV.map((n, i) => n === null ? <hr key={i} /> : (
+              <NavLink key={n[0]} to={`/settings/${n[0]}`} className="sitem">{n[1].includes('.') ? t(n[1]) : n[1]}</NavLink>
+            ))}
+          </aside>
+          <section className="sbody"><h2 className="sec-title">{cur.title}</h2>{cur.el()}</section>
+        </div>
+      </div>
     </div>
   )
 })

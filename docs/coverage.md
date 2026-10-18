@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `7a7bee7`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `5f12cb9`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -8,7 +8,7 @@ Generated 2026-10-18 from commit `7a7bee7`. Run `npm run coverage` to refresh.
 
 | Measure | Value |
 | --- | --- |
-| Client behaviors replicated | 211 of 241 (12 partial, 18 not yet) |
+| Client behaviors replicated | 214 of 244 (12 partial, 18 not yet) |
 | Backend behaviors replicated | 74 of 90 (1 partial, 15 not yet) |
 | Visual fidelity (average of compared pages) | 76 / 100 over 13 pages |
 | Behavior fidelity | 73 / 100 |
@@ -16,7 +16,7 @@ Generated 2026-10-18 from commit `7a7bee7`. Run `npm run coverage` to refresh.
 | Automated checks | 224 |
 | Client routes | 21 |
 | Database tables | 28 |
-| Languages | 12 (186 strings) |
+| Languages | 12 (188 strings) |
 
 ## Fidelity by page
 
@@ -148,37 +148,37 @@ Generated 2026-10-18 from commit `7a7bee7`. Run `npm run coverage` to refresh.
 
 | Language | Strings | Coverage |
 | --- | --- | --- |
-| Chinese (Simplified) | 186/186 | 100% |
-| English | 186/186 | 100% |
-| French | 186/186 | 100% |
-| German | 186/186 | 100% |
-| Italian | 186/186 | 100% |
-| Japanese | 186/186 | 100% |
-| Korean | 186/186 | 100% |
-| Polish | 186/186 | 100% |
-| Portuguese (Brazil) | 186/186 | 100% |
-| Russian | 186/186 | 100% |
-| Spanish | 186/186 | 100% |
-| Turkish | 186/186 | 100% |
+| Chinese (Simplified) | 188/188 | 100% |
+| English | 188/188 | 100% |
+| French | 188/188 | 100% |
+| German | 188/188 | 100% |
+| Italian | 188/188 | 100% |
+| Japanese | 188/188 | 100% |
+| Korean | 188/188 | 100% |
+| Polish | 188/188 | 100% |
+| Portuguese (Brazil) | 188/188 | 100% |
+| Russian | 188/188 | 100% |
+| Spanish | 188/188 | 100% |
+| Turkish | 188/188 | 100% |
 
 ## UI text going through the translator
 
 | File | Translated | Hard-coded | Coverage |
 | --- | --- | --- | --- |
-| About.tsx | 0 | 8 | 0% |
+| About.tsx | 0 | 10 | 0% |
 | App.tsx | 0 | 2 | 0% |
 | Reviews.tsx | 0 | 17 | 0% |
 | ui.tsx | 0 | 3 | 0% |
-| Settings.tsx | 1 | 49 | 2% |
+| Settings.tsx | 2 | 59 | 3% |
 | Developer.tsx | 3 | 37 | 8% |
 | Library.tsx | 10 | 56 | 15% |
 | Friends.tsx | 9 | 38 | 19% |
 | StoreGame.tsx | 9 | 33 | 21% |
-| Chrome.tsx | 17 | 50 | 25% |
-| Community.tsx | 11 | 26 | 30% |
+| Chrome.tsx | 17 | 49 | 26% |
+| Community.tsx | 11 | 28 | 28% |
 | StorePages.tsx | 31 | 56 | 36% |
 | Auth.tsx | 16 | 17 | 48% |
-| Profile.tsx | 18 | 1 | 95% |
+| Profile.tsx | 18 | 5 | 78% |
 | Charts.tsx | 2 | 0 | 100% |
 | Downloads.tsx | 13 | 0 | 100% |
 | Explore.tsx | 6 | 0 | 100% |
@@ -303,7 +303,7 @@ Generated 2026-10-18 from commit `7a7bee7`. Run `npm run coverage` to refresh.
 - [ ] Scheduled updates
 - [ ] Download region
 
-**Store** (47/53)
+**Store** (50/56)
 
 - [x] Browse menu
 - [x] Recommendations menu
@@ -332,6 +332,9 @@ Generated 2026-10-18 from commit `7a7bee7`. Run `npm run coverage` to refresh.
 - [x] More like this
 - [x] Discovery Queue
 - [x] Charts and stats
+- [x] Account page layout
+- [x] Profile layout
+- [x] Hub news and follow
 - [x] Hover screenshot previews
 - [x] Cart page
 - [x] Checkout

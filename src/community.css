@@ -86,3 +86,5 @@
 .cm-welcome p { margin: 0 0 14px; color: #fff; }
 .cm-wbtns { display: flex; align-items: center; gap: 10px; }
 .cm-wbtns .btn { padding: 8px 18px; font-size: 15px; }
+.news-card .nc-body { padding: 4px 16px 16px; }
+.news-card .nc-body p { white-space: pre-wrap; color: #acb2b8; line-height: 1.5; }

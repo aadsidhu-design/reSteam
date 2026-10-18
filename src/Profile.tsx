@@ -57,11 +57,10 @@ export const ProfilePage = observer(() => {
     <div className="profile">
       <div className="pf-wrap">
         <div className="pf-head">
-          <div className="pf-avatar"><Avatar f={shown} size={160} /></div>
-          <div className="grow">
+          <div className="pf-avatar"><Avatar f={shown} size={164} /></div>
+          <div className="pf-who">
             <h1>{shown.name}</h1>
             <div className="muted small">@{data.username}</div>
-            <div className="muted">{self ? (store.running !== null ? `Currently In-Game — ${GAMES.find(g => g.id === store.running)?.title}` : store.status === 'offline' ? 'Invisible' : store.status === 'away' ? 'Away' : 'Currently Online') : presenceText(data.presence)}</div>
             <div className="pf-btns">
               {self && <><button className="btn" onClick={() => { setName(store.name); setMsg(''); setEdit(true) }}>{t('pf.edit')}</button><Link to="/settings/account" className="btn">{t('set.account')}</Link></>}
               {data.relation === 'accepted' && <><button className="btn blue" onClick={() => void store.openChat(data.username)}>{t('pf.chat')}</button><button className="btn" onClick={() => void unfriend()}>{t('pf.remove')}</button></>}
@@ -71,28 +70,44 @@ export const ProfilePage = observer(() => {
               {!self && data.relation !== 'accepted' && <button className="btn" onClick={() => { if (confirm(`Block ${data.name}?`)) void store.block(data.username).then(() => nav('/community')) }}>{t('pf.block')}</button>}
             </div>
           </div>
-          {!data.limited && <div className="pf-level"><div className="lvl">{data.level ?? 1}</div><div className="muted small">{t('pf.level')}</div></div>}
+          {!data.limited && <div className="pf-level"><span className="lvl-t">{t('pf.level')}</span><span className="lvl">{data.level ?? 1}</span></div>}
         </div>
         {data.limited ? (
           <p className="muted pf-private">This profile is {store.signedIn ? 'private' : 'not visible'}. Only their name is shown.</p>
         ) : (
           <div className="pf-cols">
-            <div>
-              <h2>{t('pf.recent')}</h2>
-              <div className="muted small pf-hrs">{hours(data.minutes ?? 0)} on record</div>
-              {recent.length === 0 && <p className="muted">{self ? 'Play a game and it will show up here.' : 'No recent games.'}</p>}
-              {recent.map(r => (
-                <Link key={r.gameId} to={self && store.owned.includes(r.gameId) ? `/library/${r.gameId}` : `/store/${r.gameId}`} className="pf-game">
-                  <div className="pf-art"><Art game={r.game!} kind="header" /></div>
-                  <div><div className="pf-gname">{r.game!.title}</div><div className="muted small">{hours(r.playtime)} on record · last played {ago(r.lastPlayed).toLowerCase()}</div></div>
-                </Link>
-              ))}
-              {fav && (<><h2 className="mt">{t('pf.fav')}</h2><Link to={`/library/${fav.id}`} className="pf-game"><div className="pf-art"><Art game={fav} kind="header" /></div><div className="pf-gname">{fav.title}</div></Link></>)}
+            <div className="pf-panel">
+              <div className="pf-bar">{t('pf.recent')}</div>
+              <div className="pf-inner">
+                <div className="muted small pf-hrs">{hours(data.minutes ?? 0)} on record</div>
+                {recent.length === 0 && <p className="muted">{self ? 'Play a game and it will show up here.' : 'No recent games.'}</p>}
+                {recent.map(r => {
+                  const g = r.game!
+                  const got = Math.min(g.achievements, Math.floor(r.playtime / 3))
+                  return (
+                    <div key={r.gameId} className="pf-row">
+                      <Link to={self && store.owned.includes(r.gameId) ? `/library/${r.gameId}` : `/store/${r.gameId}`} className="pf-game">
+                        <div className="pf-art"><Art game={g} kind="header" /></div>
+                        <div className="pf-info"><div className="pf-gname">{g.title}</div><div className="muted small pf-meta">{hours(r.playtime)} on record<br />last played {ago(r.lastPlayed).toLowerCase()}</div></div>
+                      </Link>
+                      {g.achievements > 0 && <div className="pf-ach"><span className="small">{got} / {g.achievements} Achievements</span><div className="pf-achbar"><span style={{ width: `${(got / g.achievements) * 100}%` }} /></div></div>}
+                    </div>
+                  )
+                })}
+                {fav && (<><div className="pf-sub">{t('pf.fav')}</div><Link to={`/library/${fav.id}`} className="pf-game"><div className="pf-art"><Art game={fav} kind="header" /></div><div className="pf-gname">{fav.title}</div></Link></>)}
+              </div>
             </div>
-            <aside>
-              <div className="pf-stats">
-                {([['Games', data.gamesOwned ?? 0], ['Friends', data.friends ?? 0], ['Hours played', Math.round((data.minutes ?? 0) / 60)]] as const).map(([k, v]) => <div key={k}><span>{k}</span><b>{v}</b></div>)}
-                {self && <div><span>Wishlist</span><b>{store.wishlist.length}</b></div>}
+            <aside className="pf-side">
+              <div className="pf-status">
+                <div className="pf-st">{self ? (store.running !== null ? 'Currently In-Game' : store.status === 'offline' ? 'Invisible' : store.status === 'away' ? 'Away' : 'Currently Online') : presenceText(data.presence)}</div>
+                {self && store.running !== null && <div className="muted">{GAMES.find(g => g.id === store.running)?.title}</div>}
+              </div>
+              <div className="pf-links">
+                <div><span>Games</span><b>{data.gamesOwned ?? 0}</b></div>
+                <div><span>Friends</span><b>{data.friends ?? 0}</b></div>
+                <div><span>Hours played</span><b>{Math.round((data.minutes ?? 0) / 60)}</b></div>
+                {self && <Link to="/wishlist"><span>Wishlist</span><b>{store.wishlist.length}</b></Link>}
+                {self && <Link to="/developer"><span>Published games</span></Link>}
               </div>
             </aside>
           </div>

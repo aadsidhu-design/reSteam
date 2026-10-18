@@ -130,13 +130,12 @@ export const Footer = () => (
       <div className="gf-left">
         <div className="gf-brand"><Logo size={34} /> <span>reSteam</span></div>
         <p>An independent, non-commercial fan project that recreates a PC game store for learning. It is not affiliated with or endorsed by any game store company. Every game, studio and picture here is fictional or made by players. Wallet funds are play money.</p>
-        <div className="gf-social"><a href="https://github.com/aadsidhu-design/reSteam" target="_blank" rel="noreferrer" aria-label="Source code on GitHub"><Icon name="info" size={26} /></a></div>
       </div>
       <div className="gf-cols">
         <div><h5>RESTEAM</h5><Link to="/about">About reSteam</Link><Link to="/developer">Publish a game</Link><Link to="/store/browse">All games</Link><Link to="/store">Gift cards</Link></div>
         <div><h5>COMMUNITY</h5><Link to="/community">Community</Link><Link to="/community?tab=Discussions">Discussions</Link><Link to="/community?tab=Guides">Guides</Link><Link to="/community?tab=Reviews">Reviews</Link></div>
         <div><h5>LEGAL</h5><Link to="/about">Not affiliated</Link><Link to="/about">Play money</Link><Link to="/about">Your data</Link></div>
-        <div><h5>MORE</h5><a href="https://github.com/aadsidhu-design/reSteam" target="_blank" rel="noreferrer">Source code</a><Link to="/settings/account">My account</Link><Link to="/login">Sign in</Link><Link to="/login?mode=join">Join</Link></div>
+        <div><h5>MORE</h5><Link to="/about">About</Link><Link to="/settings/account">My account</Link><Link to="/login">Sign in</Link><Link to="/login?mode=join">Join</Link></div>
       </div>
     </div>
   </footer>

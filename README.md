@@ -8,7 +8,7 @@ A from-scratch, fan-made recreation of the look and behavior of a popular PC gam
 
 reSteam is built to give developers access to systems they would not otherwise have, and the source code for those systems. A digital game storefront is normally a closed product: accounts, a catalog, a library, chat, community hubs, uploads and downloads, and the services behind them are not something an independent developer can read, run or change. This repository is a complete, working, openly licensed version of that stack that anyone can read, fork and host on their own Cloudflare account (see "Deploy to your own Cloudflare account" below), then change however they like.
 
-It is a learning and prototyping project. It is not a replacement for any real store and has no affiliation with one.
+The repository is currently private; this README describes the intent for when it is shared. It is a learning and prototyping project. It is not a replacement for any real store and has no affiliation with one.
 
 ## AI disclosure
 

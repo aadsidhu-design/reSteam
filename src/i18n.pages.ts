@@ -144,6 +144,8 @@ const ROWS: Row[] = [
   ['pl.nobuild', 'This game has no browser build.', 'Este juego no tiene versión para el navegador.', 'Ce jeu n\'a pas de version pour navigateur.', 'Dieses Spiel hat keine Browser-Version.', 'Questo gioco non ha una versione per browser.', 'Este jogo não tem versão para navegador.', 'このゲームにはブラウザ版がありません。', '이 게임에는 브라우저 버전이 없습니다.', '此游戏没有浏览器版本。', 'У этой игры нет браузерной версии.', 'Bu oyunun tarayıcı sürümü yok.', 'Ta gra nie ma wersji przeglądarkowej.'],
   ['pl.open', 'Open it in your library', 'Ábrelo en tu biblioteca', 'Ouvrez-le dans votre bibliothèque', 'In deiner Bibliothek öffnen', 'Aprilo nella tua libreria', 'Abra na sua biblioteca', 'ライブラリで開く', '라이브러리에서 열기', '在您的库中打开', 'Открыть в библиотеке', 'Kütüphanende aç', 'Otwórz w bibliotece'],
   ['pl.stop', 'Stop', 'Detener', 'Arrêter', 'Beenden', 'Ferma', 'Parar', '停止', '중지', '停止', 'Стоп', 'Durdur', 'Zatrzymaj'],
+  ['comm.news', 'News', 'Noticias', 'Actualités', 'Neuigkeiten', 'Novità', 'Notícias', 'ニュース', '뉴스', '新闻', 'Новости', 'Haberler', 'Aktualności'],
+  ['settings.title', "{name}'s Account", 'Cuenta de {name}', 'Compte de {name}', 'Konto von {name}', 'Account di {name}', 'Conta de {name}', '{name}のアカウント', '{name}의 계정', '{name}的账户', 'Аккаунт {name}', '{name} hesabı', 'Konto {name}'],
 ]
 
 export const PAGE_STRINGS: Record<Lang, Record<string, string>> = Object.fromEntries(
