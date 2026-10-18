@@ -86,17 +86,17 @@ const GiftModal = observer(({ onClose }: { onClose: () => void }) => {
   return (
     <Modal title="Send a Gift Card" onClose={onClose}>
       <p>Send wallet funds to a friend. The amount comes out of your balance ({fmt(store.wallet)}).</p>
-      {pals.length === 0 && <p className="muted small">You need a friend to send a gift card to. Add one from Friends &amp; Chat.</p>}
-      <label className="small muted">Friend</label>
+      {pals.length === 0 && <p className="muted small">{tr('gf.need')}</p>}
+      <label className="small muted">{tr('gf.friend')}</label>
       <select className="input" value={friend} onChange={e => setFriend(e.target.value)}>{pals.map(f => <option key={f.username} value={f.username}>{f.name}</option>)}</select>
       <div className="amounts">{[500, 1000, 2500, 5000, 10000].map(a => <button key={a} className={`btn ${amount === a ? 'blue' : ''}`} onClick={() => setAmount(a)}>{fmt(a)}</button>)}</div>
       {err && <div className="err">{err}</div>}
       <div className="modal-actions">
-        <button className="btn" onClick={onClose}>Cancel</button>
+        <button className="btn" onClick={onClose}>{tr('pf.cancel')}</button>
         <button className="btn green" disabled={!friend || busy} onClick={async () => {
           setBusy(true); const e = await store.gift(friend, amount); setBusy(false)
           if (e) setErr(e); else { store.toast(`Gift card sent to ${pals.find(f => f.username === friend)?.name}`); onClose() }
-        }}>Send gift card</button>
+        }}>{tr('gf.send')}</button>
       </div>
     </Modal>
   )
@@ -462,11 +462,11 @@ export const Cart = observer(() => {
     const gs = GAMES.filter(g => done.includes(g.id))
     return (
       <div className="container cart2">
-        <h1 className="cart-h1">Thank you for your purchase!</h1>
-        <p className="muted">Your new games have been added to your library.</p>
+        <h1 className="cart-h1">{tr('ct.thanks')}</h1>
+        <p className="muted">{tr('ct.added')}</p>
         {gs.map(g => <div key={g.id} className="cart-item"><div className="ci-art"><Art game={g} kind="header" /></div><div className="grow"><b>{g.title}</b></div>
           <button className="btn blue" onClick={() => { store.install(g.id); nav('/downloads') }}>Install</button></div>)}
-        <p><Link to="/library" className="btn green">Go to my library</Link></p>
+        <p><Link to="/library" className="btn green">{tr('ct.golib')}</Link></p>
       </div>
     )
   }
@@ -482,21 +482,21 @@ export const Cart = observer(() => {
               <div className="cart-item" key={g.id}>
                 <div className="ci-art"><Art game={g} kind="header" /></div>
                 <div className="grow"><Link to={`/store/${g.id}`} className="ci-title">{g.title}</Link><div className="muted small"><Plats /> {g.sizeGb.toFixed(1)} GB</div></div>
-                <Price game={g} /><button className="link-btn" onClick={() => store.removeFromCart(g.id)}>Remove</button>
+                <Price game={g} /><button className="link-btn" onClick={() => store.removeFromCart(g.id)}>{tr('ct.remove')}</button>
               </div>))}
           </div>
           <div className="cart-btns">
             <Link to="/store" className="btn gray">{tr('cart.continue')}</Link>
             <button className="btn bluebig" disabled={empty} onClick={() => setPay(true)}>{tr('cart.pay')}</button>
           </div>
-          <h3 className="rec-title">RECOMMENDATIONS FOR YOU</h3>
+          <h3 className="rec-title">{tr('ct.recs')}</h3>
           <div className="rec3">{recs.map((g, i) => (
             <Link key={g.id} to={`/store/${g.id}`} className="rec"><div className="rec-art"><Art game={g} kind="header" /></div>
               <div className="rec-pill"><span className="rec-plats"><Plats /></span>{i < 2 && <span className="rec-new">NEW</span>}
                 {g.discount > 0 ? <><span className="rec-pct">-{g.discount}%</span><span className="rec-price"><s>{fmt(g.price)}</s><b>{fmt(priceOf(g))}</b></span></> : <span className="rec-price plain"><b>{fmt(g.price)}</b></span>}</div></Link>))}</div>
         </div>
         <aside className="cart-side">
-          <div className="est"><b>{tr('cart.total')}</b><div className="est-total">{fmt(store.cartTotal)}</div><div className="small">Sales tax will be calculated during checkout where applicable</div>
+          <div className="est"><b>{tr('cart.total')}</b><div className="est-total">{fmt(store.cartTotal)}</div><div className="small">{tr('ct.tax')}</div>
             <button className="btn bluebig full" disabled={empty} onClick={() => setPay(true)}>{tr('cart.pay')}</button></div>
           <div className="cart-ill">
             <svg viewBox="0 0 300 150" aria-hidden><rect x="60" y="20" width="190" height="110" rx="4" fill="#0f1722" stroke="#33465c" /><rect x="70" y="30" width="60" height="90" fill="#17222f" /><rect x="136" y="30" width="104" height="52" fill="#2b3f66" /><rect x="136" y="90" width="104" height="8" fill="#1d2b3d" /><rect x="136" y="104" width="70" height="8" fill="#1d2b3d" /></svg>
@@ -518,19 +518,19 @@ export const Wishlist = observer(() => {
     <div className="container">
       <div className="row-between wl-head"><div className="wl-who"><Avatar f={{ name: store.name, status: store.status }} size={64} ring={false} /><h1>{tr('wish.title', { name: store.name }).toUpperCase()}</h1></div>
         <select className="input sortsel" value={sort} onChange={e => setSort(e.target.value as typeof sort)} aria-label="Sort wishlist">
-          <option value="added">Sort by: date added</option><option value="name">Sort by: name</option><option value="price">Sort by: price</option><option value="discount">Sort by: discount</option>
+          <option value="added">{tr('wl.byadded')}</option><option value="name">{tr('wl.byname')}</option><option value="price">{tr('wl.byprice')}</option><option value="discount">{tr('wl.bydisc')}</option>
         </select></div>
       {onSale > 0 && <div className="sale-banner">{onSale} game{onSale === 1 ? '' : 's'} from your wishlist {onSale === 1 ? 'is' : 'are'} on sale now</div>}
-      {list.length === 0 && <div className="wl-empty"><b>{tr('wish.empty')}</b><p>Fill up your wishlist by browsing the store and using the "Add to your Wishlist" button.</p><Link to="/store/browse">Browse the store</Link></div>}
+      {list.length === 0 && <div className="wl-empty"><b>{tr('wish.empty')}</b><p>{tr('wl.fill')}</p><Link to="/store/browse">{tr('wl.browse')}</Link></div>}
       {list.map(g => (
         <div className="lrow wish" key={g.id}>
           <div className="lrow-art big"><Art game={g} kind="header" /></div>
           <div className="lrow-main"><Link to={`/store/${g.id}`} className="lrow-title">{g.title}</Link><div className={`${reviewClass(g.rating, g.reviews)} small`}>{reviewLabel(g.rating, g.reviews)}</div><Tags g={g} n={3} /><div className="muted small">{g.blurb}</div></div>
           <Price game={g} />
           <div className="wish-actions">
-            {store.owned.includes(g.id) ? <Link to={`/library/${g.id}`} className="btn small">In library</Link>
-              : store.cart.includes(g.id) ? <Link to="/cart" className="btn green small">In cart</Link>
-              : <button className="btn green small" onClick={() => store.addToCart(g.id)}>Add to cart</button>}
+            {store.owned.includes(g.id) ? <Link to={`/library/${g.id}`} className="btn small">{tr('ct.inlib')}</Link>
+              : store.cart.includes(g.id) ? <Link to="/cart" className="btn green small">{tr('ct.incart')}</Link>
+              : <button className="btn green small" onClick={() => store.addToCart(g.id)}>{tr('game.addcart')}</button>}
             <button className="link-btn small" onClick={() => store.toggleWishlist(g.id)}>Remove</button>
           </div>
         </div>

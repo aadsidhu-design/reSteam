@@ -52,8 +52,8 @@ export const Header = observer(() => {
               </button>
               {menu === 'bell' && (
                 <div className="popover right bell-pop">
-                  <div className="pop-title row-between">Notifications <button className="link-btn small" onClick={() => void store.markAllRead()}>Mark all read</button></div>
-                  {store.notifications.length === 0 && <div className="pop-item static read">You are all caught up.</div>}
+                  <div className="pop-title row-between">{t('nt.title')} <button className="link-btn small" onClick={() => void store.markAllRead()}>{t('nt.markall')}</button></div>
+                  {store.notifications.length === 0 && <div className="pop-item static read">{t('nt.caught')}</div>}
                   {store.notifications.slice(0, 20).map(n => {
                     const from = n.data.from?.username as string | undefined
                     const pending = n.kind === 'friend_request' && from && store.incoming.some(r => r.username === from)
@@ -63,11 +63,11 @@ export const Header = observer(() => {
                         <div className="muted small">{ago(n.at)}</div>
                         {pending && (
                           <div className="req-actions">
-                            <button className="btn small green" onClick={() => void store.acceptRequest(from!)}>Accept</button>
-                            <button className="btn small" onClick={() => void store.declineRequest(from!)}>Ignore</button>
+                            <button className="btn small green" onClick={() => void store.acceptRequest(from!)}>{t('friends.accept')}</button>
+                            <button className="btn small" onClick={() => void store.declineRequest(from!)}>{t('friends.ignore')}</button>
                           </div>
                         )}
-                        {n.kind === 'post_reply' && n.data.gameId && <Link to={`/community?hub=${n.data.gameId}&post=${n.data.postId}`} onClick={() => setMenu(null)}>View discussion</Link>}
+                        {n.kind === 'post_reply' && n.data.gameId && <Link to={`/community?hub=${n.data.gameId}&post=${n.data.postId}`} onClick={() => setMenu(null)}>{t('nt.viewdisc')}</Link>}
                       </div>
                     )
                   })}
@@ -129,13 +129,13 @@ export const Footer = () => (
     <div className="gf-inner">
       <div className="gf-left">
         <div className="gf-brand"><Logo size={34} /> <span>reSteam</span></div>
-        <p>An independent, non-commercial fan project that recreates a PC game store for learning. It is not affiliated with or endorsed by any game store company. Every game, studio and picture here is fictional or made by players. Wallet funds are play money.</p>
+        <p>{t('ft.disclaimer')}</p>
       </div>
       <div className="gf-cols">
-        <div><h5>RESTEAM</h5><Link to="/about">About reSteam</Link><Link to="/developer">Publish a game</Link><Link to="/store/browse">All games</Link><Link to="/store">Gift cards</Link></div>
-        <div><h5>COMMUNITY</h5><Link to="/community">Community</Link><Link to="/community?tab=Discussions">Discussions</Link><Link to="/community?tab=Guides">Guides</Link><Link to="/community?tab=Reviews">Reviews</Link></div>
-        <div><h5>LEGAL</h5><Link to="/about">Not affiliated</Link><Link to="/about">Play money</Link><Link to="/about">Your data</Link></div>
-        <div><h5>MORE</h5><Link to="/about">About</Link><Link to="/settings/account">My account</Link><Link to="/login">Sign in</Link><Link to="/login?mode=join">Join</Link></div>
+        <div><h5>RESTEAM</h5><Link to="/about">{t('ft.about')}</Link><Link to="/developer">{t('mm.publish')}</Link><Link to="/store/browse">{t('lib.allgames')}</Link><Link to="/store">{t('ft.gift')}</Link></div>
+        <div><h5>{t('nav.community').toUpperCase()}</h5><Link to="/community">{t('nav.community')}</Link><Link to="/community?tab=Discussions">{t('comm.discussions')}</Link><Link to="/community?tab=Guides">{t('comm.guides')}</Link><Link to="/community?tab=Reviews">{t('comm.reviews')}</Link></div>
+        <div><h5>{t('ft.legal').toUpperCase()}</h5><Link to="/about">{t('ft.notaff')}</Link><Link to="/about">{t('ft.playmoney')}</Link><Link to="/about">{t('ft.yourdata')}</Link></div>
+        <div><h5>{t('ft.more').toUpperCase()}</h5><Link to="/about">About</Link><Link to="/settings/account">{t('mm.myaccount')}</Link><Link to="/login">{t('auth.signin')}</Link><Link to="/login?mode=join">{t('ft.join')}</Link></div>
       </div>
     </div>
   </footer>
@@ -148,13 +148,13 @@ export const AddGameMenu = observer(() => {
   const ref = useDismiss(add, () => setAdd(false))
   return (
     <div className="popwrap" ref={ref}>
-      <button className="bb-btn" onClick={() => setAdd(!add)}><Icon name="plus" size={20} /> Add a Game</button>
+      <button className="bb-btn" onClick={() => setAdd(!add)}><Icon name="plus" size={20} /> {t('lib.addgame')}</button>
       {add && (
         <div className="popover up">
-          <button className="pop-item" onClick={() => { setAdd(false); setDlg('custom') }}>Add a Non-Store Game…</button>
-          <button className="pop-item" onClick={() => { setAdd(false); setDlg('redeem') }}>Activate a Product on reSteam…</button>
-          <button className="pop-item" onClick={() => { setAdd(false); nav('/store/browse?free=1') }}>Browse free games</button>
-          <button className="pop-item" onClick={() => { setAdd(false); nav('/developer') }}>Upload your own game…</button>
+          <button className="pop-item" onClick={() => { setAdd(false); setDlg('custom') }}>{t('ag.nonstore')}</button>
+          <button className="pop-item" onClick={() => { setAdd(false); setDlg('redeem') }}>{t('ag.activate')}</button>
+          <button className="pop-item" onClick={() => { setAdd(false); nav('/store/browse?free=1') }}>{t('ag.free')}</button>
+          <button className="pop-item" onClick={() => { setAdd(false); nav('/developer') }}>{t('ag.upload')}</button>
         </div>
       )}
       {dlg === 'redeem' && <RedeemModal onClose={() => setDlg(null)} />}
@@ -177,7 +177,7 @@ function RedeemModal({ onClose }: { onClose: () => void }) {
       }}>
         <input className="input" autoFocus placeholder="XXXXX-XXXXX-XXXXX" value={code} onChange={e => { setCode(e.target.value); setErr('') }} />
         {err && <div className="err">{err}</div>}
-        <div className="modal-actions"><button className="btn" type="button" onClick={onClose}>Cancel</button><button className="btn blue" disabled={!code.trim() || busy}>Activate</button></div>
+        <div className="modal-actions"><button className="btn" type="button" onClick={onClose}>Cancel</button><button className="btn blue" disabled={!code.trim() || busy}>{t('ag.activatebtn')}</button></div>
       </form>
     </Modal>
   )

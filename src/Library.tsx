@@ -154,7 +154,7 @@ const Home = observer(() => {
     <div className="lib-home">
       {store.shelves.filter(s => s === 'whatsnew').map(renderShelf)}
       <div className="addshelf popwrap" ref={addRef}>
-        <button className="addshelf-btn" onClick={() => setAddOpen(!addOpen)} disabled={missing.length === 0}><Icon name="plus" size={20} /> Add shelf</button>
+        <button className="addshelf-btn" onClick={() => setAddOpen(!addOpen)} disabled={missing.length === 0}><Icon name="plus" size={20} /> {t('lb.addshelf')}</button>
         {addOpen && (
           <div className="popover" style={{ left: 'calc(50% - 130px)' }}>
             {missing.map(s => <button key={s} className="pop-item" onClick={() => { store.addShelf(s); setAddOpen(false) }}>{SHELF_LABEL[s]}</button>)}
@@ -210,7 +210,7 @@ export const Library = observer(() => {
         >
           <Art game={g} kind="icon" className="sicon" />
           <span className={`lib-name ${isInstalled(g) ? '' : 'dim'}`}>{g.title}</span>
-          {store.running === g.id && <span className="running">Running</span>}
+          {store.running === g.id && <span className="running">{t('lb.running')}</span>}
         </NavLink>
       ))}
     </>
@@ -225,7 +225,7 @@ export const Library = observer(() => {
         </div>
         <div className="side-filters">
           <select className="catsel" value={cat} onChange={e => setCat(e.target.value as Cat)} aria-label="Category">
-            <option value="all">Games and Software</option>
+            <option value="all">{t('lb.gamesandsw')}</option>
             <option value="games">Games</option>
             <option value="software">Software</option>
           </select>
@@ -255,7 +255,7 @@ export const Library = observer(() => {
             </div>
           ))}
           {section('rest', favs.length > 0 || store.collections.length > 0 ? 'UNCATEGORIZED' : t('lib.allgames').toUpperCase(), rest)}
-          {list.length === 0 && <div className="muted small side-empty">{all.length === 0 ? 'Your library is empty. Find something in the store.' : 'No games match.'}</div>}
+          {list.length === 0 && <div className="muted small side-empty">{all.length === 0 ? 'Your library is empty. Find something in the store.' : t('lb.nomatch')}</div>}
         </div>
         <div className="side-foot">
           <AddGameMenu />
@@ -283,8 +283,8 @@ export const Library = observer(() => {
             ? <button key={c.id} className="pop-item" onClick={() => { store.removeFromCollection(c.id, ctx.g.id); setCtx(null) }}>Remove from {c.name}</button>
             : <button key={c.id} className="pop-item" onClick={() => { store.addToCollection(c.id, ctx.g.id); setCtx(null) }}>Add to {c.name}</button>)}
           <button className="pop-item" onClick={() => { const g = ctx.g; setCtx(null); setNameDlg({ mode: 'new', gameId: g.id, value: '' }) }}>Add to new collection…</button>
-          {!isLocal(ctx.g.id) && <button className="pop-item" onClick={() => { setCtx(null); nav(`/store/${ctx.g.id}`) }}>View store page</button>}
-          {!isLocal(ctx.g.id) && isInstalled(ctx.g) && <button className="pop-item" onClick={() => { store.uninstall(ctx.g.id); setCtx(null) }}>Uninstall</button>}
+          {!isLocal(ctx.g.id) && <button className="pop-item" onClick={() => { setCtx(null); nav(`/store/${ctx.g.id}`) }}>{t('lb.viewstore')}</button>}
+          {!isLocal(ctx.g.id) && isInstalled(ctx.g) && <button className="pop-item" onClick={() => { store.uninstall(ctx.g.id); setCtx(null) }}>{t('lb.uninstall')}</button>}
         </div>
       )}
     </div>
@@ -337,20 +337,20 @@ const LibGame = observer(({ g }: { g: Game }) => {
               {caret && (
                 <div className="popover" style={{ left: 0 }}>
                   <button className="pop-item" onClick={() => { setCaret(false); store.install(g.id); nav('/downloads') }}>Install and open Downloads</button>
-                  <button className="pop-item" onClick={() => { setCaret(false); nav(`/store/${g.id}`) }}>View store page</button>
+                  <button className="pop-item" onClick={() => { setCaret(false); nav(`/store/${g.id}`) }}>{t('lb.viewstore')}</button>
                 </div>
               )}
             </span>
           )}
         </div>
         <div className="gp-stat"><div className="caps">{installed ? 'Last played' : 'Space required'}</div><div className="gp-val">{installed ? ago(store.lastPlayed[g.id]) : `${g.sizeGb.toFixed(2)} GB`}</div></div>
-        {!installed && <div className="gp-stat"><div className="caps">Last played</div><div className="gp-val">{ago(store.lastPlayed[g.id])}</div></div>}
-        <div className="gp-stat with-icon"><Icon name="clock" size={30} className="gs-icon" /><div><div className="caps">Play time</div><div className="gp-val">{hours(played)}</div></div></div>
+        {!installed && <div className="gp-stat"><div className="caps">{t('lb.lastplayed')}</div><div className="gp-val">{ago(store.lastPlayed[g.id])}</div></div>}
+        <div className="gp-stat with-icon"><Icon name="clock" size={30} className="gs-icon" /><div><div className="caps">{t('lb.playtime')}</div><div className="gp-val">{hours(played)}</div></div></div>
         {!custom && (
           <div className="gp-stat with-icon">
             <Icon name="star" size={30} className="gs-icon" />
             <div>
-              <div className="caps">Achievements</div>
+              <div className="caps">{t('sg.achievements')}</div>
               <div className="gp-val">{unlocked}/{g.achievements}</div>
               <div className="ach-bar"><span style={{ width: `${(unlocked / Math.max(1, g.achievements)) * 100}%` }} /></div>
             </div>
@@ -364,8 +364,8 @@ const LibGame = observer(({ g }: { g: Game }) => {
           {gear && (
             <div className="popover right">
               <button className="pop-item" onClick={() => { store.toggleFavorite(g.id); setGear(false) }}>{fav ? 'Remove from favorites' : 'Add to favorites'}</button>
-              {!custom && installed && !running && <button className="pop-item" onClick={() => { store.uninstall(g.id); setGear(false) }}>Uninstall</button>}
-              {!custom && <button className="pop-item" onClick={() => { setGear(false); nav(`/store/${g.id}`) }}>View store page</button>}
+              {!custom && installed && !running && <button className="pop-item" onClick={() => { store.uninstall(g.id); setGear(false) }}>{t('lb.uninstall')}</button>}
+              {!custom && <button className="pop-item" onClick={() => { setGear(false); nav(`/store/${g.id}`) }}>{t('lb.viewstore')}</button>}
             </div>
           )}
         </div>
@@ -379,16 +379,16 @@ const LibGame = observer(({ g }: { g: Game }) => {
       <div className="gp-tabs">
         {custom ? <span className="muted">Non-store game</span> : (
           <>
-            <Link to={`/store/${g.id}`}>Store Page</Link>
-            <Link to={`/community?hub=${g.id}`}>Community Hub</Link>
-            <Link to={`/community?hub=${g.id}&tab=Discussions`}>Discussions</Link>
-            <Link to={`/community?hub=${g.id}&tab=Guides`}>Guides</Link>
+            <Link to={`/store/${g.id}`}>{t('fr.storepage')}</Link>
+            <Link to={`/community?hub=${g.id}`}>{t('lb.hub')}</Link>
+            <Link to={`/community?hub=${g.id}&tab=Discussions`}>{t('comm.discussions')}</Link>
+            <Link to={`/community?hub=${g.id}&tab=Guides`}>{t('comm.guides')}</Link>
           </>
         )}
       </div>
       <div className="gp-body">
         <div className="gp-left">
-          <h2>Activity</h2>
+          <h2>{t('lb.activity')}</h2>
           {feed.length === 0 && played === 0 && <p className="muted">Nothing yet. Play {g.title} and your activity, and your friends', will show up here.</p>}
           {feed.map(e => (
             <div className="act-entry" key={e.id}>
@@ -406,14 +406,14 @@ const LibGame = observer(({ g }: { g: Game }) => {
         <div className="gp-right">
           {!custom && (
             <div className="side-panel">
-              <h2>Friends who play</h2>
+              <h2>{t('lb.friendsplay')}</h2>
               <div className="sp-box">
                 {friends.length > 0 ? (
                   <>
                     <div>{playingNow.length > 0 ? `${playingNow.length} friend${playingNow.length > 1 ? 's' : ''} playing now` : `${previously.length} friend${previously.length > 1 ? 's have' : ' has'} played previously`}</div>
                     <div className="avatars">{friends.map(f => <Link key={f.username} to={`/profile/${f.username}`} title={f.name}><Avatar f={{ name: f.name, status: f.presence.status }} size={34} /></Link>)}</div>
                   </>
-                ) : <div className="muted">None of your friends have played this</div>}
+                ) : <div className="muted">{t('lb.nofriendsplay')}</div>}
                 <button className="link-btn viewall" onClick={() => (store.friendsOpen = true)}>View all friends who play</button>
               </div>
             </div>
@@ -423,9 +423,9 @@ const LibGame = observer(({ g }: { g: Game }) => {
       {info && (
         <Modal title={g.title} onClose={() => setInfo(false)}>
           <dl className="kv">
-            <dt>Developer</dt><dd>{g.dev}</dd>
-            {!custom && <><dt>Publisher</dt><dd>{g.publisher}</dd><dt>Released</dt><dd>{g.released}</dd><dt>Install size</dt><dd>{g.sizeGb.toFixed(1)} GB</dd><dt>Tags</dt><dd>{g.tags.join(', ')}</dd></>}
-            <dt>Play time</dt><dd>{hours(played)}</dd>
+            <dt>{t('sg.dev')}</dt><dd>{g.dev}</dd>
+            {!custom && <><dt>{t('sg.pub')}</dt><dd>{g.publisher}</dd><dt>{t('lb.released')}</dt><dd>{g.released}</dd><dt>{t('lb.size')}</dt><dd>{g.sizeGb.toFixed(1)} GB</dd><dt>{t('lb.tags')}</dt><dd>{g.tags.join(', ')}</dd></>}
+            <dt>{t('lb.playtime')}</dt><dd>{hours(played)}</dd>
           </dl>
         </Modal>
       )}
