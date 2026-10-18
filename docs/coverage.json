@@ -1,6 +1,6 @@
 {
   "generated": "2026-10-18",
-  "commit": "1f3e19e",
+  "commit": "c2c5174",
   "summary": {
     "client": {
       "d": 224,
@@ -9,16 +9,16 @@
       "n": 250
     },
     "backend": {
-      "d": 79,
+      "d": 80,
       "p": 1,
-      "m": 10,
+      "m": 9,
       "n": 90
     },
     "visualAvg": 75.35,
     "behaviorAvg": 70.45,
     "endpoints": 111,
     "tested": 111,
-    "checks": 279,
+    "checks": 283,
     "routes": 25,
     "dbTables": 34
   },

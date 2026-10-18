@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `1f3e19e`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `c2c5174`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -9,11 +9,11 @@ Generated 2026-10-18 from commit `1f3e19e`. Run `npm run coverage` to refresh.
 | Measure | Value |
 | --- | --- |
 | Client behaviors replicated | 224 of 250 (13 partial, 13 not yet) |
-| Backend behaviors replicated | 79 of 90 (1 partial, 10 not yet) |
+| Backend behaviors replicated | 80 of 90 (1 partial, 9 not yet) |
 | Visual fidelity (average of compared pages) | 75 / 100 over 20 pages |
 | Behavior fidelity | 70 / 100 |
 | API endpoints | 111 (111 exercised by e2e checks) |
-| Automated checks | 279 |
+| Automated checks | 283 |
 | Client routes | 25 |
 | Database tables | 34 |
 | Languages | 12 (422 strings) |
@@ -507,7 +507,7 @@ Generated 2026-10-18 from commit `1f3e19e`. Run `npm run coverage` to refresh.
 - [ ] Email on account
 - [ ] Two-factor
 
-**Catalog** (6/8)
+**Catalog** (7/8)
 
 - [x] Games API
 - [x] Tags and publisher
@@ -515,7 +515,7 @@ Generated 2026-10-18 from commit `1f3e19e`. Run `npm run coverage` to refresh.
 - [x] Seed from one source
 - [x] Upserting migrations
 - [x] Search API
-- [ ] Recommendations
+- [x] Recommendations
 - [ ] Developer uploads
 
 **Commerce** (9/11)

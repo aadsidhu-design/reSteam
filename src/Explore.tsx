@@ -14,7 +14,12 @@ const dayKey = () => new Date().toISOString().slice(0, 10)
 const KEY = 'resteam:queue:v1'
 
 /** Builds today's queue: games you do not own and have not ignored, favouring what players actually own and review. */
-const build = (): number[] =>
+const build = (): number[] => {
+  const fromServer = store.recs.map(r => r.id).filter(id => !store.owned.includes(id) && !store.ignored.includes(id))
+  if (fromServer.length >= 4) return fromServer.slice(0, QUEUE_SIZE)
+  return local()
+}
+const local = (): number[] =>
   GAMES.filter(g => !store.owned.includes(g.id) && !store.ignored.includes(g.id))
     .map(g => ({ id: g.id, score: g.owners * 3 + g.reviews * 2 + (g.rating || 50) / 100 + g.discount / 100 + (store.followed.includes(g.id) ? 5 : 0) }))
     .sort((a, b) => b.score - a.score || a.id - b.id).slice(0, QUEUE_SIZE).map(x => x.id)
@@ -34,6 +39,7 @@ export const Explore = observer(() => {
   const items = useMemo(() => q.ids.map(id => GAMES.find(g => g.id === id)).filter((g): g is Game => !!g), [q.ids])
   const done = q.at >= items.length
   const g = items[q.at]
+  const because = g ? store.recs.find(r => r.id === g.id)?.because ?? null : null
   const next = () => { const n = { ...q, at: q.at + 1 }; save(n); setQ(n) }
   const restart = () => { const n = { day: dayKey(), ids: build(), at: 0 }; save(n); setQ(n) }
 
@@ -54,6 +60,7 @@ export const Explore = observer(() => {
         <Link to={`/store/${g.id}`} className="dq-art"><Art game={g} kind="wide" /></Link>
         <div className="dq-side">
           <Link to={`/store/${g.id}`} className="dq-title">{g.title}</Link>
+          {because && <div className="muted small">Because you play {because}</div>}
           <div><span className={reviewClass(g.rating, g.reviews)}>{reviewLabel(g.rating, g.reviews)}</span>{g.reviews >= 10 && <span className="muted"> ({compact(g.reviews)})</span>}</div>
           <div className="fp-shots">{[1, 2, 3, 4].map(n => <div key={n} className="fp-shot"><Art game={g} kind="shot" variant={n} showTitle={false} /></div>)}</div>
           <p className="muted small">{g.blurb}</p>

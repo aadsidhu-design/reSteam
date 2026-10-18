@@ -55,6 +55,17 @@ check('the same game cannot be refunded twice', (await a.call('POST', '/refund/5
 await a.call('PUT', '/cart/5'); await a.call('POST', '/checkout')
 check('a re-bought game stays non-refundable', (await a.call('GET', '/refund/5')).data.eligible === false)
 
+// ---- recommendations
+const guestRecs = await fetch(`${BASE}/api/recommendations`).then(r => r.json())
+check('guests get popular recommendations', guestRecs.recommendations.length > 0 && guestRecs.personal === false)
+await c.call('PUT', '/wishlist/9') // Mossbound: Puzzle, Relaxing, Atmospheric...
+const rec = (await c.call('GET', '/recommendations')).data
+check('signed-in recommendations are personal', rec.personal === true && rec.recommendations.length > 0)
+check('owned and wishlisted-then-removed games are handled', !rec.recommendations.some(r => r.id === 11))
+await c.call('PUT', '/ignored/3')
+check('ignored games are never recommended', !(await c.call('GET', '/recommendations')).data.recommendations.some(r => r.id === 3))
+await c.call('DELETE', '/ignored/3'); await c.call('DELETE', '/wishlist/9')
+
 // ---- search
 const sr = await fetch(`${BASE}/api/search?q=${encodeURIComponent('mossb')}`).then(r => r.json())
 check('search finds games by title prefix', sr.results[0]?.title === 'Mossbound')
@@ -148,6 +159,8 @@ check('the update also appears in the news hub', (await fetch(`${BASE}/api/news`
 check('a game can be reported', (await b.call('POST', `/games/${gid}/report`, { reason: 'test' })).status === 200)
 await a.call('DELETE', `/dev/games/${gid}`)
 
+// the per-IP request limiter allows 120 a minute, which this suite now exceeds, so let it reset
+console.log('note  waiting out the per-IP limiter...'); await new Promise(r => setTimeout(r, 62_000))
 // ---- friends housekeeping
 check('a friend request can be sent', (await a.call('POST', '/friends/requests', { username: b.username })).status < 300)
 check('the recipient can decline it', (await b.call('DELETE', `/friends/requests/${a.username}`)).status === 200)

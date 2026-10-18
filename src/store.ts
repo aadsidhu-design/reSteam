@@ -84,6 +84,7 @@ class Store {
   // auth
   account: Account = 'loading'
   catalogReady = false
+  recs: { id: number; because: string | null }[] = []
   user: User | null = null
   // server-backed
   owned: number[] = []
@@ -147,7 +148,7 @@ class Store {
       aborts: false, ws: false, wsTimer: false, pingTimer: false, typingTimers: false, lastTypingSent: false, playTick: false, unsent: false,
     })
     void this.bootstrap()
-    void this.loadCatalog().then(() => this.loadStats())
+    void this.loadCatalog().then(() => { void this.loadStats(); void this.loadRecs() })
     setInterval(() => this.tickDownloads(), 250)
     autorun(() => {
       const l: LocalState = {
@@ -206,6 +207,7 @@ class Store {
   private enter(m: Me) {
     this.apply(m)
     this.account = 'in'
+    void this.loadRecs()
     this.startSocket()
     void this.refreshSocial()
     void api<{ admin: boolean }>('GET', '/admin/me').then(r => runInAction(() => { this.admin = !!r?.admin }))
@@ -236,6 +238,11 @@ class Store {
       }
       this.catalogReady = true
     })
+  }
+  /** Personalised picks from the server (popular games for guests). Reload after anything that changes your taste. */
+  async loadRecs() {
+    const r = await api<{ recommendations: { id: number; because: string | null }[] }>('GET', '/recommendations')
+    if (r) runInAction(() => { this.recs = r.recommendations })
   }
   /** Loads public review counts into the catalog so every price/rating widget reads real data. */
   async loadStats() {

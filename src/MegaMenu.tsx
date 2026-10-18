@@ -56,8 +56,7 @@ const Browse = ({ go }: { go: () => void }) => {
 }
 
 const Recommendations = observer(({ go }: { go: () => void }) => {
-  const picks = useMemo(() => GAMES.filter(g => !store.owned.includes(g.id) && !store.ignored.includes(g.id))
-    .sort((a, b) => b.owners * 3 + b.reviews - (a.owners * 3 + a.reviews) || b.discount - a.discount).slice(0, 3), [store.owned.length, store.ignored.length, GAMES.length])
+  const picks = useMemo(() => store.recs.map(r => GAMES.find(g => g.id === r.id)).filter((g): g is Game => !!g && !store.owned.includes(g.id)).slice(0, 3), [store.recs, store.owned.length, GAMES.length])
   return (
     <div className="mg-reco">
       <div>
