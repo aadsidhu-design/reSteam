@@ -1,0 +1,13 @@
+node_modules
+dist
+.wrangler
+.dev.vars
+.env
+.env.*
+*.log
+.DS_Store
+# real Cloudflare account/database ids live here, never in git
+wrangler.jsonc
+# reference screenshots of other people's apps can contain personal data
+captures/
+*.capture.png

@@ -1,0 +1,24 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // Copy to wrangler.jsonc, then run `wrangler d1 create resteam` and paste the id below.
+  // Set CLOUDFLARE_ACCOUNT_ID in your shell if your login has several accounts.
+  "name": "resteam",
+  "main": "worker/index.ts",
+  "compatibility_date": "2026-09-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application",
+    "run_worker_first": ["/api/*"]
+  },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "resteam",
+      "database_id": "REPLACE_WITH_YOUR_D1_DATABASE_ID", "migrations_dir": "./migrations" }
+  ],
+  "ratelimits": [
+    // approximate and per Cloudflare location, which is fine for abuse protection
+    { "name": "GENERAL_LIMITER", "namespace_id": "1001", "simple": { "limit": 120, "period": 60 } },
+    { "name": "WRITE_LIMITER", "namespace_id": "1002", "simple": { "limit": 30, "period": 60 } },
+    { "name": "NEW_USER_LIMITER", "namespace_id": "1003", "simple": { "limit": 10, "period": 60 } }
+  ],
+  "observability": { "enabled": true }
+}
