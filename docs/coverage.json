@@ -1,12 +1,12 @@
 {
   "generated": "2026-10-18",
-  "commit": "d110afa",
+  "commit": "d5b365b",
   "summary": {
     "client": {
-      "d": 217,
+      "d": 219,
       "p": 12,
       "m": 18,
-      "n": 247
+      "n": 249
     },
     "backend": {
       "d": 74,
@@ -14,12 +14,12 @@
       "m": 15,
       "n": 90
     },
-    "visualAvg": 75.10526315789474,
-    "behaviorAvg": 70.57894736842105,
-    "endpoints": 98,
-    "tested": 98,
-    "checks": 225,
-    "routes": 23,
+    "visualAvg": 74.45,
+    "behaviorAvg": 70.35,
+    "endpoints": 99,
+    "tested": 99,
+    "checks": 228,
+    "routes": 24,
     "dbTables": 29
   },
   "pages": [
@@ -152,6 +152,16 @@
       "behavior": 66,
       "verified": "2026-10-18",
       "notes": "Large title over blurred art and the spotlight carousel (media left, capsule, tags and wishlist star right) match; no video and no event sections below."
+    },
+    {
+      "page": "News hub",
+      "route": "/news",
+      "real": "/news/",
+      "method": "connected-browser",
+      "visual": 62,
+      "behavior": 66,
+      "verified": "2026-10-18",
+      "notes": "Sidebar, day-grouped feed and news cards follow the real page; built from the capture and not yet checked side by side. No likes, comments or curators."
     },
     {
       "page": "Footer",
@@ -566,6 +576,14 @@
     {
       "method": "GET",
       "path": "/games/:id/news",
+      "area": "Publishing and files",
+      "auth": false,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "GET",
+      "path": "/news",
       "area": "Publishing and files",
       "auth": false,
       "write": false,
@@ -1105,6 +1123,12 @@
       "file": "App.tsx",
       "translated": 0,
       "literals": 2,
+      "pct": 0
+    },
+    {
+      "file": "NewsHub.tsx",
+      "translated": 0,
+      "literals": 12,
       "pct": 0
     },
     {

@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `d110afa`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `d5b365b`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -8,13 +8,13 @@ Generated 2026-10-18 from commit `d110afa`. Run `npm run coverage` to refresh.
 
 | Measure | Value |
 | --- | --- |
-| Client behaviors replicated | 217 of 247 (12 partial, 18 not yet) |
+| Client behaviors replicated | 219 of 249 (12 partial, 18 not yet) |
 | Backend behaviors replicated | 74 of 90 (1 partial, 15 not yet) |
-| Visual fidelity (average of compared pages) | 75 / 100 over 19 pages |
-| Behavior fidelity | 71 / 100 |
-| API endpoints | 98 (98 exercised by e2e checks) |
-| Automated checks | 225 |
-| Client routes | 23 |
+| Visual fidelity (average of compared pages) | 74 / 100 over 20 pages |
+| Behavior fidelity | 70 / 100 |
+| API endpoints | 99 (99 exercised by e2e checks) |
+| Automated checks | 228 |
+| Client routes | 24 |
 | Database tables | 29 |
 | Languages | 12 (368 strings) |
 
@@ -35,6 +35,7 @@ Generated 2026-10-18 from commit `d110afa`. Run `npm run coverage` to refresh.
 | Charts | `/charts` | connected-browser | 78 | 80 | 2026-10-18 | Sub-nav, centered title over blurred art and the rank, price, change and weeks columns match; no regions and 25 rows instead of 100. Movement and weeks come from daily snapshots. |
 | New Releases | `/store/new` | connected-browser | 76 | 64 | 2026-10-18 | Breadcrumb, large title, patterned header and two spotlight capsules with caption bars match; the real page has more sections below that were not captured. |
 | Discounts and events | `/store/specials` | connected-browser | 72 | 66 | 2026-10-18 | Large title over blurred art and the spotlight carousel (media left, capsule, tags and wishlist star right) match; no video and no event sections below. |
+| News hub | `/news` | connected-browser | 62 | 66 | 2026-10-18 | Sidebar, day-grouped feed and news cards follow the real page; built from the capture and not yet checked side by side. No likes, comments or curators. |
 | Footer | `(all)` | connected-browser | 74 | 60 | 2026-10-18 | Four-column layout matched; legal pages do not exist. |
 | Loading and motion | `(all)` | screenshot+css | 94 | 88 | 2026-10-18 | Throbber, carousel fades, hover lifts and menu timings copied from the real CSS values. |
 | Language menu | `(header)` | connected-browser | 70 | 55 | 2026-10-18 | 12 of about 29 languages, chrome strings only; real store translates every page. |
@@ -90,6 +91,7 @@ Generated 2026-10-18 from commit `d110afa`. Run `npm run coverage` to refresh.
 | DELETE | `/dev/games/:id/web` | Publishing and files | yes | yes | yes |
 | PUT | `/dev/games/:id/discount` | Publishing and files | yes | yes | yes |
 | GET | `/games/:id/news` | Publishing and files | public | - | yes |
+| GET | `/news` | Publishing and files | public | - | yes |
 | POST | `/dev/games/:id/news` | Publishing and files | yes | yes | yes |
 | DELETE | `/dev/news/:id` | Publishing and files | yes | yes | yes |
 | POST | `/dev/games/:id/publish` | Publishing and files | yes | yes | yes |
@@ -170,6 +172,7 @@ Generated 2026-10-18 from commit `d110afa`. Run `npm run coverage` to refresh.
 | --- | --- | --- | --- |
 | About.tsx | 0 | 10 | 0% |
 | App.tsx | 0 | 2 | 0% |
+| NewsHub.tsx | 0 | 12 | 0% |
 | ui.tsx | 0 | 3 | 0% |
 | Community.tsx | 11 | 28 | 28% |
 | NewReleases.tsx | 3 | 4 | 43% |
@@ -308,7 +311,7 @@ Generated 2026-10-18 from commit `d110afa`. Run `npm run coverage` to refresh.
 - [ ] Scheduled updates
 - [ ] Download region
 
-**Store** (53/59)
+**Store** (54/60)
 
 - [x] Browse menu
 - [x] Recommendations menu
@@ -338,6 +341,7 @@ Generated 2026-10-18 from commit `d110afa`. Run `npm run coverage` to refresh.
 - [x] Discovery Queue
 - [x] Charts and stats
 - [x] New Releases page
+- [x] News hub
 - [x] Discounts and events page
 - [x] Chart history (movement, weeks)
 - [x] Account page layout
@@ -405,7 +409,7 @@ Generated 2026-10-18 from commit `d110afa`. Run `npm run coverage` to refresh.
 - [ ] Emoji and stickers
 - [ ] Nicknames
 
-**Community** (25/26)
+**Community** (26/27)
 
 - [x] Activity page
 - [x] Recently played hubs
@@ -427,6 +431,7 @@ Generated 2026-10-18 from commit `d110afa`. Run `npm run coverage` to refresh.
 - [x] Upload your own game
 - [x] Sale pricing
 - [x] Game news and follower alerts
+- [x] Store-wide news feed
 - [x] Developer achievements
 - [x] Wishlist sale alerts
 - [x] UI translation (11 languages)

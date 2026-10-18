@@ -34,7 +34,7 @@ export const CLIENT: Group = {
     'Search with suggestions:d', 'Wishlist link:d', 'Sale hero banner:d', 'Featured carousel:d', 'Carousel info panel:d', 'Send a Gift Card:d',
     'Special offers:d', 'Browse by genre:d', 'Top sellers tabs:d', 'Free to play row:d', 'Game page media viewer:p', 'Game page description:d',
     'Review summary:d', 'Popular tags:d', 'Buy box:d', 'Follow / Ignore:d', 'Customer reviews:d', 'Write a review:d', 'Helpful votes:d', 'More like this:d',
-    'Discovery Queue:d', 'Charts and stats:d', 'New Releases page:d', 'Discounts and events page:d', 'Chart history (movement, weeks):d', 'Account page layout:d', 'Profile layout:d', 'Hub news and follow:d', 'Hover screenshot previews:d', 'Cart page:d', 'Checkout:d', 'Wishlist page:d', 'Free-to-play claim:d', 'Discount badges:d',
+    'Discovery Queue:d', 'Charts and stats:d', 'New Releases page:d', 'News hub:d', 'Discounts and events page:d', 'Chart history (movement, weeks):d', 'Account page layout:d', 'Profile layout:d', 'Hub news and follow:d', 'Hover screenshot previews:d', 'Cart page:d', 'Checkout:d', 'Wishlist page:d', 'Free-to-play claim:d', 'Discount badges:d',
     'Search results rows:d', 'Narrow-by filter panels:d', 'Sort options:d', 'Active filter chips:d', 'Excluded titles notice:d', 'Ignore hides games:d', 'Follow list:d', 'Payment step:d', 'Cart recommendations:d', 'Discovery queue banner:d', 'Promo banner:p', 'Featured tag grids:d', 'Top new releases:d', 'Popular tabs with preview:d', 'DLC list:p', 'Handheld compatibility box:p', 'Right rail details:d', 'Age rating box:p', 'Platform icons:p',
   ],
   'Friends & Chat': [
@@ -48,7 +48,7 @@ export const CLIENT: Group = {
   'Community': [
     'Activity page:d', 'Recently played hubs:d', 'Popular hubs:d', 'Find hubs search:d', 'Find people search:d', 'Content tabs:d', 'Most popular / recent:d',
     'Content cards:d', 'Review cards:d', 'Hub pages:d', 'Discussions:d', 'Guides:d', 'Market:m',
-    'Hub header and stats:d', 'Hub store banner:d', 'Guide cards:d', 'Post replies and votes:d', 'Real posts and users:d', 'Upload your own game:d', 'Sale pricing:d', 'Game news and follower alerts:d', 'Developer achievements:d', 'Wishlist sale alerts:d', 'UI translation (11 languages):d', 'Language menu:d', 'Real file downloads:d',
+    'Hub header and stats:d', 'Hub store banner:d', 'Guide cards:d', 'Post replies and votes:d', 'Real posts and users:d', 'Upload your own game:d', 'Sale pricing:d', 'Game news and follower alerts:d', 'Store-wide news feed:d', 'Developer achievements:d', 'Wishlist sale alerts:d', 'UI translation (11 languages):d', 'Language menu:d', 'Real file downloads:d',
   ],
   'Settings': [
     'Settings window:d', 'Account page:d', 'Add funds:d', 'Privacy settings:d', 'Change password:d', 'Delete account:d', 'Friends & Chat page:d', 'Notifications page:d',

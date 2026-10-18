@@ -270,6 +270,22 @@ export const devRoutes: Route[] = [
     ).bind(gameId(c)).all()
     return json({ news: results })
   }),
+  /** The news hub: everything developers have announced, optionally only for games you follow or own. */
+  route('GET', '/news', { auth: false }, async c => {
+    const mine = c.url.searchParams.get('scope') === 'mine'
+    if (mine && !c.user) return fail(401, 'not signed in')
+    const q = (c.url.searchParams.get('q') ?? '').trim().slice(0, 40).replace(/[\\%_]/g, m => `\\${m}`)
+    const binds: unknown[] = []
+    let where = "g.status = 'published'"
+    if (mine) { where += ' AND g.id IN (SELECT game_id FROM followed WHERE user_id = ? UNION SELECT game_id FROM library WHERE user_id = ?)'; binds.push(c.user!.id, c.user!.id) }
+    if (q) { where += " AND (n.title LIKE ? ESCAPE '\\' OR g.title LIKE ? ESCAPE '\\')"; binds.push(`%${q}%`, `%${q}%`) }
+    const { results } = await c.env.DB.prepare(
+      `SELECT n.id, n.title, n.body, n.created_at AS at, g.id AS gameId, g.title AS gameTitle, u.display_name AS author
+       FROM game_news n JOIN games g ON g.id = n.game_id JOIN users u ON u.id = n.user_id WHERE ${where} ORDER BY n.created_at DESC LIMIT 60`,
+    ).bind(...binds).all()
+    return json({ news: results }, 200, mine ? {} : { 'cache-control': 'public, max-age=20' })
+  }),
+
   route('POST', '/dev/games/:id/news', {}, async c => {
     const g = await ownedGame(c)
     if (!g) return fail(404, 'no such game')

@@ -33,6 +33,7 @@ const Browse = ({ go }: { go: () => void }) => {
     [t('mm.storehome'), '/store'],
     [t('mm.newreleases'), '/store/new', t('mm.newreleasesdesc')],
     [t('mm.charts'), '/charts', t('mm.chartsdesc')],
+    ['News & Updates', '/news'],
     [t('home.discounts'), '/store/specials'],
     [t('home.free'), '/store/browse?free=1'],
     [t('mm.browsergames'), '/store/browse?playable=1'],
