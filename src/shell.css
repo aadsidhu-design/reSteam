@@ -6,6 +6,12 @@
 .gh-nav { position: absolute; left: 200px; top: 0; display: flex; }
 .gh-nav a { position: relative; display: block; padding: 45px 7px 7px; line-height: 16px; font-size: 16px; font-weight: 600; color: #fff; text-transform: uppercase; letter-spacing: .01em; }
 .gh-nav a:hover { color: #fff; }
+.gh-navitem { position: relative; }
+.gh-drop { position: absolute; top: 100%; left: 0; z-index: 60; min-width: 180px; padding: 4px 0; background: #3d4450; box-shadow: 0 6px 16px rgba(0, 0, 0, .55); animation: ghdrop .12s ease-out; }
+.gh-nav .gh-drop a { padding: 8px 16px; font-size: 14px; line-height: 18px; font-weight: 400; text-transform: none; letter-spacing: 0; color: #dcdedf; white-space: nowrap; }
+.gh-nav .gh-drop a:hover { background: #dcdedf; color: #3d4450; }
+@keyframes ghdrop { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .gh-drop { animation: none; } }
 .gh-nav a.active { color: #1a9fff; }
 .gh-nav a.active::after { content: ''; position: absolute; left: 7px; right: 7px; bottom: 5px; height: 3px; background: #1a9fff; }
 .gh-right { position: absolute; right: 0; top: 4px; height: 26px; display: flex; align-items: center; gap: 8px; font-size: 12px; }

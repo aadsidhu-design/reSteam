@@ -451,6 +451,12 @@ const ROWS: Row[] = [
   ['vr.gameid', 'Game ID', 'ID del juego', 'ID du jeu', 'Spiel-ID', 'ID del gioco', 'ID do jogo', 'ゲームID', '게임 ID', '游戏 ID', 'ID игры', 'Oyun kimliği', 'ID gry'],
   ['vr.props', 'Properties', 'Propiedades', 'Propriétés', 'Eigenschaften', 'Proprietà', 'Propriedades', 'プロパティ', '속성', '属性', 'Свойства', 'Özellikler', 'Właściwości'],
   ['vr.keep', 'Keep the game', 'Conservar el juego', 'Garder le jeu', 'Spiel behalten', 'Tieni il gioco', 'Manter o jogo', 'ゲームを残す', '게임 유지', '保留游戏', 'Оставить игру', 'Oyunu sakla', 'Zachowaj grę'],
+  ['dd.collections', 'Collections', 'Colecciones', 'Collections', 'Sammlungen', 'Raccolte', 'Coleções', 'コレクション', '컬렉션', '收藏夹', 'Коллекции', 'Koleksiyonlar', 'Kolekcje'],
+  ['dd.discovery', 'Discovery Queue', 'Lista de descubrimiento', 'Liste de découvertes', 'Entdeckungsliste', 'Coda di scoperta', 'Fila de descobertas', 'ディスカバリーキュー', '발견 대기열', '探索队列', 'Очередь рекомендаций', 'Keşif Kuyruğu', 'Kolejka odkrywania'],
+  ['dd.specials', 'Specials', 'Ofertas', 'Promotions', 'Angebote', 'Offerte', 'Ofertas', 'スペシャル', '특별 할인', '特惠', 'Скидки', 'Fırsatlar', 'Promocje'],
+  ['dd.charts', 'Charts', 'Listas de éxitos', 'Classements', 'Charts', 'Classifiche', 'Paradas', 'チャート', '차트', '排行榜', 'Чарты', 'Listeler', 'Zestawienia'],
+  ['dd.news', 'News', 'Noticias', 'Actualités', 'Neuigkeiten', 'Notizie', 'Notícias', 'ニュース', '뉴스', '新闻', 'Новости', 'Haberler', 'Wiadomości'],
+  ['dd.interface', 'Interface settings', 'Ajustes de interfaz', 'Paramètres d’interface', 'Oberflächeneinstellungen', 'Impostazioni interfaccia', 'Configurações de interface', 'インターフェース設定', '인터페이스 설정', '界面设置', 'Настройки интерфейса', 'Arayüz ayarları', 'Ustawienia interfejsu'],
 ]
 
 export const PAGE_STRINGS: Record<Lang, Record<string, string>> = Object.fromEntries(

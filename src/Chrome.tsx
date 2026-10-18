@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { GAMES, fmt } from './data'
@@ -7,6 +7,24 @@ import { Icon } from './icons'
 import { Avatar, Logo, Modal, ago, useDismiss } from './ui'
 import { LANGUAGES, i18n, t } from './i18n'
 import './shell.css'
+
+/** A top-level nav link whose dropdown opens on hover (or keyboard focus), like the real header. */
+function NavDrop({ to, label, active, items }: { to: string; label: string; active: boolean; items: [string, string][] }) {
+  const [open, setOpen] = useState(false)
+  const timer = useRef<number>(0)
+  const show = () => { window.clearTimeout(timer.current); setOpen(true) }
+  const hide = () => { window.clearTimeout(timer.current); timer.current = window.setTimeout(() => setOpen(false), 120) }
+  return (
+    <div className="gh-navitem" onMouseEnter={show} onMouseLeave={hide} onFocus={show} onBlur={hide}>
+      <NavLink to={to} className={active ? 'active' : ''} aria-haspopup="true" aria-expanded={open}>{label}</NavLink>
+      {open && (
+        <div className="gh-drop" role="menu">
+          {items.map(([text, href]) => <Link key={text + href} to={href} role="menuitem" onClick={() => setOpen(false)}>{text}</Link>)}
+        </div>
+      )}
+    </div>
+  )
+}
 
 export const Header = observer(() => {
   const nav = useNavigate()
@@ -26,11 +44,11 @@ export const Header = observer(() => {
       <div className={`gh-inner ${isCommunity || path.startsWith('/profile') ? 'narrow' : ''}`}>
         <Link to="/store" className="gh-logo" aria-label="reSteam home"><Logo size={36} /><span>reSteam</span></Link>
         <nav className="gh-nav">
-          <NavLink to="/store" className={isStore ? 'active' : ''}>{t('nav.store')}</NavLink>
-          <NavLink to="/library" className={isLibrary ? 'active' : ''}>{t('nav.library')}</NavLink>
-          <NavLink to="/community" className={isCommunity ? 'active' : ''}>{t('nav.community')}</NavLink>
-          {store.signedIn && <NavLink to="/profile" className={path === '/profile' || path.startsWith('/profile/') ? 'active' : ''}>{store.name.toUpperCase()}</NavLink>}
-          <NavLink to="/about" className={isAbout ? 'active' : ''}>{t('nav.about')}</NavLink>
+          <NavDrop to="/store" label={t('nav.store')} active={isStore} items={[[t('st.home'), '/store'], [t('dd.discovery'), '/explore'], [t('mm.newreleases'), '/store/new'], [t('dd.specials'), '/store/specials'], [t('dd.charts'), '/charts'], [t('dd.news'), '/news'], [t('nav.wishlist'), '/wishlist']]} />
+          <NavDrop to="/library" label={t('nav.library')} active={isLibrary} items={[[t('st.home'), '/library'], [t('dd.collections'), '/library'], [t('user.downloads'), '/downloads'], [t('dd.interface'), '/settings/interface']]} />
+          <NavDrop to="/community" label={t('nav.community')} active={isCommunity} items={[[t('st.home'), '/community'], [t('comm.discussions'), '/community?tab=Discussions'], [t('comm.guides'), '/community?tab=Guides'], [t('comm.reviews'), '/community?tab=Reviews'], [t('dd.news'), '/news'], [t('dd.charts'), '/charts']]} />
+          {store.signedIn && <NavDrop to="/profile" label={store.name.toUpperCase()} active={path === '/profile' || path.startsWith('/profile/')} items={[[t('user.profile'), '/profile'], [t('nav.wishlist'), '/wishlist'], [t('ag.upload'), '/developer'], [t('user.account'), '/settings/account'], [t('user.settings'), '/settings/interface']]} />}
+          <NavDrop to="/about" label={t('nav.about')} active={isAbout} items={[[t('nav.about'), '/about'], [t('dd.news'), '/news'], [t('ag.upload'), '/developer']]} />
         </nav>
         <div className="grow" />
         {dl && dlGame && (

@@ -1,6 +1,6 @@
 {
   "generated": "2026-10-18",
-  "commit": "ae8720e",
+  "commit": "47b96c8",
   "summary": {
     "client": {
       "d": 224,
@@ -1138,74 +1138,74 @@
     {
       "code": "schinese",
       "name": "Chinese (Simplified)",
-      "have": 492,
-      "total": 492
+      "have": 498,
+      "total": 498
     },
     {
       "code": "english",
       "name": "English",
-      "have": 492,
-      "total": 492
+      "have": 498,
+      "total": 498
     },
     {
       "code": "french",
       "name": "French",
-      "have": 492,
-      "total": 492
+      "have": 498,
+      "total": 498
     },
     {
       "code": "german",
       "name": "German",
-      "have": 492,
-      "total": 492
+      "have": 498,
+      "total": 498
     },
     {
       "code": "italian",
       "name": "Italian",
-      "have": 492,
-      "total": 492
+      "have": 498,
+      "total": 498
     },
     {
       "code": "japanese",
       "name": "Japanese",
-      "have": 492,
-      "total": 492
+      "have": 498,
+      "total": 498
     },
     {
       "code": "koreana",
       "name": "Korean",
-      "have": 492,
-      "total": 492
+      "have": 498,
+      "total": 498
     },
     {
       "code": "polish",
       "name": "Polish",
-      "have": 492,
-      "total": 492
+      "have": 498,
+      "total": 498
     },
     {
       "code": "brazilian",
       "name": "Portuguese (Brazil)",
-      "have": 492,
-      "total": 492
+      "have": 498,
+      "total": 498
     },
     {
       "code": "russian",
       "name": "Russian",
-      "have": 492,
-      "total": 492
+      "have": 498,
+      "total": 498
     },
     {
       "code": "spanish",
       "name": "Spanish",
-      "have": 492,
-      "total": 492
+      "have": 498,
+      "total": 498
     },
     {
       "code": "turkish",
       "name": "Turkish",
-      "have": 492,
-      "total": 492
+      "have": 498,
+      "total": 498
     }
   ],
   "textCoverage": [
@@ -1264,12 +1264,6 @@
       "pct": 66.66666666666666
     },
     {
-      "file": "Chrome.tsx",
-      "translated": 47,
-      "literals": 20,
-      "pct": 70.1492537313433
-    },
-    {
       "file": "NewReleases.tsx",
       "translated": 5,
       "literals": 2,
@@ -1280,6 +1274,12 @@
       "translated": 65,
       "literals": 23,
       "pct": 73.86363636363636
+    },
+    {
+      "file": "Chrome.tsx",
+      "translated": 72,
+      "literals": 20,
+      "pct": 78.26086956521739
     },
     {
       "file": "Reviews.tsx",
