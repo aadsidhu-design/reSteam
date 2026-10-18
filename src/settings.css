@@ -41,3 +41,6 @@
 .pf-stats > div { display: flex; justify-content: space-between; color: #8ba6bd; font-size: 17px; }
 .pf-stats b { color: #fff; }
 .fps-overlay { position: fixed; left: 12px; top: 88px; background: #000a; color: #9fe870; font: 700 14px/1 monospace; padding: 6px 10px; border-radius: 3px; z-index: 90; }
+.pwform { display: grid; gap: 10px; max-width: 360px; margin-bottom: 8px; }
+.sbody h2.mt { margin-top: 28px; }
+.pf-private { padding: 28px 0; font-size: 16px; }

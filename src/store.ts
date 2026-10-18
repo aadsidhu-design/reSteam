@@ -1,7 +1,17 @@
 import { makeAutoObservable, autorun, runInAction } from 'mobx'
-import { BOT_REPLIES, FRIENDS, GAMES, NEWS, priceOf, type Friend } from './data'
+import { GAMES, priceOf, type Presence } from './data'
 
-export interface ChatMessage { from: 'me' | string; text: string; at: number }
+export interface User { username: string; name: string }
+export interface ChatMessage { id?: number; from: 'me' | string; text: string; at: number }
+export interface FriendPresence { status: Presence; gameId?: number | null; lastSeen?: number | null }
+export interface Friend { username: string; name: string; presence: FriendPresence; unread: number; since?: number }
+export interface FriendRequest { username: string; name: string; at: number }
+export interface Group { id: string; name: string; mine: boolean; members: number }
+export interface GroupMember { username: string; name: string }
+export interface GroupMessage { id: number; from: 'me' | string; text: string; at: number }
+export interface Person { username: string; name: string }
+export interface Notification { id: number; kind: string; data: Record<string, any>; at: number; read: boolean }
+export interface ActivityEvent { id: number; kind: string; gameId: number | null; data: Record<string, any>; at: number; user: 'me' | Person }
 export interface DownloadItem { id: number; progress: number; phase: string; speed: number; paused: boolean }
 export interface Toast { id: number; text: string }
 export interface Settings {
@@ -15,113 +25,99 @@ export interface Settings {
   fpsCounter: boolean
   cloud: boolean
   notifySounds: boolean
-  profilePrivacy: 'public' | 'friends' | 'private'
 }
+export type Privacy = 'public' | 'friends' | 'private'
 export interface CustomGame { id: number; title: string }
 export interface Collection { id: string; name: string; games: number[] }
-export interface GroupChat { id: string; name: string; members: string[]; messages: ChatMessage[] }
 export type Shelf = 'whatsnew' | 'recent' | 'favorites' | 'playnext' | 'installed'
+export type Account = 'loading' | 'out' | 'in'
 
-const KEY = 'resteam:v1'
-const LOCAL = 'resteam:local:v1'
-
-interface Saved {
-  owned: number[]
-  wishlist: number[]
-  cart: number[]
-  wallet: number
-  installed: number[]
-  favorites: number[]
-  lastPlayed: Record<number, number>
-  playtime: Record<number, number>
-  chats: Record<string, ChatMessage[]>
-  status: Friend['status']
-  name: string
-}
+const LOCAL = 'resteam:local:v2'
 
 interface LocalState {
   settings: Settings
   customGames: CustomGame[]
   hints: Record<string, boolean>
-  readNotifs: string[]
-  posts: Record<number, { text: string; at: number }[]>
   shelves: Shelf[]
   libraryGrid: boolean
   installedOnly: boolean
   recentSort: boolean
-  groups: GroupChat[]
   viewed: number[]
-  ignored: number[]
-  followed: number[]
   collections: Collection[]
   favFriends: string[]
 }
 
 const DEFAULT_SETTINGS: Settings = {
   uiScale: 1, gridSize: 150, bandwidthLimit: 0, autoUpdates: true, downloadsDuringGame: false,
-  reduceMotion: false, overlay: true, fpsCounter: false, cloud: true, notifySounds: true, profilePrivacy: 'public',
+  reduceMotion: false, overlay: true, fpsCounter: false, cloud: true, notifySounds: true,
 }
 
 const readJson = <T,>(k: string, fallback: T): T => {
   try { return { ...fallback, ...JSON.parse(localStorage.getItem(k) ?? '{}') } } catch { return fallback }
 }
 
-const sessionId = (): string => {
-  try {
-    let id = localStorage.getItem('resteam:session')
-    if (!id) { id = crypto.randomUUID(); localStorage.setItem('resteam:session', id) }
-    return id
-  } catch { return crypto.randomUUID() }
+interface Me {
+  username: string; name: string; status: 'online' | 'away' | 'offline'; wallet: number; privacy: Privacy
+  owned: number[]; installed: number[]; playtime: Record<number, number>; favorites: number[]; lastPlayed: Record<number, number>
+  wishlist: number[]; cart: number[]; ignored: number[]; followed: number[]
 }
-let SESSION = sessionId()
 
-interface Me extends Omit<Saved, 'chats'> { }
-
-/** Calls the Worker API; surfaces the server's error text so forms can show it. */
-async function call<T>(method: string, path: string, body?: unknown): Promise<{ data?: T; error?: string }> {
+/** Calls the Worker API with the session cookie; surfaces the server's error text so forms can show it. */
+export async function call<T>(method: string, path: string, body?: unknown): Promise<{ data?: T; error?: string; status: number }> {
   try {
     const res = await fetch(`/api${path}`, {
       method,
-      headers: { 'x-session': SESSION, ...(body ? { 'content-type': 'application/json' } : {}) },
-      body: body ? JSON.stringify(body) : undefined,
+      credentials: 'same-origin',
+      headers: { 'x-requested-with': 'fetch', ...(body !== undefined ? { 'content-type': 'application/json' } : {}) },
+      body: body !== undefined ? JSON.stringify(body) : undefined,
     })
     const j = await res.json().catch(() => ({}))
-    return res.ok ? { data: j as T } : { error: (j as { error?: string }).error ?? 'request failed' }
-  } catch { return { error: 'Could not reach the server' } }
+    return res.ok ? { data: j as T, status: res.status } : { error: (j as { error?: string }).error ?? 'request failed', status: res.status }
+  } catch { return { error: 'Could not reach the server', status: 0 } }
 }
 /** Like call(), but resolves null on any failure so the UI keeps working offline. */
-const api = async <T = Me>(method: string, path: string, body?: unknown): Promise<T | null> => (await call<T>(method, path, body)).data ?? null
+export const api = async <T,>(method: string, path: string, body?: unknown): Promise<T | null> => (await call<T>(method, path, body)).data ?? null
 
 const sizeMb = (id: number) => (GAMES.find(g => g.id === id)?.sizeGb ?? 1) * 1024
 
 class Store {
+  // auth
+  account: Account = 'loading'
+  user: User | null = null
   // server-backed
-  owned: number[] = [11]
+  owned: number[] = []
   wishlist: number[] = []
   cart: number[] = []
-  wallet = 5000
+  wallet = 0
   installed: number[] = []
   favorites: number[] = []
   lastPlayed: Record<number, number> = {}
   playtime: Record<number, number> = {}
-  status: Friend['status'] = 'online'
-  name = 'Player'
+  ignored: number[] = []
+  followed: number[] = []
+  status: 'online' | 'away' | 'offline' = 'online'
+  privacy: Privacy = 'public'
+  // social
+  friends: Friend[] = []
+  incoming: FriendRequest[] = []
+  outgoing: FriendRequest[] = []
   chats: Record<string, ChatMessage[]> = {}
-  friends: Friend[] = FRIENDS
+  groups: Group[] = []
+  groupMessages: Record<string, GroupMessage[]> = {}
+  groupMembers: Record<string, GroupMember[]> = {}
+  notifications: Notification[] = []
+  activity: ActivityEvent[] = []
+  typing: Record<string, boolean> = {}
+  socket: 'closed' | 'connecting' | 'open' = 'closed'
   // local (per browser)
   settings: Settings = DEFAULT_SETTINGS
   customGames: CustomGame[] = []
   hints: Record<string, boolean> = {}
-  readNotifs: string[] = []
-  posts: Record<number, { text: string; at: number }[]> = {}
   shelves: Shelf[] = ['whatsnew', 'recent']
   libraryGrid = false
   installedOnly = false
   recentSort = false
-  groups: GroupChat[] = []
   viewed: number[] = []
-  ignored: number[] = []
-  followed: number[] = []
   collections: Collection[] = []
   favFriends: string[] = []
   // session
@@ -131,29 +127,32 @@ class Store {
   completed: { id: number; at: number }[] = []
   running: number | null = null
   openChats: string[] = []
-  typing: Record<string, boolean> = {}
   toasts: Toast[] = []
   friendsOpen = false
 
+  private ws?: WebSocket
+  private wsTimer?: ReturnType<typeof setTimeout>
+  private pingTimer?: ReturnType<typeof setInterval>
+  private typingTimers: Record<string, ReturnType<typeof setTimeout>> = {}
+  private lastTypingSent = 0
+  private playTick?: ReturnType<typeof setInterval>
+  private unsent = 0
+
   constructor() {
-    Object.assign(this, readJson<Partial<Saved>>(KEY, {}))
     const local = readJson<Partial<LocalState>>(LOCAL, {})
     Object.assign(this, local, { settings: { ...DEFAULT_SETTINGS, ...(local.settings ?? {}) } })
-    makeAutoObservable(this)
-    void this.hydrate()
-    void this.refreshFriends()
-    setInterval(() => { if (this.friends.some(f => f.status === 'pending')) void this.refreshFriends() }, 4000)
+    makeAutoObservable<Store, 'ws' | 'wsTimer' | 'pingTimer' | 'typingTimers' | 'lastTypingSent' | 'playTick' | 'unsent'>(this, {
+      ws: false, wsTimer: false, pingTimer: false, typingTimers: false, lastTypingSent: false, playTick: false, unsent: false,
+    })
+    void this.bootstrap()
+    void this.loadStats()
     setInterval(() => this.tickDownloads(), 250)
     autorun(() => {
-      const s: Saved = {
-        owned: this.owned, wishlist: this.wishlist, cart: this.cart, wallet: this.wallet, installed: this.installed,
-        favorites: this.favorites, lastPlayed: this.lastPlayed, playtime: this.playtime, chats: this.chats, status: this.status, name: this.name,
-      }
       const l: LocalState = {
-        settings: this.settings, customGames: this.customGames, hints: this.hints, readNotifs: this.readNotifs, posts: this.posts,
-        shelves: this.shelves, libraryGrid: this.libraryGrid, installedOnly: this.installedOnly, recentSort: this.recentSort, groups: this.groups, viewed: this.viewed, ignored: this.ignored, followed: this.followed, collections: this.collections, favFriends: this.favFriends,
+        settings: this.settings, customGames: this.customGames, hints: this.hints, shelves: this.shelves, libraryGrid: this.libraryGrid,
+        installedOnly: this.installedOnly, recentSort: this.recentSort, viewed: this.viewed, collections: this.collections, favFriends: this.favFriends,
       }
-      try { localStorage.setItem(KEY, JSON.stringify(s)); localStorage.setItem(LOCAL, JSON.stringify(l)) } catch { /* storage unavailable */ }
+      try { localStorage.setItem(LOCAL, JSON.stringify(l)) } catch { /* storage unavailable */ }
     })
     autorun(() => {
       // everything is sized in px, so scale with zoom and tell the layout how tall the zoomed window may be
@@ -164,23 +163,19 @@ class Store {
   }
 
   // ---- derived ----
+  get name() { return this.user?.name ?? '' }
+  get signedIn() { return this.account === 'in' }
   get ownedGames() { return GAMES.filter(g => this.owned.includes(g.id)) }
   get cartGames() { return GAMES.filter(g => this.cart.includes(g.id)) }
   get cartTotal() { return this.cartGames.reduce((n, g) => n + priceOf(g), 0) }
   get wishlistGames() { return GAMES.filter(g => this.wishlist.includes(g.id)) }
   get activeDownload() { return this.queue.find(d => !d.paused) }
-  get friendCode() { return String([...SESSION].reduce((h, c) => (h * 33 + c.charCodeAt(0)) % 2_000_000_000, 5381) + 1_000_000_000) }
   get storageUsedGb() { return this.installed.reduce((n, id) => n + sizeMb(id) / 1024, 0) }
-
-  get notifications() {
-    const list: { id: string; text: string; at: number }[] = [{ id: 'welcome', text: 'Welcome to reSteam! Browse the store or redeem a product code with "Add a Game".', at: 0 }]
-    for (const g of this.wishlistGames) if (g.discount > 0) list.push({ id: `sale-${g.id}`, text: `${g.title} on your wishlist is ${g.discount}% off`, at: 1 })
-    for (const c of this.completed) list.push({ id: `dl-${c.id}-${c.at}`, text: `${GAMES.find(g => g.id === c.id)?.title ?? 'A game'} finished installing`, at: c.at })
-    for (const f of this.friends) if (f.custom && f.status !== 'pending') list.push({ id: `fr-${f.id}`, text: `${f.name} accepted your friend request`, at: 2 })
-    return list.sort((a, b) => b.at - a.at)
-  }
-  get unreadCount() { return this.notifications.filter(n => !this.readNotifs.includes(n.id)).length }
-  markAllRead() { this.readNotifs = this.notifications.map(n => n.id) }
+  get unreadCount() { return this.notifications.filter(n => !n.read).length }
+  get unreadChats() { return this.friends.reduce((n, f) => n + f.unread, 0) }
+  get onlineFriends() { return this.friends.filter(f => f.presence.status !== 'offline') }
+  friend(username: string) { return this.friends.find(f => f.username.toLowerCase() === username.toLowerCase()) }
+  friendsPlaying(gameId: number) { return this.friends.filter(f => f.presence.status === 'ingame' && f.presence.gameId === gameId) }
 
   toast(text: string) {
     const id = Date.now() + Math.random()
@@ -188,17 +183,92 @@ class Store {
     setTimeout(() => runInAction(() => { this.toasts = this.toasts.filter(t => t.id !== id) }), 3500)
   }
 
-  // ---- server sync ----
+  // ---- accounts ----
   private apply(m: Me) {
+    this.user = { username: m.username, name: m.name }
     this.owned = m.owned; this.wishlist = m.wishlist; this.cart = m.cart; this.wallet = m.wallet
     this.installed = m.installed; this.favorites = m.favorites; this.lastPlayed = m.lastPlayed
-    this.playtime = m.playtime; this.status = m.status
-    if (m.name) this.name = m.name
+    this.playtime = m.playtime; this.status = m.status; this.privacy = m.privacy
+    this.ignored = m.ignored; this.followed = m.followed
+  }
+  private clearAccount() {
+    this.stopSocket()
+    clearInterval(this.playTick)
+    this.user = null; this.running = null
+    this.owned = []; this.wishlist = []; this.cart = []; this.wallet = 0; this.installed = []; this.favorites = []
+    this.lastPlayed = {}; this.playtime = {}; this.ignored = []; this.followed = []
+    this.friends = []; this.incoming = []; this.outgoing = []; this.chats = {}; this.groups = []; this.groupMessages = {}; this.groupMembers = {}
+    this.notifications = []; this.activity = []; this.typing = {}; this.openChats = []; this.friendsOpen = false
+    this.queue = []
+  }
+  private enter(m: Me) {
+    this.apply(m)
+    this.account = 'in'
+    this.startSocket()
+    void this.refreshSocial()
+  }
+  async bootstrap() {
+    const m = await api<Me>('GET', '/me')
+    runInAction(() => { if (m) this.enter(m); else this.account = 'out' })
   }
   async hydrate() {
-    const m = await api('GET', '/me')
+    const m = await api<Me>('GET', '/me')
     if (m) runInAction(() => this.apply(m))
   }
+  /** Loads public review counts into the catalog so every price/rating widget reads real data. */
+  async loadStats() {
+    const r = await api<{ stats: Record<string, { reviews: number; positive: number; owners: number; playing: number }> }>('GET', '/stats')
+    if (!r) return
+    runInAction(() => {
+      for (const g of GAMES) {
+        const s = r.stats[g.id]
+        g.reviews = s?.reviews ?? 0
+        g.rating = s && s.reviews > 0 ? Math.round((s.positive / s.reviews) * 100) : 0
+        g.owners = s?.owners ?? 0
+        g.playing = s?.playing ?? 0
+      }
+    })
+  }
+  async signIn(username: string, password: string, remember: boolean): Promise<string | null> {
+    const { data, error } = await call<{ user: User }>('POST', '/auth/login', { username, password, remember })
+    if (!data) return error ?? 'Could not sign in'
+    const m = await api<Me>('GET', '/me')
+    if (m) runInAction(() => this.enter(m))
+    return null
+  }
+  /** Resolves the one-time recovery key on success. */
+  async register(username: string, password: string, remember: boolean): Promise<{ error?: string; recoveryCode?: string }> {
+    const { data, error } = await call<{ user: User; recoveryCode: string }>('POST', '/auth/register', { username, password, remember })
+    if (!data) return { error: error ?? 'Could not create the account' }
+    const m = await api<Me>('GET', '/me')
+    if (m) runInAction(() => this.enter(m))
+    return { recoveryCode: data.recoveryCode }
+  }
+  async recover(username: string, recoveryCode: string, newPassword: string): Promise<{ error?: string; recoveryCode?: string }> {
+    const { data, error } = await call<{ recoveryCode: string }>('POST', '/auth/recover', { username, recoveryCode, newPassword })
+    if (!data) return { error: error ?? 'Recovery failed' }
+    return { recoveryCode: data.recoveryCode }
+  }
+  async signOut() {
+    await call('POST', '/auth/logout')
+    runInAction(() => { this.clearAccount(); this.account = 'out' })
+  }
+  async changePassword(current: string, next: string): Promise<string | null> {
+    return (await call('POST', '/auth/password', { current, next })).error ?? null
+  }
+  async deleteAccount(password: string): Promise<string | null> {
+    const { error } = await call('DELETE', '/auth/account', { password })
+    if (error) return error
+    runInAction(() => { this.clearAccount(); this.account = 'out' })
+    return null
+  }
+  async setName(name: string): Promise<string | null> { return this.sync('PUT', '/profile', { name }) }
+  async setPrivacy(privacy: Privacy): Promise<string | null> { return this.sync('PUT', '/profile', { privacy }) }
+  async setStatus(status: 'online' | 'away' | 'offline') {
+    this.status = status
+    await call('PUT', '/presence', { status })
+  }
+
   /** Fire a mutation; on rejection fall back to the server's truth. */
   private async sync(method: string, path: string, body?: unknown): Promise<string | null> {
     const { data, error } = await call<Me>(method, path, body)
@@ -209,12 +279,22 @@ class Store {
   }
 
   // ---- shopping ----
+  /** Store actions need an account; send guests to the sign-in page and come back afterwards. */
+  needLogin(): boolean {
+    if (this.account === 'in') return false
+    this.toast('Sign in to do that')
+    const here = location.hash.replace(/^#/, '') || '/store'
+    location.hash = `#/login?next=${encodeURIComponent(here)}`
+    return true
+  }
   toggleWishlist(id: number) {
+    if (this.needLogin()) return
     const had = this.wishlist.includes(id)
     this.wishlist = had ? this.wishlist.filter(x => x !== id) : [...this.wishlist, id]
     void this.sync(had ? 'DELETE' : 'PUT', `/wishlist/${id}`)
   }
   addToCart(id: number) {
+    if (this.needLogin()) return
     if (this.cart.includes(id) || this.owned.includes(id)) return
     this.cart.push(id)
     void this.sync('PUT', `/cart/${id}`)
@@ -223,26 +303,35 @@ class Store {
     this.cart = this.cart.filter(x => x !== id)
     void this.sync('DELETE', `/cart/${id}`)
   }
-  addFunds(cents: number) { this.wallet += cents; void this.sync('POST', '/wallet', { cents }) }
-  checkout(): boolean {
-    if (this.cartTotal > this.wallet) return false
-    this.wallet -= this.cartTotal
-    this.owned.push(...this.cart)
-    this.wishlist = this.wishlist.filter(id => !this.cart.includes(id))
-    this.cart = []
-    void this.sync('POST', '/checkout')
-    return true
+  async addFunds(cents: number): Promise<string | null> { return this.sync('POST', '/wallet', { cents }) }
+  async checkout(): Promise<string | null> {
+    if (this.cartTotal > this.wallet) return 'Not enough funds in your reSteam Wallet'
+    return this.sync('POST', '/checkout')
   }
   claimFree(id: number) {
+    if (this.needLogin()) return
     if (this.owned.includes(id)) return
     this.owned.push(id)
     void this.sync('POST', `/claim/${id}`)
   }
   async redeem(code: string): Promise<string | null> { return this.sync('POST', '/redeem', { code }) }
-  async gift(friendId: string, cents: number): Promise<string | null> {
-    const err = await this.sync('POST', '/gift', { friendId, cents })
-    if (!err) void this.loadChat(friendId)
+  async gift(username: string, cents: number): Promise<string | null> {
+    const err = await this.sync('POST', '/gift', { username, cents })
+    if (!err) void this.loadChat(username)
     return err
+  }
+  toggleIgnore(id: number) {
+    if (this.needLogin()) return
+    const had = this.ignored.includes(id)
+    this.ignored = had ? this.ignored.filter(x => x !== id) : [...this.ignored, id]
+    void this.sync(had ? 'DELETE' : 'PUT', `/ignored/${id}`)
+    if (!had && this.wishlist.includes(id)) this.toggleWishlist(id)
+  }
+  toggleFollow(id: number) {
+    if (this.needLogin()) return
+    const had = this.followed.includes(id)
+    this.followed = had ? this.followed.filter(x => x !== id) : [...this.followed, id]
+    void this.sync(had ? 'DELETE' : 'PUT', `/followed/${id}`)
   }
 
   // ---- custom library collections (kept on this browser) ----
@@ -255,19 +344,12 @@ class Store {
   deleteCollection(id: string) { this.collections = this.collections.filter(c => c.id !== id) }
   addToCollection(id: string, gameId: number) { const c = this.collections.find(x => x.id === id); if (c && !c.games.includes(gameId)) c.games.push(gameId) }
   removeFromCollection(id: string, gameId: number) { const c = this.collections.find(x => x.id === id); if (c) c.games = c.games.filter(g => g !== gameId) }
-  toggleFavFriend(id: string) { this.favFriends = this.favFriends.includes(id) ? this.favFriends.filter(x => x !== id) : [...this.favFriends, id] }
-  toggleIgnore(id: number) {
-    const had = this.ignored.includes(id)
-    this.ignored = had ? this.ignored.filter(x => x !== id) : [...this.ignored, id]
-    if (!had) this.wishlist.includes(id) && this.toggleWishlist(id)
-  }
-  toggleFollow(id: number) {
-    this.followed = this.followed.includes(id) ? this.followed.filter(x => x !== id) : [...this.followed, id]
-  }
+  toggleFavFriend(username: string) { this.favFriends = this.favFriends.includes(username) ? this.favFriends.filter(x => x !== username) : [...this.favFriends, username] }
   view(id: number) { this.viewed = [id, ...this.viewed.filter(x => x !== id)].slice(0, 12) }
 
   // ---- library ----
   toggleFavorite(id: number) {
+    if (this.needLogin()) return
     const had = this.favorites.includes(id)
     this.favorites = had ? this.favorites.filter(x => x !== id) : [...this.favorites, id]
     void this.sync(had ? 'DELETE' : 'PUT', `/favorites/${id}`)
@@ -284,10 +366,6 @@ class Store {
     this.customGames.push({ id: 1000 + this.customGames.length + 1, title: t })
     this.toast(`${t} was added to your library`)
   }
-  post(gameId: number, text: string) {
-    const t = text.trim().slice(0, 300)
-    if (t) (this.posts[gameId] ??= []).unshift({ text: t, at: Date.now() })
-  }
 
   // ---- downloads (single active download, the rest queue) ----
   install(id: number) {
@@ -299,7 +377,7 @@ class Store {
   cancel(id: number) { this.queue = this.queue.filter(d => d.id !== id) }
   moveToFront(id: number) {
     const d = this.queue.find(x => x.id === id)
-    if (d) this.queue = [d, ...this.queue.filter(x => x.id !== id)]
+    if (d) this.queue = [d, ...this.queue.filter(x => x !== d)]
   }
   /** A real game is ~GBs; compress time so an install takes 8-40s, while the shown speed still reflects the limit. */
   private tickDownloads() {
@@ -326,95 +404,238 @@ class Store {
     }
   }
 
-  private tick?: ReturnType<typeof setInterval>
-  play(id: number) {
+  /** Launching tells friends what you are playing; time accrues in the library once the server knows. */
+  async play(id: number) {
     if (this.running !== null) return
-    this.running = id
-    this.lastPlayed[id] = Date.now()
-    this.tick = setInterval(() => runInAction(() => {
-      this.playtime[id] = (this.playtime[id] ?? 0) + 1
+    if (id < 1000) {
+      const { error } = await call('POST', '/presence/playing', { gameId: id })
+      if (error) { this.toast(error); return }
+    }
+    runInAction(() => {
+      this.running = id
       this.lastPlayed[id] = Date.now()
-      if (id < 1000) void api('POST', `/playtime/${id}`, { minutes: 1 })
-    }), 6000) // one "minute" per 6s so playtime visibly moves
-  }
-  stop() { clearInterval(this.tick); this.running = null }
-
-  // ---- profile / friends / chat ----
-  setStatus(status: Friend['status']) { this.status = status; void this.sync('PUT', '/status', { status }) }
-  async setName(name: string): Promise<string | null> {
-    const { data, error } = await call<Me>('PUT', '/profile', { name })
-    if (error || !data) return error ?? 'Could not save name'
-    runInAction(() => this.apply(data))
-    return null
-  }
-  signOut() {
-    try { localStorage.removeItem('resteam:session'); localStorage.removeItem(KEY); localStorage.removeItem(LOCAL) } catch { /* ignore */ }
-    SESSION = crypto.randomUUID()
-    try { localStorage.setItem('resteam:session', SESSION) } catch { /* ignore */ }
-    location.hash = '#/store'
-    location.reload()
-  }
-  async refreshFriends() {
-    const list = await api<Friend[]>('GET', '/friends')
-    if (list) runInAction(() => { this.friends = list })
-  }
-  async addFriend(name: string): Promise<string | null> {
-    const { data, error } = await call<Friend>('POST', '/friends', { name })
-    if (error || !data) return error ?? 'Could not add friend'
-    runInAction(() => { this.friends = [...this.friends, data] })
-    return null
-  }
-  async removeFriend(id: string) {
-    this.closeChat(id)
-    this.friends = this.friends.filter(f => f.id !== id)
-    await api('DELETE', `/friends/${id}`)
-  }
-  async loadChat(id: string) {
-    const history = await api<ChatMessage[]>('GET', `/chats/${id}`)
-    if (history) runInAction(() => { this.chats[id] = history })
-  }
-  async openChat(id: string) {
-    if (this.openChats.includes(id)) return
-    this.openChats.push(id)
-    if (!id.startsWith('g')) await this.loadChat(id) // group chats live only in this browser
-  }
-  closeChat(id: string) { this.openChats = this.openChats.filter(x => x !== id) }
-  send(friendId: string, text: string) {
-    const t = text.trim()
-    if (!t) return
-    ;(this.chats[friendId] ??= []).push({ from: 'me', text: t, at: Date.now() })
-    const f = this.friends.find(x => x.id === friendId)
-    if (!f || f.status === 'offline') { void api('POST', `/chats/${friendId}`, { text: t }); return }
-    this.typing[friendId] = true
-    void api<{ reply: ChatMessage | null }>('POST', `/chats/${friendId}`, { text: t }).then(res => {
-      const reply = res?.reply ?? { from: friendId, text: BOT_REPLIES[Math.floor(Math.random() * BOT_REPLIES.length)], at: Date.now() }
-      setTimeout(() => runInAction(() => { this.typing[friendId] = false; (this.chats[friendId] ??= []).push(reply) }), 1200 + Math.random() * 1500)
+      this.unsent = 0
+      this.playTick = setInterval(() => runInAction(() => {
+        this.playtime[id] = (this.playtime[id] ?? 0) + 1
+        this.lastPlayed[id] = Date.now()
+        this.unsent += 1
+        if (id < 1000 && this.unsent >= 5) { const n = this.unsent; this.unsent = 0; void call('POST', `/playtime/${id}`, { minutes: n }) }
+      }), 6000) // one "minute" per 6s so playtime visibly moves
     })
   }
-
-  // ---- group chats (kept on this browser; members answer with canned replies) ----
-  createGroup(name: string, members: string[]) {
-    const id = `g${Date.now()}`
-    this.groups.push({ id, name: name.trim().slice(0, 30) || 'Group chat', members, messages: [] })
-    this.openChat(id)
+  stop() {
+    clearInterval(this.playTick)
+    const id = this.running
+    if (id !== null && id < 1000) {
+      if (this.unsent > 0) void call('POST', `/playtime/${id}`, { minutes: this.unsent }).then(() => call('POST', '/presence/playing', { gameId: null }))
+      else void call('POST', '/presence/playing', { gameId: null })
+    }
+    this.unsent = 0
+    this.running = null
   }
-  deleteGroup(id: string) { this.closeChat(id); this.groups = this.groups.filter(g => g.id !== id) }
-  sendGroup(id: string, text: string) {
+
+  // ---- friends ----
+  async refreshSocial() {
+    await Promise.all([this.refreshFriends(), this.refreshNotifications(), this.refreshActivity(), this.refreshGroups()])
+  }
+  async refreshFriends() {
+    const r = await api<{ friends: Friend[]; incoming: FriendRequest[]; outgoing: FriendRequest[] }>('GET', '/friends')
+    if (r) runInAction(() => { this.friends = r.friends; this.incoming = r.incoming; this.outgoing = r.outgoing })
+  }
+  async refreshNotifications() {
+    const r = await api<{ notifications: Notification[] }>('GET', '/notifications')
+    if (r) runInAction(() => { this.notifications = r.notifications })
+  }
+  async refreshActivity() {
+    const r = await api<{ events: ActivityEvent[] }>('GET', '/activity')
+    if (r) runInAction(() => { this.activity = r.events })
+  }
+  async refreshGroups() {
+    const r = await api<{ groups: Group[] }>('GET', '/groups')
+    if (r) runInAction(() => { this.groups = r.groups })
+  }
+  async markAllRead() {
+    this.notifications.forEach(n => { n.read = true })
+    await call('POST', '/notifications/read')
+  }
+  async sendRequest(username: string): Promise<string | null> {
+    const { error } = await call('POST', '/friends/requests', { username: username.trim() })
+    if (!error) void this.refreshFriends()
+    return error ?? null
+  }
+  async acceptRequest(username: string) { await call('POST', `/friends/requests/${encodeURIComponent(username)}/accept`); await this.refreshFriends() }
+  async declineRequest(username: string) { await call('DELETE', `/friends/requests/${encodeURIComponent(username)}`); await this.refreshFriends() }
+  async removeFriend(username: string) {
+    this.closeChat(username)
+    await call('DELETE', `/friends/${encodeURIComponent(username)}`)
+    await this.refreshFriends()
+  }
+  async block(username: string) {
+    this.closeChat(username)
+    await call('POST', `/blocks/${encodeURIComponent(username)}`)
+    await this.refreshFriends()
+  }
+  async unblock(username: string) { await call('DELETE', `/blocks/${encodeURIComponent(username)}`); await this.refreshFriends() }
+  async search(q: string): Promise<Person[]> {
+    const r = await api<{ users: Person[] }>('GET', `/users/search?q=${encodeURIComponent(q)}`)
+    return r?.users ?? []
+  }
+
+  // ---- direct messages ----
+  async loadChat(username: string) {
+    const r = await api<{ messages: ChatMessage[] }>('GET', `/chats/${encodeURIComponent(username)}`)
+    if (r) runInAction(() => { this.chats[username.toLowerCase()] = r.messages })
+  }
+  chatKey(username: string) { return username.startsWith('g:') ? username : username.toLowerCase() }
+  async openChat(username: string) {
+    const key = this.chatKey(username)
+    if (!this.openChats.includes(key)) this.openChats.push(key)
+    this.friendsOpen = true
+    if (key.startsWith('g:')) { await this.loadGroup(key.slice(2)); return }
+    await this.loadChat(username)
+    this.markRead(key)
+  }
+  markRead(username: string) {
+    const f = this.friend(username)
+    if (f && f.unread > 0) { f.unread = 0; void call('POST', `/chats/${encodeURIComponent(username)}/read`) }
+  }
+  closeChat(key: string) { const k = this.chatKey(key); this.openChats = this.openChats.filter(x => x !== k) }
+  async send(username: string, text: string): Promise<string | null> {
+    const t = text.trim()
+    if (!t) return null
+    const { data, error } = await call<{ message: ChatMessage }>('POST', `/chats/${encodeURIComponent(username)}`, { text: t })
+    if (!data) { this.toast(error ?? 'Message not sent'); return error ?? 'Message not sent' }
+    // the socket echoes our own message back too; drop duplicates by id
+    runInAction(() => this.pushMessage(username, { ...data.message, from: 'me' }))
+    return null
+  }
+  sendTyping(username: string) {
+    const now = Date.now()
+    if (now - this.lastTypingSent < 2500 || this.ws?.readyState !== WebSocket.OPEN) return
+    this.lastTypingSent = now
+    this.ws.send(JSON.stringify({ type: 'typing', to: username }))
+  }
+  private pushMessage(username: string, m: ChatMessage) {
+    const key = username.toLowerCase()
+    const list = (this.chats[key] ??= [])
+    if (m.id !== undefined && list.some(x => x.id === m.id)) return
+    list.push(m)
+  }
+
+  // ---- group chats ----
+  async loadGroup(id: string) {
+    const r = await api<{ messages: GroupMessage[]; members: GroupMember[] }>('GET', `/groups/${id}/messages`)
+    if (r) runInAction(() => { this.groupMessages[id] = r.messages; this.groupMembers[id] = r.members })
+  }
+  async createGroup(name: string, members: string[]): Promise<string | null> {
+    const { data, error } = await call<{ group: Group }>('POST', '/groups', { name: name.trim().slice(0, 30) || 'Group chat', members })
+    if (!data) return error ?? 'Could not create the group'
+    await this.refreshGroups()
+    void this.openChat(`g:${data.group.id}`)
+    return null
+  }
+  async sendGroup(id: string, text: string): Promise<string | null> {
     const t = text.trim().slice(0, 500)
-    const grp = this.groups.find(g => g.id === id)
-    if (!t || !grp) return
-    grp.messages.push({ from: 'me', text: t, at: Date.now() })
-    const online = grp.members.filter(m => { const f = this.friends.find(x => x.id === m); return f && f.status !== 'offline' && f.status !== 'pending' })
-    if (online.length === 0) return
-    this.typing[id] = true
-    setTimeout(() => runInAction(() => {
-      this.typing[id] = false
-      const from = online[Math.floor(Math.random() * online.length)]
-      grp.messages.push({ from, text: BOT_REPLIES[Math.floor(Math.random() * BOT_REPLIES.length)], at: Date.now() })
-    }), 1200 + Math.random() * 1500)
+    if (!t) return null
+    const { data, error } = await call<{ message: GroupMessage }>('POST', `/groups/${id}/messages`, { text: t })
+    if (!data) { this.toast(error ?? 'Message not sent'); return error ?? null }
+    runInAction(() => {
+      const list = (this.groupMessages[id] ??= [])
+      if (!list.some(x => x.id === data.message.id)) list.push({ ...data.message, from: 'me' })
+    })
+    return null
+  }
+  async inviteToGroup(id: string, username: string): Promise<string | null> {
+    const { error } = await call('POST', `/groups/${id}/invite`, { username })
+    if (!error) void this.loadGroup(id)
+    return error ?? null
+  }
+  async leaveGroup(id: string) {
+    this.closeChat(`g:${id}`)
+    await call('POST', `/groups/${id}/leave`)
+    await this.refreshGroups()
   }
 
-  news = NEWS
+  // ---- realtime ----
+  private startSocket() {
+    this.stopSocket()
+    if (this.account !== 'in') return
+    this.socket = 'connecting'
+    const ws = new WebSocket(`${location.protocol === 'https:' ? 'wss' : 'ws'}://${location.host}/api/ws`)
+    this.ws = ws
+    ws.onopen = () => runInAction(() => {
+      this.socket = 'open'
+      this.pingTimer = setInterval(() => { if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ type: 'ping' })); void call('POST', '/presence/ping') }, 45_000)
+      void this.refreshSocial() // catch up on anything missed while disconnected
+    })
+    ws.onmessage = e => { try { runInAction(() => this.onPush(JSON.parse(String(e.data)))) } catch { /* ignore malformed frames */ } }
+    ws.onclose = () => runInAction(() => {
+      clearInterval(this.pingTimer)
+      if (this.ws !== ws) return
+      this.socket = 'closed'
+      if (this.account === 'in') this.wsTimer = setTimeout(() => this.startSocket(), 3000 + Math.random() * 3000)
+    })
+  }
+  private stopSocket() {
+    clearTimeout(this.wsTimer); clearInterval(this.pingTimer)
+    const ws = this.ws
+    this.ws = undefined
+    this.socket = 'closed'
+    if (ws) { ws.onclose = null; ws.close() }
+  }
+  private onPush(ev: any) {
+    switch (ev.type) {
+      case 'dm': {
+        const other: string = ev.from === 'me' ? ev.with : ev.from
+        if (!other) return
+        this.pushMessage(other, { id: ev.id, from: ev.from === 'me' ? 'me' : ev.from, text: ev.text, at: ev.at })
+        if (ev.from !== 'me') {
+          const key = other.toLowerCase()
+          this.typing[key] = false
+          const f = this.friend(other)
+          if (this.openChats.includes(key) && this.friendsOpen) this.markRead(key)
+          else if (f) { f.unread += 1; this.toast(`${f.name}: ${String(ev.text).slice(0, 60)}`) }
+        }
+        break
+      }
+      case 'typing': {
+        const key = String(ev.from).toLowerCase()
+        this.typing[key] = true
+        clearTimeout(this.typingTimers[key])
+        this.typingTimers[key] = setTimeout(() => runInAction(() => { this.typing[key] = false }), 4000)
+        break
+      }
+      case 'friends': void this.refreshFriends(); break
+      case 'notification': {
+        if (!this.notifications.some(n => n.id === ev.id)) this.notifications.unshift({ id: ev.id, kind: ev.kind, data: ev.data ?? {}, at: ev.at, read: false })
+        if (ev.kind === 'friend_request' || ev.kind === 'friend_accepted') void this.refreshFriends()
+        if (ev.kind === 'group_invite') void this.refreshGroups()
+        if (ev.kind === 'gift') void this.hydrate()
+        this.toast(notificationText(ev as Notification))
+        break
+      }
+      case 'group-message': {
+        const id = String(ev.group)
+        const list = (this.groupMessages[id] ??= [])
+        if (!list.some(x => x.id === ev.id)) list.push({ id: ev.id, from: ev.from, text: ev.text, at: ev.at })
+        if (!this.openChats.includes(`g:${id}`) && ev.from !== 'me') this.toast(`${this.groups.find(g => g.id === id)?.name ?? 'Group'}: ${String(ev.text).slice(0, 60)}`)
+        break
+      }
+    }
+  }
+}
+
+export const notificationText = (n: Pick<Notification, 'kind' | 'data'>): string => {
+  const who = (n.data.from as Person | undefined)?.name ?? 'Someone'
+  switch (n.kind) {
+    case 'friend_request': return `${who} sent you a friend request`
+    case 'friend_accepted': return `${who} accepted your friend request`
+    case 'group_invite': return `${who} invited you to the group chat "${n.data.group?.name ?? 'Group chat'}"`
+    case 'post_reply': return `${who} replied to your post "${n.data.title ?? ''}"`
+    case 'review_helpful': return `${who} found your review helpful`
+    case 'gift': return `${who} sent you ${n.data.cents ? `$${(Number(n.data.cents) / 100).toFixed(2)}` : 'a gift'} in wallet funds`
+    default: return 'You have a new notification'
+  }
 }
 
 export const store = new Store()

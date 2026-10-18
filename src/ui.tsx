@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { fmt, priceOf, type Friend, type Game } from './data'
+import { fmt, priceOf, type Game } from './data'
 import { Icon } from './icons'
 
 export const hours = (mins = 0) => (mins < 60 ? `${mins} min` : `${(mins / 60).toFixed(1)} hrs`)
@@ -23,15 +23,17 @@ export const Logo = ({ size = 28 }: { size?: number }) => (
   </svg>
 )
 
-type AvatarFriend = Pick<Friend, 'name' | 'hue' | 'status'>
-export const Avatar = ({ f, size = 36, ring = true }: { f: AvatarFriend; size?: number; ring?: boolean }) => (
-  <div
-    className={`avatar ${ring ? `st-${f.status}` : ''}`}
-    style={{ width: size, height: size, fontSize: size * 0.46, background: `linear-gradient(135deg, hsl(${f.hue} 50% 48%), hsl(${f.hue + 40} 45% 28%))` }}
-  >
-    {f.name[0]?.toUpperCase()}
-  </div>
-)
+export const Avatar = ({ f, size = 36, ring = true }: { f: { name: string; status?: string }; size?: number; ring?: boolean }) => {
+  const hue = nameHue(f.name)
+  return (
+    <div
+      className={`avatar ${ring && f.status ? `st-${f.status}` : ''}`}
+      style={{ width: size, height: size, fontSize: size * 0.46, background: `linear-gradient(135deg, hsl(${hue} 50% 48%), hsl(${hue + 40} 45% 28%))` }}
+    >
+      {f.name[0]?.toUpperCase()}
+    </div>
+  )
+}
 
 export const Price = ({ game, big = false }: { game: Game; big?: boolean }) => {
   const p = priceOf(game)

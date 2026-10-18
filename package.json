@@ -20,6 +20,7 @@
   "dependencies": {
     "mobx": "^7.0.6",
     "mobx-react-lite": "^5.1.0",
+    "qrcode-generator": "^2.0.4",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.4"

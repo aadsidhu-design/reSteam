@@ -8,7 +8,7 @@ import { Icon } from './icons'
 import { Modal, Price, useDismiss } from './ui'
 import './store.css'
 
-export const reviewClass = (rating: number) => (rating >= 70 ? 'rv-pos' : rating >= 40 ? 'rv-mixed' : 'rv-neg')
+export const reviewClass = (rating: number, reviews = 1) => (reviews < 10 ? 'rv-none' : rating >= 70 ? 'rv-pos' : rating >= 40 ? 'rv-mixed' : 'rv-neg')
 
 /* ---------- layout with the store sub-menu ---------- */
 type MenuItem = { label: string; to: string }
@@ -105,23 +105,24 @@ const Card = ({ g }: { g: Game }) => (
 
 /* ---------- gift card modal ---------- */
 const GiftModal = observer(({ onClose }: { onClose: () => void }) => {
-  const pals = store.friends.filter(f => f.status !== 'pending')
-  const [friend, setFriend] = useState(pals[0]?.id ?? '')
+  const pals = store.friends
+  const [friend, setFriend] = useState(pals[0]?.username ?? '')
   const [amount, setAmount] = useState(1000)
   const [err, setErr] = useState('')
   const [busy, setBusy] = useState(false)
   return (
     <Modal title="Send a Gift Card" onClose={onClose}>
       <p>Send wallet funds to a friend. The amount comes out of your balance ({fmt(store.wallet)}).</p>
+      {pals.length === 0 && <p className="muted small">You need a friend to send a gift card to. Add one from Friends &amp; Chat.</p>}
       <label className="small muted">Friend</label>
-      <select className="input" value={friend} onChange={e => setFriend(e.target.value)}>{pals.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}</select>
+      <select className="input" value={friend} onChange={e => setFriend(e.target.value)}>{pals.map(f => <option key={f.username} value={f.username}>{f.name}</option>)}</select>
       <div className="amounts">{[500, 1000, 2500, 5000, 10000].map(a => <button key={a} className={`btn ${amount === a ? 'blue' : ''}`} onClick={() => setAmount(a)}>{fmt(a)}</button>)}</div>
       {err && <div className="err">{err}</div>}
       <div className="modal-actions">
         <button className="btn" onClick={onClose}>Cancel</button>
         <button className="btn green" disabled={!friend || busy} onClick={async () => {
           setBusy(true); const e = await store.gift(friend, amount); setBusy(false)
-          if (e) setErr(e); else { store.toast(`Gift card sent to ${pals.find(f => f.id === friend)?.name}`); onClose() }
+          if (e) setErr(e); else { store.toast(`Gift card sent to ${pals.find(f => f.username === friend)?.name}`); onClose() }
         }}>Send gift card</button>
       </div>
     </Modal>
@@ -150,22 +151,6 @@ const Head = ({ title, more, children }: { title: string; more?: string; childre
   <div className="sec-head2"><h2>{title}{children}</h2>{more && <Link to={more} className="seebtn">See More</Link>}</div>
 )
 
-const PromoBanner = () => (
-  <Link to="/store/browse?tag=Cozy" className="promo" aria-label="Cozy Fest">
-    <svg viewBox="0 0 1180 187" preserveAspectRatio="xMidYMid slice" className="promo-svg">
-      <rect width="1180" height="187" fill="#f6ebcf" />
-      {Array.from({ length: 34 }, (_, i) => <circle key={i} cx={(i * 97) % 1180} cy={((i * 53) % 170) + 8} r={5 + (i % 4) * 3} fill="#efdcae" />)}
-      <circle cx="905" cy="150" r="90" fill="#8fc13a" opacity=".85" /><ellipse cx="905" cy="172" rx="150" ry="22" fill="#c9792b" />
-      <text x="60" y="88" fontSize="34" fontWeight="800" fill="#e8501f" fontStyle="italic">reSteam</text>
-      <text x="58" y="150" fontSize="74" fontWeight="800" fill="#e8501f" stroke="#fff" strokeWidth="5" paintOrder="stroke">Cozy Fest</text>
-      <text x="640" y="62" fontSize="28" fontWeight="800" fill="#e8501f" fontStyle="italic">Discounts, Demos, and More</text>
-      <rect x="470" y="86" width="560" height="78" rx="39" fill="#e8501f" />
-      <text x="750" y="120" textAnchor="middle" fontSize="26" fontWeight="800" fill="#fff6dc">ON NOW THROUGH OCTOBER 19</text>
-      <text x="750" y="150" textAnchor="middle" fontSize="26" fontWeight="800" fill="#fff6dc">AT 10 AM PT</text>
-    </svg>
-  </Link>
-)
-
 export const StoreHome = observer(() => {
   const [idx, setIdx] = useState(0)
   const [paused, setPaused] = useState(false)
@@ -175,12 +160,12 @@ export const StoreHome = observer(() => {
   const [tab, setTab] = useState<'new' | 'top' | 'upcoming' | 'sale' | 'free'>('new')
   const [hover, setHover] = useState<Game | null>(null)
   const pool = GAMES.filter(g => !store.ignored.includes(g.id))
-  const featured = useMemo(() => [...pool].sort((a, b) => b.reviews * b.rating - a.reviews * a.rating).slice(0, 8), [])
+  const featured = useMemo(() => [...pool].sort((a, b) => b.reviews * b.rating - a.reviews * a.rating || b.owners - a.owners || b.discount - a.discount).slice(0, 8), [store.ignored.length, GAMES.reduce((n, g) => n + g.reviews, 0)])
   const sale = useMemo(() => pool.filter(g => g.discount > 0).sort((a, b) => b.discount - a.discount), [pool.length])
   const hero = sale.slice(0, 3)
   const f = featured[idx]
   const maxOff = Math.max(...GAMES.map(g => g.discount))
-  const byReviews = useMemo(() => [...pool].sort((a, b) => b.reviews - a.reviews), [pool.length])
+  const byReviews = useMemo(() => [...pool].sort((a, b) => b.reviews - a.reviews || b.owners - a.owners), [pool.length, GAMES.reduce((n, g) => n + g.reviews + g.owners, 0)])
   const newest = useMemo(() => [...pool].sort((a, b) => b.released.localeCompare(a.released)), [pool.length])
   const month = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
   const freeGames = pool.filter(g => g.price === 0)
@@ -236,18 +221,16 @@ export const StoreHome = observer(() => {
             <Link to={`/store/${f.id}`} className="feat-main"><Art game={f} kind="wide" variant={idx % 3} /></Link>
             <div className="feat-panel">
               <div className="fp-title">{f.title}</div>
-              <div className="fp-rev"><span className={reviewClass(f.rating)}>{reviewLabel(f.rating)}</span> <span className="muted">({compact(f.reviews)} Reviews)</span></div>
+              <div className="fp-rev"><span className={reviewClass(f.rating, f.reviews)}>{reviewLabel(f.rating, f.reviews)}</span> {f.reviews >= 10 && <span className="muted">({compact(f.reviews)} Reviews)</span>}</div>
               <div className="fp-shots">{[1, 2, 3, 4].map(n => <div key={n} className="fp-shot"><Art game={f} kind="shot" variant={n} showTitle={false} /></div>)}</div>
               <div className="fp-rank"><svg width="40" height="34" viewBox="0 0 40 34" aria-hidden><path d="M2 20l9-9 7 6 14-14" fill="none" stroke="#a4d007" strokeWidth="3" /><rect x="4" y="22" width="7" height="11" fill="#fff" /><rect x="15" y="16" width="7" height="17" fill="#fff" /><rect x="26" y="9" width="7" height="24" fill="#fff" /></svg>
-                <div><div className="rk-t">{rank <= 3 ? 'Top Seller' : 'Popular'}</div><div>Ranked #{rank} in your region</div></div></div>
+                <div><div className="rk-t">{f.reviews > 0 ? (rank <= 3 ? 'Top Rated' : 'Popular') : 'Just added'}</div><div>{f.reviews > 0 ? `Ranked #${rank} by player reviews` : 'Be the first to review it'}</div></div></div>
               <div className="fp-foot">{f.price === 0 ? <span className="fp-free">Free to Play</span> : <CapPrice g={f} />}</div>
             </div>
           </div>
         </div>
         <Dots n={featured.length} i={idx} set={setIdx} />
       </section>
-
-      <section className="container"><PromoBanner /></section>
 
       <section className="container sec">
         <Head title="Discounts & Events" more="/store/browse?sale=1" />
@@ -263,14 +246,14 @@ export const StoreHome = observer(() => {
               <div className="ev-price"><span className="up-to">Up to -{maxOff}%</span></div>
             </Link>
             <Link to={`/store/${dp.free.id}`} className="ev">
-              <span className="evtag t-purple">FREE WEEKEND</span>
+              <span className="evtag t-purple">FREE TO PLAY</span>
               <div className="ev-art tall"><Art game={dp.free} kind="capsule" /></div>
               <div className="ev-price"><CapPrice g={dp.free} /></div>
             </Link>
             <div className="ev stack">
               {dp.deals.map(g => (
                 <Link key={g.id} to={`/store/${g.id}`} className="ev half">
-                  <span className="evtag t-blue">TODAY'S DEAL</span>
+                  <span className="evtag t-blue">SPECIAL OFFER</span>
                   <div className="ev-art short"><Art game={g} kind="header" /></div>
                   <div className="ev-price"><CapPrice g={g} /></div>
                 </Link>
@@ -337,7 +320,7 @@ export const StoreHome = observer(() => {
             <div className="pv-title">{shown.title}</div>
             <div className="muted small">Released: {new Date(shown.released).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
             <div className="fp-shots">{[1, 2, 3, 4].map(n => <div key={n} className="fp-shot"><Art game={shown} kind="shot" variant={n} showTitle={false} /></div>)}</div>
-            <div><span className={reviewClass(shown.rating)}>{reviewLabel(shown.rating)}</span> <span className="muted small">({compact(shown.reviews)})</span></div>
+            <div><span className={reviewClass(shown.rating, shown.reviews)}>{reviewLabel(shown.rating, shown.reviews)}</span>{shown.reviews >= 10 && <span className="muted small"> ({compact(shown.reviews)})</span>}</div>
             <Tags g={shown} n={4} />
           </aside>
         </div>
@@ -391,7 +374,6 @@ export const Browse = observer(() => {
   const q = sp.get('q') ?? ''
   const genre = sp.get('genre'), tag = sp.get('tag'), noTag = sp.get('notag'), sort = sp.get('sort') ?? 'relevance'
   const free = sp.get('free') === '1', sale = sp.get('sale') === '1', friends = sp.get('friends') === '1', hideFree = sp.get('hidefree') === '1'
-  const handheld = sp.get('handheld')
   const maxSize = Number(sp.get('maxSize') ?? 0), minSize = Number(sp.get('minSize') ?? 0), under = Number(sp.get('under') ?? 0), minRating = Number(sp.get('minRating') ?? 0)
   const [draft, setDraft] = useState(q)
   const [tagQ, setTagQ] = useState('')
@@ -405,13 +387,13 @@ export const Browse = observer(() => {
     (!q || g.title.toLowerCase().includes(q.toLowerCase()) || g.dev.toLowerCase().includes(q.toLowerCase()) || g.tags.some(t => t.toLowerCase().includes(q.toLowerCase()))) &&
     (!genre || g.genre.includes(genre)) && (!free || g.price === 0) && (!hideFree || g.price > 0) && (!sale || g.discount > 0) &&
     (!maxSize || g.sizeGb <= maxSize) && (!minSize || g.sizeGb >= minSize) && (!under || priceOf(g) <= under) && (!minRating || g.rating >= minRating) &&
-    (!friends || store.friends.some(f => f.gameId === g.id)) && (!handheld || (handheld === 'verified' ? g.sizeGb <= 10 : g.sizeGb <= 30)) && (!noTag || !g.tags.includes(noTag)))
+    (!friends || store.friends.some(f => f.presence.gameId === g.id)) && (!noTag || !g.tags.includes(noTag)))
   const list = [...base.filter(g => !tag || g.tags.includes(tag))].sort((a, b) => sort === 'new' ? b.released.localeCompare(a.released) : sort === 'top' ? b.reviews - a.reviews : sort === 'price' ? priceOf(a) - priceOf(b) : sort === 'rating' ? b.rating - a.rating : b.reviews * b.rating - a.reviews * a.rating)
   const tagCounts = [...new Map(ALL_TAGS.map(t => [t, base.filter(g => g.tags.includes(t)).length])).entries()].filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1])
   const chips: [string, string][] = [['q', q && `"${q}"`], ['genre', genre ?? ''], ['tag', tag ?? ''], ['notag', noTag ? `not ${noTag}` : ''], ['free', free ? 'Free to Play' : ''], ['sale', sale ? 'Discounts & Events' : ''], ['hidefree', hideFree ? 'Hide free to play' : ''],
-    ['friends', friends ? 'Played by friends' : ''], ['maxSize', maxSize ? `Under ${maxSize} GB` : ''], ['minSize', minSize ? `Over ${minSize} GB` : ''], ['under', under ? `Under ${fmt(under)}` : ''], ['minRating', minRating ? `${minRating}%+ positive` : ''], ['handheld', handheld ? `Handheld: ${handheld}` : '']]
+    ['friends', friends ? 'Played by friends' : ''], ['maxSize', maxSize ? `Under ${maxSize} GB` : ''], ['minSize', minSize ? `Over ${minSize} GB` : ''], ['under', under ? `Under ${fmt(under)}` : ''], ['minRating', minRating ? `${minRating}%+ positive` : '']]
   const active = chips.filter(([, v]) => v)
-  const rvIcon = (r: number) => (r >= 70 ? 'rv-pos' : r >= 40 ? 'rv-mixed' : 'rv-neg')
+  const rvIcon = (r: number, n: number) => reviewClass(r, n)
 
   return (
     <div className="container browse2">
@@ -434,7 +416,7 @@ export const Browse = observer(() => {
                 <div className="srow-art"><Art game={g} kind="header" /></div>
                 <div className="srow-main"><div className="srow-title">{g.title}</div><Plats /></div>
                 <div className="srow-date">{new Date(g.released).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
-                <span className={`rvthumb ${rvIcon(g.rating)}`} title={`${reviewLabel(g.rating)} (${compact(g.reviews)})`}><Icon name="thumbUp" size={14} /></span>
+                <span className={`rvthumb ${rvIcon(g.rating, g.reviews)}`} title={g.reviews > 0 ? `${reviewLabel(g.rating, g.reviews)} (${compact(g.reviews)})` : 'No user reviews'}><Icon name="thumbUp" size={14} /></span>
                 <SearchPrice g={g} />
               </Link>
             ))}
@@ -457,11 +439,6 @@ export const Browse = observer(() => {
           </Panel>
           <Panel title="Narrow by genre">{GENRES.map(g => <label key={g} className="chk"><input type="checkbox" checked={genre === g} onChange={() => set('genre', genre === g ? null : g)} /> {g} <i>{GAMES.filter(x => x.genre.includes(g)).length}</i></label>)}</Panel>
           <Panel title="Narrow by number of players">{['Singleplayer', 'Multiplayer', 'Co-op', 'Local Multiplayer'].map(t => <label key={t} className="chk"><input type="checkbox" checked={tag === t} onChange={() => set('tag', tag === t ? null : t)} /> {t}</label>)}</Panel>
-          <Panel title="Narrow by handheld compatibility">
-            {([['verified', 'Verified', GAMES.filter(g => g.sizeGb <= 10).length], ['playable', 'Playable', GAMES.filter(g => g.sizeGb <= 30).length]] as const).map(([k, l, n]) => (
-              <label key={k} className="chk"><input type="checkbox" checked={handheld === k} onChange={() => set('handheld', handheld === k ? null : k)} /> {l} <i>{n}</i></label>))}
-            <button className="link-btn small" onClick={() => store.toast('Compatibility is estimated from install size in this demo')}>Learn More</button>
-          </Panel>
           <Panel title="Narrow by user reviews">{[95, 80, 70].map(r => <label key={r} className="chk"><input type="checkbox" checked={minRating === r} onChange={() => set('minRating', minRating === r ? null : String(r))} /> {r}% or higher</label>)}</Panel>
         </aside>
       </div>
@@ -476,11 +453,11 @@ const PayModal = observer(({ onClose, onDone }: { onClose: () => void; onDone: (
   return (
     <Modal title="Payment method" onClose={onClose} width={480}>
       <div className="paybox"><Icon name="card" size={34} /><div className="grow"><b>reSteam Wallet</b><div className="muted small">Balance {fmt(store.wallet)}</div></div><b>{fmt(store.cartTotal)}</b></div>
-      {short && <div className="err small">You need {fmt(store.cartTotal - store.wallet)} more. <button className="link-btn" onClick={() => store.addFunds(2000)}>Add {fmt(2000)} to wallet</button></div>}
+      {short && <div className="err small">You need {fmt(store.cartTotal - store.wallet)} more. <button className="link-btn" onClick={() => void store.addFunds(2000)}>Add {fmt(2000)} to wallet</button></div>}
       {err && <div className="err">{err}</div>}
       <p className="muted small">A purchase of a digital product grants a license for the product on reSteam.</p>
       <div className="modal-actions"><button className="btn" onClick={onClose}>Back</button>
-        <button className="btn green" disabled={short} onClick={() => { const ids = store.cart.slice(); if (store.checkout()) onDone(ids); else setErr('Not enough funds in your wallet.') }}>Purchase</button></div>
+        <button className="btn green" disabled={short} onClick={async () => { const ids = store.cart.slice(); const e = await store.checkout(); if (e) setErr(e); else onDone(ids) }}>Purchase</button></div>
     </Modal>
   )
 })
@@ -557,7 +534,7 @@ export const Wishlist = observer(() => {
       {list.map(g => (
         <div className="lrow wish" key={g.id}>
           <div className="lrow-art big"><Art game={g} kind="header" /></div>
-          <div className="lrow-main"><Link to={`/store/${g.id}`} className="lrow-title">{g.title}</Link><div className={`${reviewClass(g.rating)} small`}>{reviewLabel(g.rating)}</div><Tags g={g} n={3} /><div className="muted small">{g.blurb}</div></div>
+          <div className="lrow-main"><Link to={`/store/${g.id}`} className="lrow-title">{g.title}</Link><div className={`${reviewClass(g.rating, g.reviews)} small`}>{reviewLabel(g.rating, g.reviews)}</div><Tags g={g} n={3} /><div className="muted small">{g.blurb}</div></div>
           <Price game={g} />
           <div className="wish-actions">
             {store.owned.includes(g.id) ? <Link to={`/library/${g.id}`} className="btn small">In library</Link>

@@ -1,154 +1,138 @@
 import { useState } from 'react'
-import { NavLink, useLocation, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
-import { GAMES, fmt, slug } from './data'
-import { store } from './store'
+import { GAMES, fmt } from './data'
+import { notificationText, store } from './store'
 import { Icon } from './icons'
-import { Avatar, Modal, nameHue, useDismiss } from './ui'
+import { Avatar, Logo, Modal, ago, useDismiss } from './ui'
+import './shell.css'
 
 export const Header = observer(() => {
   const nav = useNavigate()
-  const loc = useLocation()
-  const path = loc.pathname
-  const [menu, setMenu] = useState<'news' | 'bell' | 'user' | null>(null)
-  const [openNews, setOpenNews] = useState<string | null>(null)
-  const [signOutAsk, setSignOutAsk] = useState(false)
+  const path = useLocation().pathname
+  const [menu, setMenu] = useState<'bell' | 'user' | null>(null)
   const ref = useDismiss(menu !== null, () => setMenu(null))
   const isStore = path.startsWith('/store') || path === '/cart' || path === '/wishlist'
   const isCommunity = path.startsWith('/community')
   const isLibrary = path.startsWith('/library') || path.startsWith('/downloads')
-  const isProfile = path.startsWith('/profile')
-  const showUrl = isStore || isCommunity
-  const me = { name: store.name, hue: nameHue(store.name), status: store.status }
-
-  let url = 'https://store.resteam.app/'
-  if (isCommunity) url = 'https://community.resteam.app/'
-  else if (path.startsWith('/store/browse')) url = 'https://store.resteam.app/search/'
-  else if (path.startsWith('/store/')) {
-    const g = GAMES.find(x => x.id === Number(path.split('/')[2]))
-    if (g) url = `https://store.resteam.app/app/${g.id}/${slug(g.title)}/`
-  } else if (path === '/cart') url = 'https://store.resteam.app/cart/'
-  else if (path === '/wishlist') url = 'https://store.resteam.app/wishlist/'
+  const isAbout = path.startsWith('/about')
+  const dl = store.activeDownload ?? store.queue[0]
+  const dlGame = dl ? GAMES.find(g => g.id === dl.id) : undefined
+  const me = { name: store.name, status: store.status === 'offline' ? 'offline' : store.running !== null ? 'ingame' : store.status }
 
   return (
-    <header className="titlebar">
-      <div className="winctl" aria-hidden><i className="r" /><i className="y" /><i className="g" /></div>
-      <div className="navrow">
-        <div className="historybtns">
-          <button className="hist" onClick={() => nav(-1)} aria-label="Back"><Icon name="back" size={22} /></button>
-          <button className="hist" onClick={() => nav(1)} aria-label="Forward"><Icon name="forward" size={22} /></button>
-        </div>
-        <nav className="mainnav">
+    <header className="gheader">
+      <div className="gh-inner">
+        <Link to="/store" className="gh-logo" aria-label="reSteam home"><Logo size={36} /><span>reSteam</span></Link>
+        <nav className="gh-nav">
           <NavLink to="/store" className={isStore ? 'active' : ''}>STORE</NavLink>
           <NavLink to="/library" className={isLibrary ? 'active' : ''}>LIBRARY</NavLink>
           <NavLink to="/community" className={isCommunity ? 'active' : ''}>COMMUNITY</NavLink>
-          <NavLink to="/profile" className={isProfile ? 'active' : ''}>{store.name.toUpperCase()}</NavLink>
+          {store.signedIn && <NavLink to="/profile" className={path === '/profile' || path.startsWith('/profile/') ? 'active' : ''}>{store.name.toUpperCase()}</NavLink>}
+          <NavLink to="/about" className={isAbout ? 'active' : ''}>ABOUT</NavLink>
         </nav>
         <div className="grow" />
-        <div className="navright" ref={ref}>
-          <div className="popwrap">
-            <button className="pill blue" onClick={() => setMenu(menu === 'news' ? null : 'news')} aria-label="News"><Icon name="megaphone" size={18} /></button>
-            {menu === 'news' && (
-              <div className="popover right news-pop">
-                <div className="pop-title">What's New</div>
-                {store.news.map(n => (
-                  <button key={n.id} className="pop-item stack" onClick={() => setOpenNews(openNews === n.id ? null : n.id)}>
-                    <b>{n.title}</b><span className="muted small">{n.when}</span>
-                    {openNews === n.id && <span className="small body">{n.body}</span>}
-                  </button>
-                ))}
-              </div>
-            )}
+        {dl && dlGame && (
+          <button className="gh-dl" onClick={() => nav('/downloads')} title="Manage downloads">
+            <Icon name="download" size={16} />
+            <span className="gh-dl-bar"><span style={{ width: `${dl.progress}%` }} /></span>
+            <span className="small">{store.activeDownload ? Math.floor(dl.progress) + '%' : 'Paused'}</span>
+          </button>
+        )}
+        {store.account === 'in' ? (
+          <div className="gh-right" ref={ref}>
+            <div className="popwrap">
+              <button className="gh-icon" onClick={() => { setMenu(menu === 'bell' ? null : 'bell') }} aria-label="Notifications">
+                <Icon name="bell" size={20} />
+                {store.unreadCount > 0 && <span className="count">{store.unreadCount}</span>}
+              </button>
+              {menu === 'bell' && (
+                <div className="popover right bell-pop">
+                  <div className="pop-title row-between">Notifications <button className="link-btn small" onClick={() => void store.markAllRead()}>Mark all read</button></div>
+                  {store.notifications.length === 0 && <div className="pop-item static read">You are all caught up.</div>}
+                  {store.notifications.slice(0, 20).map(n => {
+                    const from = n.data.from?.username as string | undefined
+                    const pending = n.kind === 'friend_request' && from && store.incoming.some(r => r.username === from)
+                    return (
+                      <div key={n.id} className={`pop-item static ${n.read ? 'read' : ''}`}>
+                        <div>{notificationText(n)}</div>
+                        <div className="muted small">{ago(n.at)}</div>
+                        {pending && (
+                          <div className="req-actions">
+                            <button className="btn small green" onClick={() => void store.acceptRequest(from!)}>Accept</button>
+                            <button className="btn small" onClick={() => void store.declineRequest(from!)}>Ignore</button>
+                          </div>
+                        )}
+                        {n.kind === 'post_reply' && n.data.gameId && <Link to={`/community?hub=${n.data.gameId}&post=${n.data.postId}`} onClick={() => setMenu(null)}>View discussion</Link>}
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+            <div className="popwrap">
+              <button className="gh-user" onClick={() => setMenu(menu === 'user' ? null : 'user')}>
+                <Avatar f={me} size={26} ring={false} />
+                <span className="uname">{store.name}</span><Icon name="chevronDown" size={14} />
+              </button>
+              {menu === 'user' && (
+                <div className="popover right">
+                  <button className="pop-item" onClick={() => { setMenu(null); nav('/profile') }}>View my profile</button>
+                  <button className="pop-item" onClick={() => { setMenu(null); store.friendsOpen = true }}>Friends &amp; Chat</button>
+                  <button className="pop-item" onClick={() => { setMenu(null); nav('/downloads') }}>Manage downloads</button>
+                  <button className="pop-item" onClick={() => { setMenu(null); nav('/settings/account') }}>Account details</button>
+                  <button className="pop-item" onClick={() => { setMenu(null); nav('/settings/interface') }}>Settings</button>
+                  <button className="pop-item" onClick={() => { setMenu(null); void store.signOut().then(() => nav('/store')) }}>Sign out of account…</button>
+                </div>
+              )}
+            </div>
+            <button className="gh-wallet" onClick={() => nav('/settings/account')} title="reSteam Wallet">{fmt(store.wallet)}</button>
           </div>
-          <div className="popwrap">
-            <button className="pill green" onClick={() => { setMenu(menu === 'bell' ? null : 'bell') }} aria-label="Notifications">
-              <Icon name="bell" size={18} />
-              {store.unreadCount > 0 && <span className="count">{store.unreadCount}</span>}
-            </button>
-            {menu === 'bell' && (
-              <div className="popover right">
-                <div className="pop-title row-between">Notifications <button className="link-btn small" onClick={() => store.markAllRead()}>Mark all read</button></div>
-                {store.notifications.map(n => (
-                  <div key={n.id} className={`pop-item static ${store.readNotifs.includes(n.id) ? 'read' : ''}`}>{n.text}</div>
-                ))}
-              </div>
-            )}
+        ) : store.account === 'out' ? (
+          <div className="gh-right">
+            <Link className="gh-login" to={`/login?next=${encodeURIComponent(path)}`}>login</Link>
+            <span className="gh-sep">|</span>
+            <Link className="gh-login" to={`/login?mode=join&next=${encodeURIComponent(path)}`}>join</Link>
           </div>
-          <div className="userchip">
-          <div className="popwrap">
-            <button className="userbtn" onClick={() => setMenu(menu === 'user' ? null : 'user')}>
-              <Avatar f={me} size={24} ring={false} />
-              <span className="uname">{store.name}</span><Icon name="chevronDown" size={14} />
-            </button>
-            {menu === 'user' && (
-              <div className="popover right">
-                <button className="pop-item" onClick={() => { setMenu(null); nav('/profile') }}>View my profile</button>
-                <button className="pop-item" onClick={() => { setMenu(null); store.friendsOpen = true }}>Friends</button>
-                <button className="pop-item" onClick={() => { setMenu(null); nav('/settings/account') }}>Account details</button>
-                <button className="pop-item" onClick={() => { setMenu(null); nav('/settings/interface') }}>Settings</button>
-                <button className="pop-item" onClick={() => { setMenu(null); setSignOutAsk(true) }}>Sign out of account…</button>
-              </div>
-            )}
-          </div>
-          <button className="walletchip" onClick={() => nav('/settings/account')}>{fmt(store.wallet)}</button>
-          </div>
-        </div>
+        ) : null}
       </div>
-      {showUrl && (
-        <div className="urlrow">
-          <button className="hist small" onClick={() => location.reload()} aria-label="Reload"><Icon name="refresh" size={18} /></button>
-          <Icon name="lock" size={15} className="urllock" />
-          <span className="urltext">{url}</span>
-        </div>
-      )}
-      {signOutAsk && (
-        <Modal title="Sign out of reSteam?" onClose={() => setSignOutAsk(false)} width={420}>
-          <p>This starts a fresh anonymous account on this browser. Your current library and wallet will no longer be reachable from here.</p>
-          <div className="modal-actions">
-            <button className="btn" onClick={() => setSignOutAsk(false)}>Cancel</button>
-            <button className="btn red" onClick={() => store.signOut()}>Sign out</button>
-          </div>
-        </Modal>
-      )}
     </header>
   )
 })
 
-export const BottomBar = observer(() => {
+export const Footer = () => (
+  <footer className="gfooter">
+    <div className="gf-inner">
+      <div className="gf-brand"><Logo size={30} /> <span>reSteam</span></div>
+      <p>reSteam is an independent, non-commercial fan project that recreates the look and behavior of a PC game store for learning. It has no affiliation with, and is not endorsed by, any game store company. All games, studios and artwork here are fictional and generated in your browser.</p>
+      <div className="gf-links">
+        <Link to="/about">About reSteam</Link>
+        <a href="https://github.com/aadsidhu-design/resteam" target="_blank" rel="noreferrer">Source code</a>
+        <Link to="/store/browse">Browse all games</Link>
+        <Link to="/community">Community</Link>
+      </div>
+    </div>
+  </footer>
+)
+
+export const AddGameMenu = observer(() => {
   const nav = useNavigate()
   const [add, setAdd] = useState(false)
   const [dlg, setDlg] = useState<null | 'redeem' | 'custom'>(null)
   const ref = useDismiss(add, () => setAdd(false))
-  const active = store.activeDownload ?? store.queue[0]
-  const game = active ? GAMES.find(g => g.id === active.id) : undefined
-
   return (
-    <footer className="bottombar">
-      <div className="bb-left popwrap" ref={ref}>
-        <button className="bb-btn" onClick={() => setAdd(!add)}><Icon name="plus" size={20} /> Add a Game</button>
-        {add && (
-          <div className="popover up">
-            <button className="pop-item" onClick={() => { setAdd(false); setDlg('custom') }}>Add a Non-Store Game…</button>
-            <button className="pop-item" onClick={() => { setAdd(false); setDlg('redeem') }}>Activate a Product on reSteam…</button>
-            <button className="pop-item" onClick={() => { setAdd(false); nav('/store/browse?free=1') }}>Browse free games</button>
-          </div>
-        )}
-      </div>
-      <button className="bb-btn bb-center" onClick={() => nav('/downloads')}>
-        <Icon name="download" size={20} />
-        {active && game ? (
-          <span className="bb-dl">
-            <span className="bb-dl-title">{store.activeDownload ? 'Downloading' : 'Paused'}: {game.title}</span>
-            <span className="bb-dl-bar"><span style={{ width: `${active.progress}%` }} /></span>
-          </span>
-        ) : 'Manage Downloads'}
-      </button>
-      <button className="bb-btn bb-right" onClick={() => (store.friendsOpen = !store.friendsOpen)}>
-        Friends &amp; Chat <Icon name="group" size={20} />
-      </button>
+    <div className="popwrap" ref={ref}>
+      <button className="bb-btn" onClick={() => setAdd(!add)}><Icon name="plus" size={20} /> Add a Game</button>
+      {add && (
+        <div className="popover up">
+          <button className="pop-item" onClick={() => { setAdd(false); setDlg('custom') }}>Add a Non-Store Game…</button>
+          <button className="pop-item" onClick={() => { setAdd(false); setDlg('redeem') }}>Activate a Product on reSteam…</button>
+          <button className="pop-item" onClick={() => { setAdd(false); nav('/store/browse?free=1') }}>Browse free games</button>
+        </div>
+      )}
       {dlg === 'redeem' && <RedeemModal onClose={() => setDlg(null)} />}
       {dlg === 'custom' && <CustomModal onClose={() => setDlg(null)} />}
-    </footer>
+    </div>
   )
 })
 
@@ -190,4 +174,3 @@ export const Toasts = observer(() => (
     {store.toasts.map(t => <div key={t.id} className="toast">{t.text}</div>)}
   </div>
 ))
-

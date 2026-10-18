@@ -1,0 +1,20 @@
+.auth-page { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 16px; background: radial-gradient(ellipse at top, #1b2838, #0e141b 70%); min-height: 520px; }
+.auth-card { display: flex; gap: 0; background: #1b2838; border: 1px solid #00000080; border-radius: 4px; box-shadow: 0 20px 60px #000a; max-width: 860px; width: 100%; }
+.auth-card.narrow { flex-direction: column; max-width: 520px; padding: 28px 32px; gap: 14px; }
+.auth-card h1 { font-size: 22px; letter-spacing: .05em; text-transform: uppercase; color: #fff; margin: 0; }
+.auth-form { flex: 1.3; padding: 28px 32px 24px; display: grid; gap: 8px; align-content: start; }
+.auth-form form { display: grid; gap: 8px; }
+.auth-logo { display: flex; align-items: center; gap: 10px; font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+.auth-sub { color: #1999ff; font-size: 12px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; margin-top: 8px; }
+.auth-form .input { background: #32363d; border: 1px solid #00000033; padding: 11px 12px; font-size: 15px; }
+.auth-submit { margin-top: 10px; width: 100%; border-radius: 2px; }
+.auth-links { display: flex; justify-content: space-between; margin-top: 10px; font-size: 13px; }
+.auth-qr { flex: 1; border-left: 1px solid #ffffff12; padding: 28px 28px 24px; display: grid; gap: 12px; justify-items: center; align-content: start; text-align: center; }
+.qr { width: 188px; height: 188px; background: #fff; padding: 6px; border-radius: 3px; }
+.qr svg { width: 100%; height: 100%; display: block; }
+.qr-off { display: grid; place-items: center; color: #555; font-size: 14px; }
+.recovery-code { font: 700 22px/1.2 ui-monospace, Menlo, monospace; letter-spacing: .08em; background: #0f1319; border: 1px dashed #2f6c93; color: #fff; padding: 16px; text-align: center; user-select: all; }
+.auth-ok { background: #2c4a1b; color: #beee11; padding: 10px 16px; margin-bottom: 14px; border-radius: 3px; }
+.mono { font-family: ui-monospace, Menlo, monospace; letter-spacing: .06em; }
+.row { display: flex; align-items: center; } .row.gap { gap: 10px; }
+@media (max-width: 760px) { .auth-card { flex-direction: column; } .auth-qr { border-left: 0; border-top: 1px solid #ffffff12; } }

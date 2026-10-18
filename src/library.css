@@ -103,3 +103,5 @@
 .colsec { position: relative; }
 .colbtns { position: absolute; right: 8px; top: 6px; display: none; gap: 2px; }
 .colsec:hover .colbtns { display: flex; }
+.side-foot { flex: none; display: flex; justify-content: space-between; gap: 4px; padding: 6px 6px; border-top: 1px solid #00000040; background: #1f2228; }
+.side-foot .bb-btn { font-size: 13px; padding: 8px 8px; gap: 6px; }

@@ -1,8 +1,5 @@
-.fwin { position: fixed; right: 14px; bottom: 56px; width: 452px; height: min(800px, calc(100vh - 150px)); display: flex; flex-direction: column; background: #1a1c21; border: 1px solid #00000099; border-radius: 8px; box-shadow: 0 18px 60px #000c; z-index: 40; overflow: hidden; }
-.fhead { background: linear-gradient(#1f3a5c, #1a2a42 70%, #1a1c21); padding: 10px 16px 14px; cursor: grab; touch-action: none; }
-.fctl { display: flex; gap: 8px; margin-bottom: 10px; }
-.fctl i { width: 12px; height: 12px; border-radius: 50%; display: block; cursor: default; }
-.fctl .r { background: #ff5f57; cursor: pointer; } .fctl .y { background: #febc2e; } .fctl .g { background: #28c840; }
+.fwin { position: fixed; right: 18px; bottom: 34px; width: 400px; height: min(720px, calc(100vh - 120px)); display: flex; flex-direction: column; background: #1a1c21; border: 1px solid #00000099; border-radius: 8px; box-shadow: 0 18px 60px #000c; z-index: 40; overflow: hidden; }
+.fhead { background: linear-gradient(#1f3a5c, #1a2a42 70%, #1a1c21); padding: 14px 16px; }
 .fme { display: flex; gap: 14px; align-items: center; }
 .fme-name { background: none; border: 0; color: var(--link); font-size: 20px; font-weight: 600; padding: 0; display: flex; align-items: center; gap: 4px; }
 .fme-status { color: #6fa8c9; margin-top: 2px; }
@@ -37,8 +34,8 @@
 .pick-list { display: grid; gap: 4px; margin: 12px 0; max-height: 220px; overflow: auto; }
 .pick { display: flex; align-items: center; gap: 10px; padding: 4px 0; }
 
-.chat-windows { position: fixed; right: 14px; bottom: 56px; display: flex; flex-direction: row-reverse; gap: 10px; z-index: 41; align-items: flex-end; max-width: calc(100vw - 28px); }
-.chat-windows.with-friends { right: 478px; max-width: calc(100vw - 492px); }
+.chat-windows { position: fixed; right: 18px; bottom: 34px; display: flex; flex-direction: row-reverse; gap: 10px; z-index: 41; align-items: flex-end; max-width: calc(100vw - 28px); }
+.chat-windows.with-friends { right: 430px; max-width: calc(100vw - 448px); }
 .chat { width: 380px; height: 460px; background: #1e2127; border: 1px solid #00000099; border-radius: 8px; display: flex; flex-direction: column; box-shadow: 0 18px 60px #000c; overflow: hidden; }
 .chat-head { display: flex; align-items: center; gap: 8px; padding: 10px 12px; background: #2b323c; }
 .chat-log { flex: 1; overflow: auto; padding: 12px; display: flex; flex-direction: column; gap: 6px; }
@@ -52,3 +49,12 @@
 .ffav { margin: 10px 14px; padding: 10px; border: 1px dashed #2f6c93; display: flex; flex-wrap: wrap; gap: 12px; min-height: 64px; }
 .fav-chip { background: none; border: 0; color: #c6ccd2; display: grid; justify-items: center; gap: 4px; font-size: 12px; max-width: 64px; }
 .fav-chip:hover { color: #fff; }
+
+.frow.static { cursor: default; }
+.fbadge { margin-left: auto; background: #d94a4a; color: #fff; border-radius: 10px; min-width: 20px; height: 20px; display: grid; place-items: center; font-size: 12px; font-weight: 700; padding: 0 6px; }
+.frow .btn { margin-left: 4px; }
+.frow .finfo { flex: 1; }
+.sres { display: flex; align-items: center; gap: 10px; padding: 4px 0; }
+.chat-title { display: flex; flex-direction: column; line-height: 1.2; min-width: 0; }
+.chat-title .small { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chat-invite { display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px; background: #252b34; }

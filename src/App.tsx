@@ -1,46 +1,56 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
-import { BottomBar, Header, Toasts } from './Chrome'
+import { Footer, Header, Toasts } from './Chrome'
 import { Library } from './Library'
 import { Browse, Cart, StoreHome, StoreLayout, Wishlist } from './StorePages'
 import { StoreGame } from './StoreGame'
 import { Community } from './Community'
-import { Profile, SettingsPage } from './Settings'
+import { SettingsPage } from './Settings'
+import { ProfilePage } from './Profile'
+import { LoginPage, QrApprove, RequireAuth } from './Auth'
+import { About } from './About'
 import { GAMES } from './data'
 import { store } from './store'
-import { useLocation } from 'react-router-dom'
 import { Downloads } from './Downloads'
-import { FriendsWindow } from './Friends'
+import { FriendsDock, FriendsWindow } from './Friends'
 
 const App = observer(() => {
   const loc = useLocation()
   const lib = loc.pathname.startsWith('/library')
+  const guard = (el: React.ReactNode) => <RequireAuth>{el}</RequireAuth>
   return (
     <div className="window">
       <Header />
       <main className={`view ${lib ? 'lib' : ''}`}>
-        <Routes>
-          <Route path="/" element={<Navigate to="/library" replace />} />
-          <Route path="/library" element={<Library />} />
-          <Route path="/library/:id" element={<Library />} />
-          <Route element={<StoreLayout />}>
-            <Route path="/store" element={<StoreHome />} />
-            <Route path="/store/browse" element={<Browse />} />
-            <Route path="/store/:id" element={<StoreGame />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/wishlist" element={<Wishlist />} />
-          </Route>
-          <Route path="/community" element={<Community />} />
-          <Route path="/settings" element={<Navigate to="/settings/account" replace />} />
-          <Route path="/settings/:section" element={<SettingsPage />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/downloads" element={<Downloads />} />
-          <Route path="*" element={<div style={{ padding: 40 }}>Coming soon</div>} />
-        </Routes>
+        <div className="page">
+          <Routes>
+            <Route path="/" element={<Navigate to="/store" replace />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/qr/:id" element={<QrApprove />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/library" element={guard(<Library />)} />
+            <Route path="/library/:id" element={guard(<Library />)} />
+            <Route element={<StoreLayout />}>
+              <Route path="/store" element={<StoreHome />} />
+              <Route path="/store/browse" element={<Browse />} />
+              <Route path="/store/:id" element={<StoreGame />} />
+              <Route path="/cart" element={guard(<Cart />)} />
+              <Route path="/wishlist" element={guard(<Wishlist />)} />
+            </Route>
+            <Route path="/community" element={<Community />} />
+            <Route path="/settings" element={<Navigate to="/settings/account" replace />} />
+            <Route path="/settings/:section" element={guard(<SettingsPage />)} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/profile/:username" element={guard(<ProfilePage />)} />
+            <Route path="/downloads" element={guard(<Downloads />)} />
+            <Route path="*" element={<div className="container"><h1>Page not found</h1><p className="muted">That page does not exist.</p></div>} />
+          </Routes>
+        </div>
+        {!lib && <Footer />}
       </main>
       {store.running !== null && store.settings.fpsCounter && store.settings.overlay && <div className="fps-overlay">FPS {58 + (store.running % 5)} · {GAMES.find(g => g.id === store.running)?.title ?? 'Game'}</div>}
-      <BottomBar />
       <FriendsWindow />
+      <FriendsDock />
       <Toasts />
     </div>
   )

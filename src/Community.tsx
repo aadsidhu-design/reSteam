@@ -1,162 +1,204 @@
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { GAMES, compact, fmt, priceOf, type Game } from './data'
-import { store } from './store'
+import { api, call, store, type Person } from './store'
 import { Art } from './art'
 import { Icon } from './icons'
-import { Avatar, Modal } from './ui'
+import { Avatar, Modal, ago, hours } from './ui'
+import { ReviewCard, type Review } from './Reviews'
 import './community.css'
 
-const TABS = ['All', 'Screenshots', 'Artwork', 'Broadcasts', 'Videos', 'Workshop', 'News', 'Guides', 'Reviews'] as const
-const HUB_TABS = ['All', 'Discussions', 'Screenshots', 'Artwork', 'Broadcasts', 'Videos', 'News', 'Guides', 'Reviews'] as const
-type Tab = (typeof HUB_TABS)[number] | (typeof TABS)[number]
-type Kind = 'Screenshots' | 'Artwork' | 'Videos' | 'Workshop' | 'Guides' | 'Reviews' | 'News' | 'Broadcasts' | 'Discussions'
+type Kind = 'discussion' | 'guide'
+interface Post { id: number; gameId: number; kind: Kind; title: string; body: string; at: number; username: string; name: string; replies: number; votes: number; mine: boolean }
+interface Reply { id: number; body: string; at: number; username: string; name: string }
+interface FeedItem { type: 'review' | 'discussion' | 'guide'; at: number; score: number; item: Review | Post }
+interface Hub { gameId: number; posts: number; guides: number; reviews: number; playing: number; owners: number }
 
-const AUTHORS = ['Ravenfeather', 'plumbob_ace', 'Quillon', 'MellowMoth', 'ByteBaron', 'sunday_driver', 'Hexley', 'nightowl88', 'PaperTiger', 'Orbit9']
-const TITLES: Record<Kind, string[]> = {
-  Screenshots: ['Golden hour at the summit', 'My best run so far', 'Found a quiet corner', 'Unexpected sunrise', 'Photo mode is dangerous'],
-  Artwork: ['Fan art: the long way home', 'Character study', 'Poster concept', 'Pixel redraw', 'Winter variant'],
-  Videos: ['Full clear in under an hour', 'Hidden route showcase', 'Boss fight no-hit', 'Ten tips for new players'],
-  Workshop: ['Colorblind-friendly palette', 'Bigger text pack', 'New starter loadout', 'Remastered soundtrack mix'],
-  Guides: ['Simple progress map', 'Ranking every boss by difficulty', 'How to befriend the rarest creature', 'Efficient progression route', 'Settings worth changing'],
-  Reviews: ['A near-perfect experience', 'Great, with caveats', 'Hard to put down', 'Worth it on sale'],
-  News: ['Patch notes for this week', 'Developer diary: what is next', 'Community event announced', 'Roadmap update'],
-  Broadcasts: ['Live: relaxing evening run', 'Live: speedrun attempts', 'Live: new player questions'],
-  Discussions: ['Share your favorite moment', 'Is the second area worth the detour?', 'Tips for the hardest boss', 'Post your setup'],
-}
-const GUIDE_TXT = [
-  'A simple map for game progress routing, with every optional area marked so you never miss a thing.',
-  'This guide is dedicated solely to ranking all of the encounters. It is not a walkthrough or a strategy handbook, it is simply meant to rank how good or bad each one is.',
-  'To befriend the rarest creature, equip the right charm first and follow the second route past the old gate. Come back after the next update for the full list.',
-]
-const REVIEW_TXT = [
-  'I work in a nursing home. Most of my residents have trouble with their vision and tremors that mean they cannot keep up with their old hobbies. Yesterday I showed one of them this game.\n\nIt brought her so much joy. She lit up when she saw all the patterns and started comparing them against each other. It has inspired me to pick up my own hobby again.\n\nThank you, from the bottom of my heart.',
-  'I do not think I have ever seen a better game of this kind. Polished and charming from the first minute, and I am only a few hours in. The pacing sags a little in the middle but the finish more than makes up for it.',
-  'Easy to pick up and surprisingly deep. The art direction carries the whole thing, and the soundtrack is the kind you keep humming. Cannot recommend it enough for the price.',
-]
+const TABS = ['All', 'Discussions', 'Guides', 'Reviews'] as const
+type Tab = (typeof TABS)[number]
+const gameOf = (id: number) => GAMES.find(g => g.id === id)
 
-interface Item { id: number; kind: Kind; game: Game; title: string; author: string; likes: number; comments: number; awards: number; ratings: number; stars: number; when: string; text: string; hrs: number; positive: boolean; helpful: number; funny: number }
-const buildItems = (): Item[] => {
-  const kinds: Kind[] = ['Reviews', 'Screenshots', 'Guides', 'Guides', 'Artwork', 'Videos', 'Workshop', 'News', 'Broadcasts', 'Discussions']
-  return Array.from({ length: 72 }, (_, i) => {
-    const kind = kinds[i % kinds.length], game = GAMES[(i * 7 + 3) % GAMES.length]
-    return {
-      id: i, kind, game, title: TITLES[kind][(i >> 1) % TITLES[kind].length], author: AUTHORS[(i * 5) % AUTHORS.length], likes: ((i * 193) % 4200) + 40,
-      comments: (i * 7) % 90, awards: (i * 3) % 12, ratings: ((i * 37) % 300) + 12, stars: 3 + (i % 3) * 0.5 + 0.5, when: ['October 11', 'October 8', 'October 2', 'September 26'][i % 4],
-      text: kind === 'Guides' ? GUIDE_TXT[i % 3] : REVIEW_TXT[i % 3], hrs: ((i * 17) % 120) + 3, positive: (i * 3) % 7 !== 0, helpful: ((i * 211) % 3000) + 20, funny: (i * 13) % 40,
-    }
-  })
+const PostCard = ({ p, onOpen, showGame }: { p: Post; onOpen: () => void; showGame?: boolean }) => {
+  const g = gameOf(p.gameId)
+  return (
+    <div className="cc guide" role="button" tabIndex={0} onClick={onOpen} onKeyDown={e => { if (e.key === 'Enter') onOpen() }}>
+      <div className="g-title">{p.kind === 'guide' ? 'Guide' : 'Discussion'}</div>
+      <div className="g-inner">{g && <div className="g-thumb"><Art game={g} kind="icon" /></div>}<div className="g-name">{p.title}</div></div>
+      <p className="g-desc">{p.body.length > 180 ? `${p.body.slice(0, 180)}…` : p.body}</p>
+      <div className="g-meta"><span className="muted">{ago(p.at)}</span><span className="counts"><span className="aw"><Icon name="thumbUp" size={13} /> {p.votes}</span><span className="cm"><Icon name="chat" size={14} /> {p.replies}</span></span></div>
+      <div className="g-author"><Avatar f={{ name: p.name }} size={26} ring={false} /><div><div>{p.name}</div>{showGame && g && <div className="muted tiny">{g.title}</div>}</div></div>
+    </div>
+  )
 }
 
-const Stars = ({ n }: { n: number }) => <span className="stars" aria-label={`${n} stars`}>{[1, 2, 3, 4, 5].map(k => <i key={k} className={k <= Math.floor(n) ? 'on' : ''}>★</i>)}</span>
-const Counts = ({ it }: { it: Item }) => <span className="counts"><span className="aw"><Icon name="star" size={13} /> {it.awards}</span><span className="cm"><Icon name="chat" size={14} /> {it.comments}</span></span>
+/** Review card in the community feed (same data as the store page, with the game named). */
+const FeedReview = observer(({ r }: { r: Review }) => <div className="cc-review"><ReviewCard r={r} game={gameOf(r.gameId)} /></div>)
 
-const ReviewCard = ({ it, big = false }: { it: Item; big?: boolean }) => (
-  <div className={`cc review ${big ? 'big' : ''}`}>
-    <div className="rv-lines"><div>{compact(it.helpful)} people found this review helpful</div><div>{it.funny} people found this review funny <span className="award"><Icon name="star" size={14} /> {compact(it.awards * 12)}</span></div></div>
-    <div className="verdict"><span className="thumbbox"><Icon name="thumbUp" size={26} /></span><div><div className="vd">{it.positive ? 'Recommended' : 'Not Recommended'}</div><div className="muted small">{it.hrs} hrs on record</div></div></div>
-    <div className="posted">Posted: {it.when}</div>
-    <div className={`rv-text ${big ? '' : 'clamp'}`}>{it.text.split('\n\n').map((p, i) => <p key={i}>{p}</p>)}</div>
-    <div className="cc-foot"><span>{it.game.title}</span><span className="cm"><Icon name="chat" size={14} /> {it.comments}</span></div>
-  </div>
-)
-const ShotCard = ({ it }: { it: Item }) => (
-  <div className="cc shot">
-    <div className="shot-art"><Art game={it.game} kind={it.kind === 'Artwork' ? 'wide' : 'shot'} variant={it.id % 6} showTitle={it.kind !== 'Screenshots'} />
-      {it.kind === 'Videos' && <span className="vplay"><Icon name="play" size={30} /></span>}{it.kind === 'Broadcasts' && <span className="live">LIVE</span>}</div>
-    <div className="shot-cap">{it.title.toUpperCase()}</div>
-    <div className="cc-foot"><span>{it.game.title}</span><Counts it={it} /></div>
-  </div>
-)
-const GuideCard = ({ it }: { it: Item }) => (
-  <div className="cc guide">
-    <div className="g-title">{it.kind === 'Workshop' ? 'Workshop Item' : it.kind === 'Discussions' ? 'Discussion' : it.kind === 'News' ? 'News' : 'Guide'}</div>
-    <div className="g-inner"><div className="g-thumb"><Art game={it.game} kind="icon" variant={it.id % 5} /></div><div className="g-name">{it.title}</div></div>
-    <p className="g-desc">{it.text}</p>
-    <div className="g-meta"><span><Stars n={it.stars} /> <span className="muted">{it.ratings} ratings</span></span><Counts it={it} /></div>
-    <div className="g-author"><Avatar f={{ name: it.author, hue: it.id * 41, status: 'offline' }} size={26} ring={false} /><div><div>{it.author}</div><div className="muted tiny">View all {it.kind === 'Guides' ? 'guides' : 'content'}</div></div></div>
-  </div>
-)
-const Card = ({ it, big }: { it: Item; big?: boolean }) =>
-  it.kind === 'Reviews' ? <ReviewCard it={it} big={big} /> : ['Screenshots', 'Artwork', 'Videos', 'Broadcasts'].includes(it.kind) ? <ShotCard it={it} /> : <GuideCard it={it} />
+const NewPost = observer(({ g, kind, onClose, onDone }: { g: Game; kind: Kind; onClose: () => void; onDone: (id: number) => void }) => {
+  const [title, setTitle] = useState('')
+  const [body, setBody] = useState('')
+  const [err, setErr] = useState('')
+  const [busy, setBusy] = useState(false)
+  return (
+    <Modal title={kind === 'guide' ? `Write a guide for ${g.title}` : `Start a discussion in ${g.title}`} onClose={onClose} width={560}>
+      <form onSubmit={async e => {
+        e.preventDefault(); setBusy(true)
+        const { data, error } = await call<{ id: number }>('POST', `/games/${g.id}/posts`, { kind, title, body })
+        setBusy(false)
+        if (error || !data) setErr(error ?? 'Could not post'); else onDone(data.id)
+      }}>
+        <input className="input" autoFocus placeholder="Title" maxLength={120} value={title} onChange={e => { setTitle(e.target.value); setErr('') }} />
+        <textarea className="input" rows={8} style={{ marginTop: 10 }} placeholder={kind === 'guide' ? 'Explain what you know. Guides can only be written by owners of the game.' : 'What do you want to talk about?'} maxLength={10000} value={body} onChange={e => { setBody(e.target.value); setErr('') }} />
+        {err && <div className="err">{err}</div>}
+        <div className="modal-actions"><button type="button" className="btn" onClick={onClose}>Cancel</button><button className="btn blue" disabled={busy || title.trim().length < 3 || body.trim().length < 10}>Post</button></div>
+      </form>
+    </Modal>
+  )
+})
 
-/** The real "All" feed lays cards out in repeating rows: a big review beside two stacked shots, two guides, then three. */
-const Mosaic = ({ items }: { items: Item[] }) => {
-  const rows: React.ReactNode[] = []
-  let i = 0, r = 0
-  const take = (pred: (x: Item) => boolean) => { const k = items.findIndex((x, idx) => idx >= i && pred(x)); if (k < 0) return items[i++]; const [x] = items.splice(k, 1); items.splice(i, 0, x); return items[i++] }
-  while (i < items.length && r < 12) {
-    const p = r % 3
-    if (p === 0) { const a = take(x => x.kind === 'Reviews'), b = take(x => x.kind === 'Screenshots'), c = take(x => x.kind === 'Artwork' || x.kind === 'Screenshots'); rows.push(<div className="mrow m1" key={r}>{a && <Card it={a} big />}<div className="stack">{b && <Card it={b} />}{c && <Card it={c} />}</div></div>) }
-    else if (p === 1) { const a = take(x => x.kind === 'Guides'), b = take(x => x.kind === 'Guides' || x.kind === 'Workshop'); rows.push(<div className="mrow m2" key={r}>{a && <Card it={a} />}{b && <Card it={b} />}</div>) }
-    else { const a = take(x => x.kind === 'News' || x.kind === 'Workshop'), b = take(x => x.kind === 'Discussions' || x.kind === 'Guides'), c = take(x => x.kind === 'Reviews'); rows.push(<div className="mrow m3" key={r}>{a && <Card it={a} />}{b && <Card it={b} />}{c && <Card it={c} />}</div>) }
-    r++
-  }
-  return <>{rows}</>
-}
+const PostView = observer(({ id, onBack }: { id: number; onBack: () => void }) => {
+  const [data, setData] = useState<{ post: Post; replies: Reply[] } | null | 'gone'>(null)
+  const [text, setText] = useState('')
+  const [err, setErr] = useState('')
+  const load = useCallback(async () => { const r = await api<{ post: Post; replies: Reply[] }>('GET', `/posts/${id}`); setData(r ?? 'gone') }, [id])
+  useEffect(() => { void load() }, [load])
+  if (data === null) return <p className="muted">Loading…</p>
+  if (data === 'gone') return <div><button className="link-btn" onClick={onBack}>← Back</button><p className="muted">This post no longer exists.</p></div>
+  const { post, replies } = data
+  const self = (u: string) => store.user?.username.toLowerCase() === u.toLowerCase()
+  const g = gameOf(post.gameId)
+  return (
+    <div className="postview">
+      <button className="link-btn" onClick={onBack}>← Back to {g ? `${g.title} hub` : 'community'}</button>
+      <div className="pv-card">
+        <div className="g-title">{post.kind === 'guide' ? 'Guide' : 'Discussion'}</div>
+        <h2 className="pv-h">{post.title}</h2>
+        <div className="pv-by"><Avatar f={{ name: post.name }} size={30} ring={false} /> <Link to={`/profile/${post.username}`}>{post.name}</Link> <span className="muted small">· {ago(post.at)}</span></div>
+        <div className="pv-body">{post.body}</div>
+        <div className="pv-actions">
+          <button className={`btn small ${post.mine ? 'blue' : ''}`} disabled={self(post.username)} onClick={async () => {
+            if (store.needLogin()) return
+            const r = await call<{ votes: number; voted: boolean }>('POST', `/posts/${id}/vote`)
+            if (r.data) setData({ post: { ...post, votes: r.data.votes, mine: r.data.voted }, replies }); else store.toast(r.error ?? 'Could not vote')
+          }}><Icon name="thumbUp" size={14} /> {post.votes}</button>
+          {self(post.username) && <button className="link-btn small" onClick={async () => { if (confirm('Delete this post?')) { await call('DELETE', `/posts/${id}`); onBack() } }}>Delete</button>}
+          {!self(post.username) && store.signedIn && <button className="link-btn small" onClick={async () => { if (confirm('Report this post?')) { const r = await call('POST', `/posts/${id}/report`, { reason: 'reported by a user' }); store.toast(r.error ?? 'Reported. Thank you.') } }}>Report</button>}
+        </div>
+      </div>
+      <h3 className="pv-rh">{replies.length} {replies.length === 1 ? 'reply' : 'replies'}</h3>
+      {replies.map(r => (
+        <div key={r.id} className="pv-reply">
+          <Avatar f={{ name: r.name }} size={34} ring={false} />
+          <div className="grow"><div><Link to={`/profile/${r.username}`}>{r.name}</Link> <span className="muted small">· {ago(r.at)}</span></div><div className="pv-body">{r.body}</div></div>
+          {self(r.username) && <button className="link-btn small" onClick={async () => { await call('DELETE', `/replies/${r.id}`); void load() }}>Delete</button>}
+        </div>
+      ))}
+      {store.signedIn ? (
+        <form className="pv-form" onSubmit={async e => {
+          e.preventDefault()
+          const { error } = await call('POST', `/posts/${id}/replies`, { body: text })
+          if (error) setErr(error); else { setText(''); setErr(''); void load() }
+        }}>
+          <textarea className="input" rows={3} placeholder="Write a reply" maxLength={4000} value={text} onChange={e => { setText(e.target.value); setErr('') }} />
+          {err && <div className="err">{err}</div>}
+          <button className="btn blue" disabled={text.trim().length < 1}>Post reply</button>
+        </form>
+      ) : <p className="muted"><Link to={`/login?next=${encodeURIComponent(`/community?hub=${post.gameId}&post=${id}`)}`}>Sign in</Link> to reply.</p>}
+    </div>
+  )
+})
 
 export const Community = observer(() => {
   const [sp, setSp] = useSearchParams()
   const hub = Number(sp.get('hub') ?? 0)
-  const hubGame = GAMES.find(g => g.id === hub)
-  const tabs = hubGame ? HUB_TABS : TABS
+  const hubGame = gameOf(hub)
+  const postId = Number(sp.get('post') ?? 0)
   const tabParam = sp.get('tab') as Tab | null
-  const tab: Tab = tabParam && (tabs as readonly string[]).includes(tabParam) ? tabParam : 'All'
+  const tab: Tab = tabParam && (TABS as readonly string[]).includes(tabParam) ? tabParam : 'All'
   const [popular, setPopular] = useState(true)
   const [hubQ, setHubQ] = useState('')
   const [peopleQ, setPeopleQ] = useState('')
+  const [people, setPeople] = useState<Person[]>([])
+  const [hubs, setHubs] = useState<Hub[]>([])
+  const [feed, setFeed] = useState<FeedItem[] | null>(null)
+  const [writing, setWriting] = useState<Kind | null>(null)
   const [shown, setShown] = useState(18)
-  const [notFound, setNotFound] = useState<string | null>(null)
-  const [about, setAbout] = useState(false)
-  const all = useMemo(buildItems, [])
 
   const setParams = (k: string, v: string | null) => { const n = new URLSearchParams(sp); if (v) n.set(k, v); else n.delete(k); setSp(n); setShown(18) }
-  let items = all.filter(i => (tab === 'All' || i.kind === tab || (tab === 'Workshop' && i.kind === 'Workshop')) && (!hubGame || i.game.id === hubGame.id || i.id % 3 === 0))
-  if (hubGame) items = items.map(i => ({ ...i, game: hubGame }))
-  items = [...items].sort((a, b) => (popular ? b.likes - a.likes : b.id - a.id))
+  const openPost = (p: number) => { const n = new URLSearchParams(sp); n.set('post', String(p)); setSp(n) }
+
+  useEffect(() => { void api<{ hubs: Hub[] }>('GET', '/community/hubs').then(r => setHubs(r?.hubs ?? [])) }, [])
+  const loadFeed = useCallback(async () => {
+    setFeed(null)
+    const sort = popular ? 'popular' : 'recent'
+    if (hubGame) {
+      const [rv, ps] = await Promise.all([
+        tab === 'All' || tab === 'Reviews' ? api<{ reviews: Review[] }>('GET', `/games/${hubGame.id}/reviews?sort=${popular ? 'helpful' : 'recent'}`) : null,
+        tab !== 'Reviews' ? api<{ posts: Post[] }>('GET', `/games/${hubGame.id}/posts?sort=${sort}${tab === 'Discussions' ? '&kind=discussion' : tab === 'Guides' ? '&kind=guide' : ''}`) : null,
+      ])
+      const items: FeedItem[] = [
+        ...(rv?.reviews ?? []).map(r => ({ type: 'review' as const, at: r.at, score: r.helpful, item: r })),
+        ...(ps?.posts ?? []).map(p => ({ type: p.kind, at: p.at, score: p.votes + p.replies, item: p })),
+      ]
+      setFeed(items.sort((a, b) => (popular ? b.score - a.score || b.at - a.at : b.at - a.at)))
+    } else {
+      const r = await api<{ items: FeedItem[] }>('GET', `/community/feed?sort=${sort}`)
+      const all = r?.items ?? []
+      setFeed(all.filter(i => tab === 'All' || (tab === 'Discussions' && i.type === 'discussion') || (tab === 'Guides' && i.type === 'guide') || (tab === 'Reviews' && i.type === 'review')))
+    }
+  }, [hubGame, tab, popular])
+  useEffect(() => { void loadFeed() }, [loadFeed])
+
+  useEffect(() => {
+    if (peopleQ.trim().length < 2 || !store.signedIn) { setPeople([]); return }
+    let live = true
+    const t = setTimeout(() => { void store.search(peopleQ.trim()).then(r => { if (live) setPeople(r) }) }, 250)
+    return () => { live = false; clearTimeout(t) }
+  }, [peopleQ])
 
   const recentHubs = [...store.ownedGames].filter(g => store.lastPlayed[g.id]).sort((a, b) => (store.lastPlayed[b.id] ?? 0) - (store.lastPlayed[a.id] ?? 0)).slice(0, 3)
-  const popularHubs = [...GAMES].sort((a, b) => b.reviews - a.reviews).slice(0, 4)
   const hubHits = hubQ.trim() ? GAMES.filter(g => g.title.toLowerCase().includes(hubQ.trim().toLowerCase())).slice(0, 5) : []
-  const people = peopleQ.trim() ? store.friends.filter(f => f.name.toLowerCase().includes(peopleQ.trim().toLowerCase())) : []
-  const playing = hubGame ? store.friends.filter(f => f.gameId === hubGame.id).length + (hubGame.reviews % 9000) : 0
+  const friendsIn = hubGame ? store.friendsPlaying(hubGame.id).length : 0
 
-  const feed = tab === 'All' && !hubGame ? <Mosaic items={[...items.slice(0, shown)]} /> : tab === 'All' ? <Mosaic items={[...items.slice(0, shown)]} />
-    : <div className={`cm-grid ${['Screenshots', 'Artwork', 'Videos', 'Broadcasts'].includes(tab) ? 'tiles' : tab === 'Reviews' ? '' : 'two'}`}>{items.slice(0, shown).map(it => <Card key={it.id} it={it} />)}</div>
+  if (postId) return <div className="community"><div className="cm-wrap"><PostView id={postId} onBack={() => { const n = new URLSearchParams(sp); n.delete('post'); setSp(n); void loadFeed() }} /></div></div>
 
+  const items = feed ?? []
   return (
     <div className="community">
       <div className="cm-wrap">
         {hubGame ? (
           <>
             <div className="hub-top"><h1>{hubGame.title}</h1><Link to={`/store/${hubGame.id}`} className="storepage">Store Page</Link></div>
-            <div className="cm-tabs hubtabs">{tabs.map(t => <button key={t} className={t === tab ? 'on' : ''} onClick={() => setParams('tab', t === 'All' ? null : t)}>{t}</button>)}</div>
             <div className="hub-banner">
-              <div className="hub-stats"><span className="ingame">{compact(playing)} In-Game</span> <span>{compact(Math.round(playing / 3))} in <u>Group Chat</u></span><span className="vs"><Icon name="grid" size={14} /> <u>View Stats</u></span></div>
+              <div className="hub-stats"><span className="ingame">{compact(hubGame.playing)} In-Game</span><span>{compact(hubGame.owners)} owner{hubGame.owners === 1 ? '' : 's'}</span><span>{compact(hubGame.reviews)} review{hubGame.reviews === 1 ? '' : 's'}</span>{friendsIn > 0 && <span className="pos">{friendsIn} friend{friendsIn === 1 ? '' : 's'} playing</span>}</div>
               <div className="hub-main">
                 <div className="hub-cap"><Art game={hubGame} kind="header" /></div>
                 <div><p>{hubGame.blurb}</p>
                   <div className="hub-buy"><span className="hub-price">{hubGame.price === 0 ? 'Free' : fmt(priceOf(hubGame))}</span><Link to={`/store/${hubGame.id}`} className="visit">Visit the Store Page</Link>
-                    <button className="link-btn" onClick={() => setParams('hub', null)}>All of the community</button></div></div>
+                    <button className="link-btn" onClick={() => { const n = new URLSearchParams(sp); n.delete('hub'); n.delete('tab'); setSp(n) }}>All of the community</button></div></div>
               </div>
             </div>
-            <div className="more-ways">MORE WAYS TO CONNECT:<div className="ways"><span /><span /><span /></div></div>
-            <div className="popular-note">Most popular community and official content for the past week. <button className="link-btn" onClick={() => setAbout(true)}>(?)</button></div>
+            <div className="cm-tabs hubtabs">{TABS.map(t => <button key={t} className={t === tab ? 'on' : ''} onClick={() => setParams('tab', t === 'All' ? null : t)}>{t}</button>)}
+              <span className="grow" />
+              <button className="btn small" onClick={() => store.needLogin() || setWriting('discussion')}>New discussion</button>
+              <button className="btn small" disabled={store.signedIn && !store.owned.includes(hubGame.id)} title={store.signedIn && !store.owned.includes(hubGame.id) ? 'Only owners can write guides' : undefined} onClick={() => store.needLogin() || setWriting('guide')}>Write a guide</button>
+            </div>
           </>
         ) : (
           <>
-            <h1>Community Activity</h1><p className="cm-sub">Community and official content for all games and software on reSteam.</p>
+            <h1>Community Activity</h1><p className="cm-sub">Reviews, discussions and guides from people on reSteam.</p>
             <div className="cm-panels">
               <div className="cm-panel cols2">
                 <div>
                   <h4>YOUR RECENTLY PLAYED GAMES</h4>
-                  {recentHubs.length === 0 && <div className="muted">Play a game and its hub will show up here.</div>}
-                  {recentHubs.map(g => <Link key={g.id} to={`/community?hub=${g.id}`} className="hubrow"><Art game={g} kind="icon" className="hub-icon" /><div><div className="hn">{g.title}</div><div className="hl">{(g.id % 4) + 1} new guides this week</div></div></Link>)}
+                  {recentHubs.length === 0 && <div className="muted">{store.signedIn ? 'Play a game and its hub will show up here.' : <><Link to="/login">Sign in</Link> to see your games.</>}</div>}
+                  {recentHubs.map(g => <Link key={g.id} to={`/community?hub=${g.id}`} className="hubrow"><Art game={g} kind="icon" className="hub-icon" /><div><div className="hn">{g.title}</div><div className="hl">{hours(store.playtime[g.id])} played</div></div></Link>)}
                 </div>
                 <div>
-                  <h4>POPULAR HUBS</h4>
-                  {popularHubs.map((g, i) => <Link key={g.id} to={`/community?hub=${g.id}`} className="hubrow"><Art game={g} kind="icon" className="hub-icon" /><div><div className="hn">{g.title}</div><div className="hl">{compact((g.reviews % 900) + 90 + i * 40)} new {['artwork', 'workshop items', 'screenshots', 'guides'][i]} this week</div></div></Link>)}
+                  <h4>BUSIEST HUBS</h4>
+                  {hubs.length === 0 && <div className="muted">Loading…</div>}
+                  {hubs.slice(0, 4).map(h => { const g = gameOf(h.gameId); return g && <Link key={g.id} to={`/community?hub=${g.id}`} className="hubrow"><Art game={g} kind="icon" className="hub-icon" /><div><div className="hn">{g.title}</div><div className="hl">{h.playing} in-game · {h.posts} posts this week</div></div></Link> })}
                 </div>
               </div>
               <div className="cm-panel">
@@ -164,15 +206,13 @@ export const Community = observer(() => {
                 <div className="cm-search"><input placeholder="Search for products" value={hubQ} onChange={e => setHubQ(e.target.value)} aria-label="Search for products" /><Icon name="search" size={22} /></div>
                 {hubHits.map(g => <Link key={g.id} to={`/community?hub=${g.id}`} className="hl-hit">{g.title}</Link>)}
                 <h4 className="mt">FIND PEOPLE</h4>
-                <form className="cm-search" onSubmit={e => { e.preventDefault(); setNotFound(people.length === 0 && peopleQ.trim() ? peopleQ.trim() : null) }}>
-                  <input placeholder="Search for friends" value={peopleQ} onChange={e => { setPeopleQ(e.target.value); setNotFound(null) }} aria-label="Search for friends" /><Icon name="search" size={22} />
-                </form>
-                {people.map(f => <button key={f.id} className="hl-hit" onClick={() => store.openChat(f.id)}><Avatar f={f} size={22} /> {f.name}</button>)}
-                {notFound && <div className="small">No one named "{notFound}". <button className="link-btn" onClick={async () => { const e = await store.addFriend(notFound); store.toast(e ?? `Friend request sent to ${notFound}`) }}>Send a friend request</button></div>}
+                <div className="cm-search"><input placeholder={store.signedIn ? 'Search by account name' : 'Sign in to search people'} disabled={!store.signedIn} value={peopleQ} onChange={e => setPeopleQ(e.target.value)} aria-label="Search for people" /><Icon name="search" size={22} /></div>
+                {people.map(u => <Link key={u.username} to={`/profile/${u.username}`} className="hl-hit"><Avatar f={{ name: u.name }} size={22} ring={false} /> {u.name} <span className="muted small">@{u.username}</span></Link>)}
+                {store.signedIn && peopleQ.trim().length >= 2 && people.length === 0 && <div className="small muted">No accounts match "{peopleQ.trim()}".</div>}
               </div>
             </div>
             <div className="cm-tabs">
-              {tabs.map(t => <button key={t} className={t === tab ? 'on' : ''} onClick={() => setParams('tab', t === 'All' ? null : t)}>{t}</button>)}
+              {TABS.map(t => <button key={t} className={t === tab ? 'on' : ''} onClick={() => setParams('tab', t === 'All' ? null : t)}>{t}</button>)}
               <span className="grow" />
               <span className="muted viewing">Viewing</span>
               <button className={`seg ${popular ? 'on' : ''}`} onClick={() => setPopular(true)}>MOST POPULAR</button>
@@ -183,12 +223,16 @@ export const Community = observer(() => {
         {hubGame && <div className="cm-tabs viewrow"><span className="grow" /><span className="muted viewing">Viewing</span>
           <button className={`seg ${popular ? 'on' : ''}`} onClick={() => setPopular(true)}>MOST POPULAR</button><button className={`seg ${!popular ? 'on' : ''}`} onClick={() => setPopular(false)}>MOST RECENT</button></div>}
 
-        {feed}
-        {items.length === 0 && <p className="muted">Nothing here yet.</p>}
+        {feed === null && <p className="muted">Loading…</p>}
+        <div className="cm-grid one">
+          {items.slice(0, shown).map(i => i.type === 'review'
+            ? <FeedReview key={`r${(i.item as Review).id}`} r={i.item as Review} />
+            : <PostCard key={`p${(i.item as Post).id}`} p={i.item as Post} showGame={!hubGame} onOpen={() => { const p = i.item as Post; const n = new URLSearchParams(sp); n.set('hub', String(p.gameId)); n.set('post', String(p.id)); setSp(n) }} />)}
+        </div>
+        {feed !== null && items.length === 0 && <p className="muted">Nothing here yet. {hubGame ? 'Be the first to post.' : 'Reviews and discussions people write will appear here.'}</p>}
         {shown < items.length && <div className="cm-more"><button className="btn" onClick={() => setShown(shown + 18)}>Show more</button></div>}
-        <div className="cm-foot muted small">reSteam is a fan-made UI study. Content on this page is generated for demonstration.</div>
       </div>
-      {about && <Modal title="Community content" onClose={() => setAbout(false)}><p>Everything shown here is generated for demonstration. There are no real posts or users.</p></Modal>}
+      {writing && hubGame && <NewPost g={hubGame} kind={writing} onClose={() => setWriting(null)} onDone={id => { setWriting(null); openPost(id) }} />}
     </div>
   )
 })

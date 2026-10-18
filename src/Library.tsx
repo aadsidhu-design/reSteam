@@ -1,18 +1,35 @@
 import { useState } from 'react'
 import { NavLink, Link, useNavigate, useParams } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
-import { gameNews, type Game } from './data'
-import { store, type Shelf as ShelfKind } from './store'
+import { GAMES, type Game } from './data'
+import { store, type ActivityEvent, type Shelf as ShelfKind } from './store'
+import { AddGameMenu } from './Chrome'
 import { Art } from './art'
 import { Icon } from './icons'
 import { Avatar, Modal, Shelf, ago, hours, useDismiss } from './ui'
 import './library.css'
 
 const customToGame = (c: { id: number; title: string }): Game => ({
-  id: c.id, title: c.title, dev: 'Local', publisher: 'Local', genre: [], tags: [], price: 0, discount: 0, rating: 0, reviews: 0,
+  id: c.id, title: c.title, dev: 'Local', publisher: 'Local', genre: [], tags: [], price: 0, discount: 0, rating: 0, reviews: 0, owners: 0, playing: 0,
   released: '', blurb: 'A non-store game added from this browser.', hue: [...c.title].reduce((h, ch) => (h + ch.charCodeAt(0) * 7) % 360, 0),
   motif: 'circuit', achievements: 0, sizeGb: 0,
 })
+
+const gameOf = (id: number | null) => GAMES.find(g => g.id === id)
+
+/** One line describing something a friend (or you) did. */
+const describe = (e: ActivityEvent): string => {
+  const who = e.user === 'me' ? 'You' : e.user.name
+  const game = gameOf(e.gameId)?.title ?? 'a game'
+  switch (e.kind) {
+    case 'playing': return `${who} started playing ${game}`
+    case 'achievement': return `${who} unlocked ${e.data.unlocked}/${e.data.total} achievements in ${game}`
+    case 'review': return `${who} reviewed ${game}${e.data.recommend === undefined ? '' : e.data.recommend ? ' and recommends it' : ' and does not recommend it'}`
+    case 'purchase': return `${who} added ${game} to ${e.user === 'me' ? 'your' : 'their'} library`
+    case 'friend': return `${who} became friends with ${e.data.with?.name ?? 'someone'}`
+    default: return `${who} did something`
+  }
+}
 
 const allGames = () => [...store.ownedGames, ...store.customGames.map(customToGame)]
 const isInstalled = (g: Game) => g.id >= 1000 || store.installed.includes(g.id)
@@ -74,19 +91,19 @@ const Home = observer(() => {
     const rm = () => store.removeShelf(s)
     switch (s) {
       case 'whatsnew': {
-        const items = store.ownedGames.slice(0, 8)
+        const items = store.activity.filter(e => e.gameId !== null && ['playing', 'achievement', 'review', 'purchase'].includes(e.kind)).slice(0, 10)
         return (
           <section className="shelf whatsnew" key={s}>
             <ShelfHeader title="What's New" onRemove={rm} />
-            {items.length === 0 ? <p className="muted">Updates for games you own will appear here.</p> : (
+            {items.length === 0 ? <p className="muted">Activity from you and your friends appears here: games started, achievements and reviews.</p> : (
               <Shelf step={800}>
-                {items.map(g => {
-                  const n = gameNews(g)
+                {items.map(e => {
+                  const g = gameOf(e.gameId)!
                   return (
-                    <Link key={g.id} to={`/library/${g.id}`} className="news-card">
-                      <div className="muted small nc-when">{n.when}</div>
+                    <Link key={e.id} to={e.user !== 'me' || !store.owned.includes(g.id) ? `/store/${g.id}` : `/library/${g.id}`} className="news-card">
+                      <div className="muted small nc-when">{ago(e.at)}</div>
                       <div className="nc-art"><Art game={g} kind="wide" variant={1} showTitle={false} /></div>
-                      <div className="nc-title">{n.title.split(': ')[1]}</div>
+                      <div className="nc-title">{describe(e)}</div>
                       <div className="nc-game"><Art game={g} kind="icon" className="nc-icon" /> {g.title}</div>
                     </Link>
                   )
@@ -211,7 +228,6 @@ export const Library = observer(() => {
             <option value="games">Games</option>
             <option value="software">Software</option>
           </select>
-          <button className="fbtn" disabled title="All games work on this computer"><Icon name="monitor" size={18} /></button>
           <button className={`fbtn ${store.recentSort ? 'on' : ''}`} onClick={() => (store.recentSort = !store.recentSort)} title="Sort by recent activity"><Icon name="clock" size={18} /></button>
           <button className={`fbtn ${store.installedOnly ? 'on' : ''}`} onClick={() => (store.installedOnly = !store.installedOnly)} title="Ready to play"><Icon name="playCircle" size={18} /></button>
         </div>
@@ -238,7 +254,11 @@ export const Library = observer(() => {
             </div>
           ))}
           {section('rest', favs.length > 0 || store.collections.length > 0 ? 'UNCATEGORIZED' : 'ALL GAMES', rest)}
-          {list.length === 0 && <div className="muted small side-empty">No games match.</div>}
+          {list.length === 0 && <div className="muted small side-empty">{all.length === 0 ? 'Your library is empty. Find something in the store.' : 'No games match.'}</div>}
+        </div>
+        <div className="side-foot">
+          <AddGameMenu />
+          <Link className="bb-btn" to="/downloads"><Icon name="download" size={20} /> Downloads{store.queue.length > 0 ? ` (${store.queue.length})` : ''}</Link>
         </div>
       </aside>
       <section className="lib-main">
@@ -275,7 +295,6 @@ const LibGame = observer(({ g }: { g: Game }) => {
   const [gear, setGear] = useState(false)
   const [info, setInfo] = useState(false)
   const [caret, setCaret] = useState(false)
-  const [post, setPost] = useState('')
   const gearRef = useDismiss(gear, () => setGear(false))
   const caretRef = useDismiss(caret, () => setCaret(false))
   const custom = g.id >= 1000
@@ -285,12 +304,11 @@ const LibGame = observer(({ g }: { g: Game }) => {
   const fav = store.favorites.includes(g.id)
   const played = store.playtime[g.id] ?? 0
   const unlocked = Math.min(g.achievements, Math.floor(played / 3))
-  // friends playing now, plus a stable pseudo-random few who have played before
-  const playingNow = store.friends.filter(f => f.gameId === g.id)
-  const previously = store.friends.filter(f => f.status !== 'pending' && f.gameId !== g.id && ([...f.id].reduce((h, c) => h + c.charCodeAt(0), 0) + g.id) % 3 === 0)
+  // friends playing right now, and friends whose recent activity involved this game
+  const playingNow = store.friendsPlaying(g.id)
+  const previously = store.friends.filter(f => f.presence.gameId !== g.id || f.presence.status !== 'ingame').filter(f => store.activity.some(e => e.gameId === g.id && e.user !== 'me' && e.user.username.toLowerCase() === f.username.toLowerCase()))
   const friends = [...playingNow, ...previously]
-  const news = gameNews(g)
-  const posts = store.posts[g.id] ?? []
+  const feed = store.activity.filter(e => e.gameId === g.id)
 
   return (
     <div className="gamepage">
@@ -359,36 +377,25 @@ const LibGame = observer(({ g }: { g: Game }) => {
           <>
             <Link to={`/store/${g.id}`}>Store Page</Link>
             <Link to={`/community?hub=${g.id}`}>Community Hub</Link>
-            <button className="tabdis" onClick={() => store.toast('Points Shop is not part of reSteam')}>Points Shop</button>
             <Link to={`/community?hub=${g.id}&tab=Discussions`}>Discussions</Link>
             <Link to={`/community?hub=${g.id}&tab=Guides`}>Guides</Link>
-            <button className="tabdis" onClick={() => store.toast('Support is not part of reSteam')}>Support</button>
           </>
         )}
       </div>
       <div className="gp-body">
         <div className="gp-left">
           <h2>Activity</h2>
-          <form className="postbox" onSubmit={e => { e.preventDefault(); store.post(g.id, post); setPost('') }}>
-            <input className="input" placeholder="Say something about this game to your friends..." value={post} onChange={e => setPost(e.target.value)} maxLength={300} />
-          </form>
-          {!custom && <div className="viewnews"><Link to={`/community?hub=${g.id}&tab=News`}>View Latest News</Link></div>}
-          {posts.map(p => (
-            <div className="act-entry" key={p.at}>
-              <div className="act-date">{new Date(p.at).toLocaleDateString('en-US', { month: 'long', day: 'numeric' }).toUpperCase()}</div>
-              <div className="act-row"><Avatar f={{ name: store.name, hue: 210, status: store.status }} size={34} ring={false} /><div><span className="pos">{store.name}</span> posted: {p.text}</div></div>
+          {feed.length === 0 && played === 0 && <p className="muted">Nothing yet. Play {g.title} and your activity, and your friends', will show up here.</p>}
+          {feed.map(e => (
+            <div className="act-entry" key={e.id}>
+              <div className="act-date">{ago(e.at).toUpperCase()}</div>
+              <div className="act-row"><Avatar f={{ name: e.user === 'me' ? store.name : e.user.name }} size={34} ring={false} /><div>{describe(e)}</div></div>
             </div>
           ))}
-          {!custom && (
-            <div className="act-entry">
-              <div className="act-date">{news.when.toUpperCase()}</div>
-              <div className="act-row"><div className="news-thumb"><Art game={g} kind="header" variant={2} showTitle={false} /></div><div><b>{news.title}</b><div className="muted small">{news.body}</div></div></div>
-            </div>
-          )}
           {played > 0 && (
             <div className="act-entry">
               <div className="act-date">{ago(store.lastPlayed[g.id]).toUpperCase()}</div>
-              <div className="act-row"><Avatar f={{ name: store.name, hue: 210, status: store.status }} size={34} ring={false} /><div><span className="pos">{store.name}</span> played {g.title} for {hours(played)} in total</div></div>
+              <div className="act-row"><Avatar f={{ name: store.name }} size={34} ring={false} /><div><span className="pos">{store.name}</span> played {g.title} for {hours(played)} in total</div></div>
             </div>
           )}
         </div>
@@ -400,7 +407,7 @@ const LibGame = observer(({ g }: { g: Game }) => {
                 {friends.length > 0 ? (
                   <>
                     <div>{playingNow.length > 0 ? `${playingNow.length} friend${playingNow.length > 1 ? 's' : ''} playing now` : `${previously.length} friend${previously.length > 1 ? 's have' : ' has'} played previously`}</div>
-                    <div className="avatars">{friends.map(f => <Avatar key={f.id} f={f} size={34} />)}</div>
+                    <div className="avatars">{friends.map(f => <Link key={f.username} to={`/profile/${f.username}`} title={f.name}><Avatar f={{ name: f.name, status: f.presence.status }} size={34} /></Link>)}</div>
                   </>
                 ) : <div className="muted">None of your friends have played this</div>}
                 <button className="link-btn viewall" onClick={() => (store.friendsOpen = true)}>View all friends who play</button>

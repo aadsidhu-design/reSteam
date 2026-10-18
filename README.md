@@ -1,8 +1,8 @@
 # reSteam
 
-A from-scratch, fan-made recreation of the look and behavior of a popular desktop game-store client: store, library, downloads, friends and chat, community, settings. It is a **UI study**, not a product.
+A from-scratch, fan-made recreation of the look and behavior of a popular PC game **web store**: storefront, library, downloads, accounts, friends with real-time chat, community hubs with reviews, discussions and guides, settings. It is a **UI study**, not a product.
 
-> Not affiliated with, endorsed by, or derived from Valve. Steam is a trademark of Valve Corporation. reSteam contains no Valve code, artwork, fonts or logos. All game art is generated procedurally in the browser, and every game, studio, friend and review in the catalog is fictional.
+> Not affiliated with, endorsed by, or derived from Valve. Steam is a trademark of Valve Corporation. reSteam contains no Valve code, artwork, fonts or logos. All game art is generated procedurally in the browser, and every game and studio in the catalog is fictional. Accounts, friends, messages, reviews and posts are real data created by people using the site.
 
 ## Coverage
 
@@ -26,7 +26,7 @@ No reference screenshots are included in this repository, because they can conta
 | --- | --- |
 | UI | React 19, TypeScript, React Router, MobX, plain CSS |
 | Art | Procedural SVG generated per game (`src/art.tsx`) |
-| API | Cloudflare Worker (`worker/index.ts`), no framework |
+| API | Cloudflare Worker (`worker/index.ts`), no framework; one SQLite Durable Object (`UserHub`) per user pushes chat, typing and notification events over WebSocket |
 | Data | Cloudflare D1 (SQLite), schema and seed in `migrations/` |
 | Abuse protection | Workers rate-limit bindings, body caps, same-origin check, CSP and other headers |
 
@@ -44,14 +44,14 @@ npm run api                                # Worker + built UI at http://localho
 
 For UI work with hot reload, run `npm run api` in one terminal and `npm run dev` in another (Vite proxies `/api`).
 
-`scripts/demo-seed.sh` fills a **local** demo account so screenshots show a populated library.
+`npm run test:e2e` (with the API running) exercises accounts, friends, chat, community and rate limits end to end; it takes a couple of minutes because it waits out the write limiter.
 
 ## Deploy to your own Cloudflare account
 
 ```bash
 npx wrangler login
 npx wrangler d1 create resteam              # paste the database_id into wrangler.jsonc
-npx wrangler d1 migrations apply resteam --remote
+npx wrangler d1 migrations apply resteam --remote   # migration 0009 deletes all old anonymous-session data
 npm run deploy
 ```
 
@@ -60,13 +60,15 @@ npm run deploy
 ## Security notes
 
 - There are no secrets in this repository. Configuration ids live in the git-ignored `wrangler.jsonc`.
-- There is no real sign-in. Each browser gets a random UUID session that acts as a bearer token, so treat it as a demo. Do not put real data in it.
-- The wallet is play money, and a few public promo codes exist for the demo (see `worker/index.ts`).
+- Accounts use a username and password. Passwords are hashed with salted PBKDF2-SHA256; only a hash of each session token is stored, and the cookie is `HttpOnly; SameSite=Strict`.
+- Each account gets a one-time recovery key (shown once, rotated on use). QR sign-in lets a signed-in device approve another browser.
+- Non-GET requests need `x-requested-with` and a same-origin `Origin`; login, registration and username lookups are throttled per IP and per name, and login errors are generic.
+- The wallet is play money, and a few public promo codes exist for the demo (see `worker/shop.ts`).
 - Rate limits are per Cloudflare location and approximate; they are a backstop against abuse, not an exact quota.
 
 ## Scripts
 
-`dev`, `build`, `api`, `db:local`, `db:seed`, `coverage`, `deploy`.
+`dev`, `build`, `api`, `db:local`, `db:seed`, `test:e2e`, `typecheck`, `coverage`, `deploy`.
 
 ## License
 
