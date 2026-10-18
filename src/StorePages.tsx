@@ -6,31 +6,12 @@ import { store } from './store'
 import { Art } from './art'
 import { Icon } from './icons'
 import { Modal, Price, useDismiss } from './ui'
+import { MegaNav } from './MegaMenu'
 import './store.css'
 
 export const reviewClass = (rating: number, reviews = 1) => (reviews < 10 ? 'rv-none' : rating >= 70 ? 'rv-pos' : rating >= 40 ? 'rv-mixed' : 'rv-neg')
 
 /* ---------- layout with the store sub-menu ---------- */
-type MenuItem = { label: string; to: string }
-const MENUS: Record<string, MenuItem[]> = {
-  Browse: [
-    { label: 'Featured', to: '/store' }, { label: 'New & Trending', to: '/store/browse?sort=new' }, { label: 'Top Sellers', to: '/store/browse?sort=top' },
-    { label: 'Specials', to: '/store/browse?sale=1' }, { label: 'Free to Play', to: '/store/browse?free=1' },
-  ],
-  Recommendations: [
-    { label: 'Your Wishlist', to: '/wishlist' }, { label: 'Played by your friends', to: '/store/browse?friends=1' }, { label: 'Games you follow', to: '/store/browse?followed=1' }, { label: 'Highly rated (95%+)', to: '/store/browse?minRating=95' },
-  ],
-  Categories: GENRES.map(g => ({ label: g, to: `/store/browse?genre=${encodeURIComponent(g)}` })),
-  Hardware: [
-    { label: 'Light installs (under 5 GB)', to: '/store/browse?maxSize=5' }, { label: 'Big installs (over 40 GB)', to: '/store/browse?minSize=40' },
-  ],
-  'Ways to Play': ['Singleplayer', 'Multiplayer', 'Co-op', 'Local Multiplayer'].map(t => ({ label: t, to: `/store/browse?tag=${encodeURIComponent(t)}` })),
-  'Special Sections': [
-    { label: 'Under $10', to: '/store/browse?under=1000' }, { label: 'Cozy games', to: '/store/browse?tag=Cozy' }, { label: 'Deckbuilders', to: '/store/browse?tag=Deckbuilding' },
-    { label: 'Roguelikes', to: '/store/browse?tag=Roguelike' }, { label: 'Horror', to: '/store/browse?genre=Horror' },
-  ],
-}
-
 const SearchBox = () => {
   const nav = useNavigate()
   const [q, setQ] = useState('')
@@ -57,32 +38,11 @@ const SearchBox = () => {
   )
 }
 
-const NavMenu = ({ label, items }: { label: string; items: MenuItem[] }) => {
-  const [open, setOpen] = useState(false)
-  const ref = useDismiss(open, () => setOpen(false))
-  const nav = useNavigate()
-  return (
-    <div className="smenu popwrap" ref={ref} onMouseLeave={() => setOpen(false)}>
-      <button className={open ? 'on' : ''} onMouseEnter={() => setOpen(true)} onClick={() => setOpen(!open)}>{label} <Icon name="chevronDown" size={16} /></button>
-      {open && (
-        <div className={`popover smenu-pop ${items.length > 8 ? 'cols' : ''}`} style={{ left: 0, top: '100%' }}>
-          {items.map(i => <button key={i.label} className="pop-item" onClick={() => { setOpen(false); nav(i.to) }}>{i.label}</button>)}
-        </div>
-      )}
-    </div>
-  )
-}
-
 export const StoreLayout = observer(() => {
   const flat = useLocation().pathname !== '/store'
   return (
   <div className="store">
-    <div className="subnav">
-      <div className="subnav-in">
-        {Object.entries(MENUS).map(([label, items]) => <NavMenu key={label} label={label} items={items} />)}
-        <SearchBox />
-      </div>
-    </div>
+    <MegaNav><SearchBox /></MegaNav>
     <div className={`store-page ${flat ? 'flat' : ''}`}><Outlet /></div>
   </div>
   )
@@ -399,13 +359,13 @@ export const Browse = observer(() => {
   const base = GAMES.filter(g =>
     (showIgnored ? ignored.has(g.id) : !ignored.has(g.id)) && (!sp.get('followed') || store.followed.includes(g.id)) &&
     (!q || g.title.toLowerCase().includes(q.toLowerCase()) || g.dev.toLowerCase().includes(q.toLowerCase()) || g.tags.some(t => t.toLowerCase().includes(q.toLowerCase()))) &&
-    (!genre || g.genre.includes(genre)) && (!free || g.price === 0) && (!hideFree || g.price > 0) && (!sale || g.discount > 0) &&
+    (!genre || g.genre.includes(genre)) && (!free || g.price === 0) && (!sp.get('playable') || g.playable) && (!sp.get('download') || !!g.build) && (!sp.get('user') || g.user) && (!hideFree || g.price > 0) && (!sale || g.discount > 0) &&
     (!maxSize || g.sizeGb <= maxSize) && (!minSize || g.sizeGb >= minSize) && (!under || priceOf(g) <= under) && (!minRating || g.rating >= minRating) &&
     (!friends || store.friends.some(f => f.presence.gameId === g.id)) && (!noTag || !g.tags.includes(noTag)))
   const list = [...base.filter(g => !tag || g.tags.includes(tag))].sort((a, b) => sort === 'new' ? b.released.localeCompare(a.released) : sort === 'top' ? b.reviews - a.reviews : sort === 'price' ? priceOf(a) - priceOf(b) : sort === 'rating' ? b.rating - a.rating : b.reviews * b.rating - a.reviews * a.rating)
   const tagCounts = [...new Map(ALL_TAGS.map(t => [t, base.filter(g => g.tags.includes(t)).length])).entries()].filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1])
   const chips: [string, string][] = [['q', q && `"${q}"`], ['genre', genre ?? ''], ['tag', tag ?? ''], ['notag', noTag ? `not ${noTag}` : ''], ['free', free ? 'Free to Play' : ''], ['sale', sale ? 'Discounts & Events' : ''], ['hidefree', hideFree ? 'Hide free to play' : ''],
-    ['friends', friends ? 'Played by friends' : ''], ['maxSize', maxSize ? `Under ${maxSize} GB` : ''], ['minSize', minSize ? `Over ${minSize} GB` : ''], ['under', under ? `Under ${fmt(under)}` : ''], ['minRating', minRating ? `${minRating}%+ positive` : '']]
+    ['friends', friends ? 'Played by friends' : ''], ['playable', sp.get('playable') ? 'Playable in the browser' : ''], ['download', sp.get('download') ? 'Downloadable' : ''], ['user', sp.get('user') ? 'Player uploads' : ''], ['maxSize', maxSize ? `Under ${maxSize} GB` : ''], ['minSize', minSize ? `Over ${minSize} GB` : ''], ['under', under ? `Under ${fmt(under)}` : ''], ['minRating', minRating ? `${minRating}%+ positive` : '']]
   const active = chips.filter(([, v]) => v)
   const rvIcon = (r: number, n: number) => reviewClass(r, n)
 
