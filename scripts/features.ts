@@ -22,7 +22,7 @@ export const CLIENT: Group = {
     'Hero art:p', 'Install split button:d', 'Install options menu:d', 'Play button:d', 'Stop button:d', 'Pause/Resume:d', 'Space required:d',
     'Last played:d', 'Play time:d', 'Achievements stat:d', 'Gear menu:d', 'Info dialog:d', 'Favorite heart:d', 'Store Page tab:d', 'Community Hub tab:d',
     'Discussions tab:d', 'Guides tab:d', 'Activity post box:d', 'Activity feed:d', 'View Latest News:d',
-    'Friends who play panel:d', 'Achievements list:d', 'Trading cards:m', 'Controller config:m', 'Cloud sync status:m', 'Properties dialog:m',
+    'Friends who play panel:d', 'Achievements list:d', 'Trading cards:m', 'Controller config:m', 'Cloud sync status:m', 'Properties dialog:d',
   ],
   'Downloads': [
     'Network stat:d', 'Peak stat:d', 'Disk usage stat:d', 'Live bandwidth graph:d', 'Active download panel:d', 'Phase labels:d', 'Progress and ETA:d',
@@ -79,7 +79,7 @@ export const BACKEND: Group = {
     'Direct messages:d', 'Real-time push (WebSocket):d', 'Typing indicator:d', 'Unread counts:d', 'Group chats:d', 'Notifications:d', 'Friend activity feed:d',
   ],
   'Publishing': [
-    'Create a game:d', 'Cover upload:d', 'Screenshot gallery:d', 'Browser-playable builds:d', 'Downloadable builds:d', 'Publish / unpublish:d', 'Edit and delete:d', 'Sandboxed play:d', 'Play tokens:d', 'Owner-only downloads:d', 'Upload limits:d', 'Zip-bomb and path checks:d', 'Cleanup on delete:d', 'Developer revenue:m', 'Versioned updates:m', 'Review before publish:m',
+    'Create a game:d', 'Cover upload:d', 'Screenshot gallery:d', 'Browser-playable builds:d', 'Downloadable builds:d', 'Publish / unpublish:d', 'Edit and delete:d', 'Sandboxed play:d', 'Play tokens:d', 'Owner-only downloads:d', 'Upload limits:d', 'Zip-bomb and path checks:d', 'Cleanup on delete:d', 'Developer revenue:m', 'Versioned updates:d', 'Review before publish:m',
   ],
   'Community': [
     'Reviews:d', 'Helpful votes:d', 'Discussions:d', 'Guides:d', 'Replies:d', 'Post votes:d', 'Reports:d', 'Hub stats:d', 'Moderation tools:m',

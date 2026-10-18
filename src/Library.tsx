@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { t } from './i18n'
 import { AchievementList } from './Achievements'
+import { PropertiesModal } from './Versions'
 import { NavLink, Link, useNavigate, useParams } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { GAMES, isLocal, type Game } from './data'
@@ -296,6 +297,7 @@ const LibGame = observer(({ g }: { g: Game }) => {
   const nav = useNavigate()
   const [gear, setGear] = useState(false)
   const [info, setInfo] = useState(false)
+  const [props, setProps] = useState(false)
   const [caret, setCaret] = useState(false)
   const gearRef = useDismiss(gear, () => setGear(false))
   const caretRef = useDismiss(caret, () => setCaret(false))
@@ -366,6 +368,7 @@ const LibGame = observer(({ g }: { g: Game }) => {
             <div className="popover right">
               <button className="pop-item" onClick={() => { store.toggleFavorite(g.id); setGear(false) }}>{fav ? 'Remove from favorites' : 'Add to favorites'}</button>
               {!custom && installed && !running && <button className="pop-item" onClick={() => { store.uninstall(g.id); setGear(false) }}>{t('lb.uninstall')}</button>}
+              {!custom && <button className="pop-item" onClick={() => { setGear(false); setProps(true) }}>Properties…</button>}
               {!custom && <button className="pop-item" onClick={() => { setGear(false); nav(`/store/${g.id}`) }}>{t('lb.viewstore')}</button>}
             </div>
           )}
@@ -422,6 +425,7 @@ const LibGame = observer(({ g }: { g: Game }) => {
           )}
         </div>
       </div>
+      {props && <PropertiesModal g={g} onClose={() => setProps(false)} />}
       {info && (
         <Modal title={g.title} onClose={() => setInfo(false)}>
           <dl className="kv">

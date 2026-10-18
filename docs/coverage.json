@@ -1,26 +1,26 @@
 {
   "generated": "2026-10-18",
-  "commit": "a0bc708",
+  "commit": "5f63650",
   "summary": {
     "client": {
-      "d": 221,
+      "d": 222,
       "p": 12,
-      "m": 17,
+      "m": 16,
       "n": 250
     },
     "backend": {
-      "d": 74,
+      "d": 75,
       "p": 1,
-      "m": 15,
+      "m": 14,
       "n": 90
     },
     "visualAvg": 75.35,
     "behaviorAvg": 70.45,
-    "endpoints": 105,
-    "tested": 105,
-    "checks": 241,
+    "endpoints": 107,
+    "tested": 107,
+    "checks": 247,
     "routes": 24,
-    "dbTables": 32
+    "dbTables": 33
   },
   "pages": [
     {
@@ -576,6 +576,22 @@
     {
       "method": "PUT",
       "path": "/dev/games/:id/achievements",
+      "area": "Publishing and files",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "GET",
+      "path": "/games/:id/versions",
+      "area": "Publishing and files",
+      "auth": false,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/dev/games/:id/release",
       "area": "Publishing and files",
       "auth": true,
       "write": true,
@@ -1180,6 +1196,12 @@
       "pct": 0
     },
     {
+      "file": "Versions.tsx",
+      "translated": 0,
+      "literals": 7,
+      "pct": 0
+    },
+    {
       "file": "ui.tsx",
       "translated": 0,
       "literals": 3,
@@ -1204,22 +1226,22 @@
       "pct": 42.857142857142854
     },
     {
+      "file": "Developer.tsx",
+      "translated": 25,
+      "literals": 28,
+      "pct": 47.16981132075472
+    },
+    {
       "file": "Auth.tsx",
       "translated": 16,
       "literals": 17,
       "pct": 48.484848484848484
     },
     {
-      "file": "Developer.tsx",
-      "translated": 25,
-      "literals": 23,
-      "pct": 52.083333333333336
-    },
-    {
       "file": "Library.tsx",
       "translated": 36,
-      "literals": 32,
-      "pct": 52.94117647058824
+      "literals": 33,
+      "pct": 52.17391304347826
     },
     {
       "file": "StorePages.tsx",

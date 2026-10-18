@@ -457,3 +457,7 @@ a.lrow:hover { background: #1e2d40; color: #fff; }
 .ach-row { display: flex; gap: 12px; align-items: center; background: #16202d; padding: 8px 12px; opacity: .65; }
 .ach-row.got { opacity: 1; background: #1c2d42; }
 .ach-mark { color: #a4d007; font-size: 20px; width: 22px; text-align: center; }
+.vr-h { margin: 16px 0 8px; color: #fff; font-size: 15px; }
+.vr-list { display: grid; gap: 8px; max-height: 280px; overflow: auto; }
+.vr-row { background: #16202d; padding: 8px 12px; }
+.vr-notes { white-space: pre-wrap; color: #acb2b8; margin-top: 4px; }

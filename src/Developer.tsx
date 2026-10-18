@@ -166,6 +166,22 @@ const AchEditor = ({ g, done }: { g: Mine; done: (r: { error?: string }) => Prom
   )
 }
 
+const Release = ({ g, done }: { g: Mine; done: (r: { error?: string }) => Promise<void> }) => {
+  const [notes, setNotes] = useState('')
+  const [err, setErr] = useState('')
+  if (g.status !== 'published') return null
+  return (
+    <div className="dv-slot dv-news">
+      <div className="grow"><b>Release an update <span className="muted small">(current version {g.version ?? 1})</span></b>
+        <div className="muted small">Upload the new files above first, then describe what changed. Everyone who owns the game is notified and the notes appear in the news hub.</div>
+        <textarea className="input" rows={3} maxLength={2000} placeholder="What changed in this version?" value={notes} onChange={e => { setNotes(e.target.value); setErr('') }} />
+        {err && <div className="err small">{err}</div>}
+        <button className="btn small blue" disabled={notes.trim().length < 5} onClick={async () => { const r = await call('POST', `/dev/games/${g.id}/release`, { notes }); if (r.error) setErr(r.error); else { setNotes(''); store.toast('Update released'); await done({}) } }}>Release update</button>
+      </div>
+    </div>
+  )
+}
+
 const GameCard = observer(({ g, genres, reload }: { g: Mine; genres: string[]; reload: () => Promise<void> }) => {
   const [edit, setEdit] = useState(false)
   const published = g.status === 'published'
@@ -182,6 +198,7 @@ const GameCard = observer(({ g, genres, reload }: { g: Mine; genres: string[]; r
         <ShotsSlot g={g} reload={reload} />
         <AchEditor g={g} done={done} />
         <Sale g={g} done={done} />
+        <Release g={g} done={done} />
         <News g={g} />
         <FileSlot title={t('dv.web')} hint="A .zip with index.html at the top level (HTML5 / JavaScript / WebAssembly). Up to 15 MB zipped. Runs in a sandbox." accept=".zip,application/zip" limit={LIMITS.web}
           have={g.playable ? 'Web build uploaded. Owners can play it right on reSteam.' : null}

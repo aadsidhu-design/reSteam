@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `a0bc708`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `5f63650`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -8,14 +8,14 @@ Generated 2026-10-18 from commit `a0bc708`. Run `npm run coverage` to refresh.
 
 | Measure | Value |
 | --- | --- |
-| Client behaviors replicated | 221 of 250 (12 partial, 17 not yet) |
-| Backend behaviors replicated | 74 of 90 (1 partial, 15 not yet) |
+| Client behaviors replicated | 222 of 250 (12 partial, 16 not yet) |
+| Backend behaviors replicated | 75 of 90 (1 partial, 14 not yet) |
 | Visual fidelity (average of compared pages) | 75 / 100 over 20 pages |
 | Behavior fidelity | 70 / 100 |
-| API endpoints | 105 (105 exercised by e2e checks) |
-| Automated checks | 241 |
+| API endpoints | 107 (107 exercised by e2e checks) |
+| Automated checks | 247 |
 | Client routes | 24 |
-| Database tables | 32 |
+| Database tables | 33 |
 | Languages | 12 (368 strings) |
 
 ## Fidelity by page
@@ -91,6 +91,8 @@ Generated 2026-10-18 from commit `a0bc708`. Run `npm run coverage` to refresh.
 | DELETE | `/dev/games/:id/web` | Publishing and files | yes | yes | yes |
 | GET | `/games/:id/achievements` | Publishing and files | public | - | yes |
 | PUT | `/dev/games/:id/achievements` | Publishing and files | yes | yes | yes |
+| GET | `/games/:id/versions` | Publishing and files | public | - | yes |
+| POST | `/dev/games/:id/release` | Publishing and files | yes | yes | yes |
 | PUT | `/dev/games/:id/discount` | Publishing and files | yes | yes | yes |
 | GET | `/games/:id/news` | Publishing and files | public | - | yes |
 | GET | `/news` | Publishing and files | public | - | yes |
@@ -179,13 +181,14 @@ Generated 2026-10-18 from commit `a0bc708`. Run `npm run coverage` to refresh.
 | About.tsx | 0 | 10 | 0% |
 | App.tsx | 0 | 2 | 0% |
 | NewsHub.tsx | 0 | 18 | 0% |
+| Versions.tsx | 0 | 7 | 0% |
 | ui.tsx | 0 | 3 | 0% |
 | Community.tsx | 11 | 28 | 28% |
 | Achievements.tsx | 1 | 2 | 33% |
 | NewReleases.tsx | 3 | 4 | 43% |
+| Developer.tsx | 25 | 28 | 47% |
 | Auth.tsx | 16 | 17 | 48% |
-| Developer.tsx | 25 | 23 | 52% |
-| Library.tsx | 36 | 32 | 53% |
+| Library.tsx | 36 | 33 | 52% |
 | StorePages.tsx | 50 | 37 | 57% |
 | Settings.tsx | 48 | 27 | 64% |
 | Chrome.tsx | 47 | 19 | 71% |
@@ -268,7 +271,7 @@ Generated 2026-10-18 from commit `a0bc708`. Run `npm run coverage` to refresh.
 - [~] Game icons in list
 - [ ] Drag to reorder
 
-**Game page** (21/26)
+**Game page** (22/26)
 
 - [x] Install split button
 - [x] Install options menu
@@ -291,11 +294,11 @@ Generated 2026-10-18 from commit `a0bc708`. Run `npm run coverage` to refresh.
 - [x] View Latest News
 - [x] Friends who play panel
 - [x] Achievements list
+- [x] Properties dialog
 - [~] Hero art
 - [ ] Trading cards
 - [ ] Controller config
 - [ ] Cloud sync status
-- [ ] Properties dialog
 
 **Downloads** (16/18)
 
@@ -551,7 +554,7 @@ Generated 2026-10-18 from commit `a0bc708`. Run `npm run coverage` to refresh.
 - [x] Notifications
 - [x] Friend activity feed
 
-**Publishing** (13/16)
+**Publishing** (14/16)
 
 - [x] Create a game
 - [x] Cover upload
@@ -566,8 +569,8 @@ Generated 2026-10-18 from commit `a0bc708`. Run `npm run coverage` to refresh.
 - [x] Upload limits
 - [x] Zip-bomb and path checks
 - [x] Cleanup on delete
+- [x] Versioned updates
 - [ ] Developer revenue
-- [ ] Versioned updates
 - [ ] Review before publish
 
 **Community** (8/9)

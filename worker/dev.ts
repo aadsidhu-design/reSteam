@@ -20,7 +20,7 @@ const gameId = (c: Ctx) => Number(c.params.id)
 
 interface GameRow {
   id: number; title: string; dev: string; genre: string; tags: string; price: number; discount: number; blurb: string; hue: number; motif: string
-  owner_id: string | null; status: string; has_cover: number; shots: number; web_entry: string | null; build_name: string | null; build_size: number; created_at: number
+  owner_id: string | null; status: string; has_cover: number; shots: number; version: number; web_entry: string | null; build_name: string | null; build_size: number; created_at: number
   released: string; publisher: string; achievements: number; size_gb: number
 }
 
@@ -29,7 +29,7 @@ export function shapeGame(g: GameRow & { owner?: string | null }) {
   return {
     id: g.id, title: g.title, dev: g.dev, publisher: g.publisher, genre: JSON.parse(g.genre), tags: JSON.parse(g.tags), price: g.price, discount: g.discount,
     released: g.released, blurb: g.blurb, hue: g.hue, motif: g.motif, achievements: g.achievements, sizeGb: g.size_gb,
-    user: g.owner_id !== null, owner: g.owner ?? null, hasCover: !!g.has_cover, shots: g.shots, playable: !!g.web_entry,
+    user: g.owner_id !== null, owner: g.owner ?? null, hasCover: !!g.has_cover, shots: g.shots, version: g.version, playable: !!g.web_entry,
     build: g.build_name ? { name: g.build_name, size: g.build_size } : null, status: g.status,
   }
 }
@@ -78,6 +78,7 @@ function purgeStatements(env: Env, id: number) {
     db.prepare('DELETE FROM posts WHERE game_id = ?').bind(id),
     db.prepare('DELETE FROM events WHERE game_id = ?').bind(id),
     db.prepare('DELETE FROM game_achievements WHERE game_id = ?').bind(id),
+    db.prepare('DELETE FROM game_versions WHERE game_id = ?').bind(id),
     db.prepare('DELETE FROM news_likes WHERE news_id IN (SELECT id FROM game_news WHERE game_id = ?)').bind(id),
     db.prepare('DELETE FROM news_comments WHERE news_id IN (SELECT id FROM game_news WHERE game_id = ?)').bind(id),
     db.prepare('DELETE FROM game_news WHERE game_id = ?').bind(id),
@@ -271,6 +272,33 @@ export const devRoutes: Route[] = [
       c.env.DB.prepare('UPDATE games SET achievements = ? WHERE id = ?').bind(items.length, g.id),
     ])
     return json({ ok: true, count: items.length })
+  }),
+
+  route('GET', '/games/:id/versions', { auth: false }, async c => {
+    const { results } = await c.env.DB.prepare(
+      `SELECT v.version, v.notes, v.created_at AS at FROM game_versions v JOIN games g ON g.id = v.game_id WHERE v.game_id = ? AND (g.status = 'published' OR g.owner_id = ?) ORDER BY v.version DESC`).bind(gameId(c), c.user?.id ?? '').all()
+    return json({ versions: results })
+  }),
+  /** Publishes a new version: bumps the number, records the notes, posts it as news and tells everyone who owns the game. */
+  route('POST', '/dev/games/:id/release', {}, async c => {
+    const g = await ownedGame(c)
+    if (!g) return fail(404, 'no such game')
+    if (g.status !== 'published') return fail(409, 'Publish the game before releasing updates')
+    const b = await readJson<{ notes: string }>(c.req, 6_000)
+    const notes = cleanText(b.notes, 2000, true)
+    if (notes.length < 5) return fail(400, 'Describe what changed in this update')
+    const recent = await c.env.DB.prepare('SELECT COUNT(*) AS n FROM game_versions WHERE game_id = ? AND created_at > ?').bind(g.id, Date.now() - HOUR).first<{ n: number }>()
+    if ((recent?.n ?? 0) >= 5) return fail(429, 'You are releasing too quickly. Try again later.')
+    const v = g.version + 1, now = Date.now()
+    await c.env.DB.batch([
+      c.env.DB.prepare('UPDATE games SET version = ? WHERE id = ?').bind(v, g.id),
+      c.env.DB.prepare('INSERT INTO game_versions (game_id, version, notes, created_at) VALUES (?, ?, ?, ?)').bind(g.id, v, notes, now),
+      c.env.DB.prepare('INSERT INTO game_news (game_id, user_id, title, body, created_at) VALUES (?, ?, ?, ?, ?)').bind(g.id, c.user!.id, `${g.title} updated to version ${v}`, notes, now),
+    ])
+    const { results } = await c.env.DB.prepare('SELECT user_id FROM library WHERE game_id = ? AND user_id != ? LIMIT 200').bind(g.id, c.user!.id).all<{ user_id: string }>()
+    for (const o of results) c.wait(notify(c.env, o.user_id, 'game_update', { gameId: g.id, title: g.title, version: v }))
+    c.wait(logEvent(c.env, c.user!.id, 'update', g.id, { version: v }))
+    return json({ version: v }, 201)
   }),
 
   /** Sets a sale price. Players who wishlisted the game are told when a new sale starts. */
