@@ -393,6 +393,13 @@ const ROWS: Row[] = [
   ['st.exclude', 'Exclude', 'Excluir', 'Exclure', 'Ausschließen', 'Escludi', 'Excluir', '除外', '제외', '排除', 'Исключить', 'Hariç tut', 'Wyklucz'],
   ['st.install', 'Install', 'Instalar', 'Installer', 'Installieren', 'Installa', 'Instalar', 'インストール', '설치', '安装', 'Установить', 'Yükle', 'Zainstaluj'],
   ['st.freetoplay', 'Free to Play', 'Gratis', 'Gratuit', 'Kostenlos spielbar', 'Gratis', 'Gratuito para jogar', '基本プレイ無料', '무료 플레이', '免费开玩', 'Бесплатно', 'Oynaması Ücretsiz', 'Free to Play'],
+  ['st.giftcard', 'Send a Gift Card', 'Enviar una tarjeta regalo', 'Envoyer une carte cadeau', 'Geschenkkarte senden', 'Invia una carta regalo', 'Enviar um cartão-presente', 'ギフトカードを贈る', '기프트 카드 보내기', '发送礼品卡', 'Отправить подарочную карту', 'Hediye kartı gönder', 'Wyślij kartę podarunkową'],
+  ['st.moretags', 'search for more tags', 'buscar más etiquetas', 'rechercher d’autres tags', 'weitere Tags suchen', 'cerca altri tag', 'pesquisar mais etiquetas', 'タグをさらに検索', '태그 더 검색', '搜索更多标签', 'искать другие метки', 'daha fazla etiket ara', 'szukaj kolejnych tagów'],
+  ['st.players', 'Narrow by number of players', 'Filtrar por número de jugadores', 'Affiner par nombre de joueurs', 'Nach Spieleranzahl eingrenzen', 'Filtra per numero di giocatori', 'Filtrar por número de jogadores', 'プレイヤー人数で絞り込む', '플레이어 수로 좁히기', '按玩家人数筛选', 'Фильтр по числу игроков', 'Oyuncu sayısına göre daralt', 'Zawęź według liczby graczy'],
+  ['st.payment', 'Payment method', 'Método de pago', 'Moyen de paiement', 'Zahlungsmethode', 'Metodo di pagamento', 'Forma de pagamento', '支払い方法', '결제 수단', '支付方式', 'Способ оплаты', 'Ödeme yöntemi', 'Metoda płatności'],
+  ['st.purchase', 'Purchase', 'Comprar', 'Acheter', 'Kaufen', 'Acquista', 'Comprar', '購入', '구매', '购买', 'Купить', 'Satın al', 'Kup'],
+  ['st.cart', 'Your Shopping Cart', 'Tu carrito de la compra', 'Votre panier', 'Dein Warenkorb', 'Il tuo carrello', 'Seu carrinho de compras', 'ショッピングカート', '장바구니', '您的购物车', 'Ваша корзина', 'Alışveriş Sepetin', 'Twój koszyk'],
+  ['st.home', 'Home', 'Inicio', 'Accueil', 'Startseite', 'Home', 'Início', 'ホーム', '홈', '首页', 'Главная', 'Ana sayfa', 'Strona główna'],
 ]
 
 export const PAGE_STRINGS: Record<Lang, Record<string, string>> = Object.fromEntries(

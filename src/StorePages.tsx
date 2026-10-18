@@ -94,7 +94,7 @@ const GiftModal = observer(({ onClose }: { onClose: () => void }) => {
   const [err, setErr] = useState('')
   const [busy, setBusy] = useState(false)
   return (
-    <Modal title="Send a Gift Card" onClose={onClose}>
+    <Modal title={tr('st.giftcard')} onClose={onClose}>
       <p>Send wallet funds to a friend. The amount comes out of your balance ({fmt(store.wallet)}).</p>
       {pals.length === 0 && <p className="muted small">{tr('gf.need')}</p>}
       <label className="small muted">{tr('gf.friend')}</label>
@@ -436,10 +436,10 @@ export const Browse = observer(() => {
               <div key={t} className="chk tagline"><label><input type="checkbox" checked={tag === t} onChange={() => set('tag', tag === t ? null : t)} /> {t} <i>{n}</i></label>
                 <button className="excl" onClick={() => set('notag', noTag === t ? null : t)} aria-label={`${tr('st.exclude')} ${t}`} title={tr('st.exclude')}>−</button></div>
             ))}
-            <input className="tagsearch" placeholder="search for more tags" value={tagQ} onChange={e => setTagQ(e.target.value)} aria-label="Search tags" />
+            <input className="tagsearch" placeholder={tr('st.moretags')} value={tagQ} onChange={e => setTagQ(e.target.value)} aria-label="Search tags" />
           </Panel>
           <Panel title={tr('browse.ngenre')}>{GENRES.map(g => <label key={g} className="chk"><input type="checkbox" checked={genre === g} onChange={() => set('genre', genre === g ? null : g)} /> {g} <i>{GAMES.filter(x => x.genre.includes(g)).length}</i></label>)}</Panel>
-          <Panel title="Narrow by number of players">{['Singleplayer', 'Multiplayer', 'Co-op', 'Local Multiplayer'].map(t => <label key={t} className="chk"><input type="checkbox" checked={tag === t} onChange={() => set('tag', tag === t ? null : t)} /> {t}</label>)}</Panel>
+          <Panel title={tr('st.players')}>{['Singleplayer', 'Multiplayer', 'Co-op', 'Local Multiplayer'].map(t => <label key={t} className="chk"><input type="checkbox" checked={tag === t} onChange={() => set('tag', tag === t ? null : t)} /> {t}</label>)}</Panel>
           <Panel title={tr('browse.nreviews')}>{[95, 80, 70].map(r => <label key={r} className="chk"><input type="checkbox" checked={minRating === r} onChange={() => set('minRating', minRating === r ? null : String(r))} /> {r}% or higher</label>)}</Panel>
         </aside>
       </div>
@@ -452,13 +452,13 @@ const PayModal = observer(({ onClose, onDone }: { onClose: () => void; onDone: (
   const [err, setErr] = useState('')
   const short = store.cartTotal > store.wallet
   return (
-    <Modal title="Payment method" onClose={onClose} width={480}>
+    <Modal title={tr('st.payment')} onClose={onClose} width={480}>
       <div className="paybox"><Icon name="card" size={34} /><div className="grow"><b>reSteam Wallet</b><div className="muted small">Balance {fmt(store.wallet)}</div></div><b>{fmt(store.cartTotal)}</b></div>
       {short && <div className="err small">You need {fmt(store.cartTotal - store.wallet)} more. <button className="link-btn" onClick={() => void store.addFunds(2000)}>Add {fmt(2000)} to wallet</button></div>}
       {err && <div className="err">{err}</div>}
       <p className="muted small">A purchase of a digital product grants a license for the product on reSteam.</p>
       <div className="modal-actions"><button className="btn" onClick={onClose}>Back</button>
-        <button className="btn green" disabled={short} onClick={async () => { const ids = store.cart.slice(); const e = await store.checkout(); if (e) setErr(e); else onDone(ids) }}>Purchase</button></div>
+        <button className="btn green" disabled={short} onClick={async () => { const ids = store.cart.slice(); const e = await store.checkout(); if (e) setErr(e); else onDone(ids) }}>{tr('st.purchase')}</button></div>
     </Modal>
   )
 })
@@ -483,7 +483,7 @@ export const Cart = observer(() => {
   const empty = store.cartGames.length === 0
   return (
     <div className="container cart2">
-      <div className="crumbs2"><Link to="/store">Home</Link> &gt; <span>Your Shopping Cart</span></div>
+      <div className="crumbs2"><Link to="/store">{tr('st.home')}</Link> &gt; <span>{tr('st.cart')}</span></div>
       <h1 className="cart-h1">{tr('cart.title')}</h1>
       <div className="cart-grid2">
         <div>
