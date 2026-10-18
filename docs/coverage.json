@@ -1,12 +1,12 @@
 {
   "generated": "2026-10-18",
-  "commit": "c6395c5",
+  "commit": "31cf359",
   "summary": {
     "client": {
-      "d": 214,
+      "d": 215,
       "p": 12,
       "m": 18,
-      "n": 244
+      "n": 245
     },
     "backend": {
       "d": 74,
@@ -14,8 +14,8 @@
       "m": 15,
       "n": 90
     },
-    "visualAvg": 75.0625,
-    "behaviorAvg": 70.6875,
+    "visualAvg": 75.23529411764706,
+    "behaviorAvg": 71.23529411764706,
     "endpoints": 98,
     "tested": 98,
     "checks": 225,
@@ -122,6 +122,16 @@
       "behavior": 86,
       "verified": "2026-10-17",
       "notes": "Form, QR sign-in handshake and recovery flow studied; visual treatment is approximate."
+    },
+    {
+      "page": "Charts",
+      "route": "/charts",
+      "real": "/charts/topselling/US",
+      "method": "connected-browser",
+      "visual": 78,
+      "behavior": 80,
+      "verified": "2026-10-18",
+      "notes": "Sub-nav, centered title over blurred art and the rank, price, change and weeks columns match; no regions and 25 rows instead of 100. Movement and weeks come from daily snapshots."
     },
     {
       "page": "Footer",
