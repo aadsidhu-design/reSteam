@@ -81,6 +81,8 @@ npx wrangler d1 migrations apply resteam --remote   # migration 0009 deletes all
 npm run deploy
 ```
 
+For later releases use `npm run ship`: it applies migrations, confirms none are pending, deploys, and health-checks the result, stopping at the first failure (set `SHIP_URL` to your Worker URL to enable the health check). Deploying the code before its migration breaks the endpoints that use the new tables, which is why the script orders them this way.
+
 `wrangler.jsonc` is git-ignored on purpose: it holds your account and database ids.
 
 ## Security notes
