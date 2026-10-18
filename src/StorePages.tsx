@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { ALL_TAGS, GAMES, GENRES, compact, fmt, priceOf, reviewLabel, type Game } from './data'
-import { store } from './store'
+import { api, store } from './store'
 import { Art } from './art'
 import { Icon } from './icons'
 import { Avatar, Modal, Price, useDismiss } from './ui'
@@ -18,7 +18,17 @@ const SearchBox = observer(() => {
   const [q, setQ] = useState('')
   const [open, setOpen] = useState(false)
   const ref = useDismiss(open, () => setOpen(false))
-  const hits = q.trim() ? GAMES.filter(g => g.title.toLowerCase().includes(q.trim().toLowerCase())).slice(0, 6) : []
+  const [ids, setIds] = useState<number[] | null>(null)
+  // suggestions come from the server's ranked search; the local catalog is the fallback if it cannot be reached
+  useEffect(() => {
+    const term = q.trim()
+    if (!term) { setIds(null); return }
+    let live = true
+    const timer = setTimeout(() => { void api<{ results: { id: number }[] }>('GET', `/search?q=${encodeURIComponent(term)}`).then(r => { if (live) setIds(r ? r.results.map(x => x.id) : null) }) }, 150)
+    return () => { live = false; clearTimeout(timer) }
+  }, [q])
+  const local = q.trim() ? GAMES.filter(g => g.title.toLowerCase().includes(q.trim().toLowerCase())) : []
+  const hits = (ids ? ids.map(id => GAMES.find(g => g.id === id)).filter((g): g is Game => !!g) : local).slice(0, 6)
   return (
     <div className="ssearch popwrap" ref={ref}>
       <form className="ssearch-form" onSubmit={e => { e.preventDefault(); setOpen(false); nav(`/store/browse?q=${encodeURIComponent(q.trim())}`) }}>

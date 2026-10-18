@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `68dec18`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `1f3e19e`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -9,11 +9,11 @@ Generated 2026-10-18 from commit `68dec18`. Run `npm run coverage` to refresh.
 | Measure | Value |
 | --- | --- |
 | Client behaviors replicated | 224 of 250 (13 partial, 13 not yet) |
-| Backend behaviors replicated | 78 of 90 (1 partial, 11 not yet) |
+| Backend behaviors replicated | 79 of 90 (1 partial, 10 not yet) |
 | Visual fidelity (average of compared pages) | 75 / 100 over 20 pages |
 | Behavior fidelity | 70 / 100 |
-| API endpoints | 110 (110 exercised by e2e checks) |
-| Automated checks | 274 |
+| API endpoints | 111 (111 exercised by e2e checks) |
+| Automated checks | 279 |
 | Client routes | 25 |
 | Database tables | 34 |
 | Languages | 12 (422 strings) |
@@ -95,6 +95,7 @@ Generated 2026-10-18 from commit `68dec18`. Run `npm run coverage` to refresh.
 | POST | `/dev/games/:id/release` | Publishing and files | yes | yes | yes |
 | PUT | `/dev/games/:id/discount` | Publishing and files | yes | yes | yes |
 | GET | `/games/:id/news` | Publishing and files | public | - | yes |
+| GET | `/search` | Publishing and files | public | - | yes |
 | GET | `/news` | Publishing and files | public | - | yes |
 | POST | `/news/:id/like` | Publishing and files | yes | yes | yes |
 | GET | `/news/:id/comments` | Publishing and files | public | - | yes |
@@ -506,14 +507,14 @@ Generated 2026-10-18 from commit `68dec18`. Run `npm run coverage` to refresh.
 - [ ] Email on account
 - [ ] Two-factor
 
-**Catalog** (5/8)
+**Catalog** (6/8)
 
 - [x] Games API
 - [x] Tags and publisher
 - [x] Live review stats
 - [x] Seed from one source
 - [x] Upserting migrations
-- [ ] Search API
+- [x] Search API
 - [ ] Recommendations
 - [ ] Developer uploads
 

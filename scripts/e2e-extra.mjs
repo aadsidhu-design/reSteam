@@ -55,6 +55,16 @@ check('the same game cannot be refunded twice', (await a.call('POST', '/refund/5
 await a.call('PUT', '/cart/5'); await a.call('POST', '/checkout')
 check('a re-bought game stays non-refundable', (await a.call('GET', '/refund/5')).data.eligible === false)
 
+// ---- search
+const sr = await fetch(`${BASE}/api/search?q=${encodeURIComponent('mossb')}`).then(r => r.json())
+check('search finds games by title prefix', sr.results[0]?.title === 'Mossbound')
+check('search ranks exact titles first', (await fetch(`${BASE}/api/search?q=mossbound`).then(r => r.json())).results[0].title === 'Mossbound')
+check('search matches tags and developers too', (await fetch(`${BASE}/api/search?q=metroidvania`).then(r => r.json())).results.some(x => x.title === 'Gearheart'))
+check('empty and odd queries are safe', (await fetch(`${BASE}/api/search?q=`).then(r => r.json())).results.length === 0 && (await fetch(`${BASE}/api/search?q=${encodeURIComponent("%_'\\")}`)).status === 200)
+const hiddenTitle = `Hidden${Math.random().toString(36).slice(2, 8)}`
+await a.call('POST', '/dev/games', { title: hiddenTitle, blurb: 'A draft nobody should find.', genre: ['Puzzle'], tags: ['Test'], price: 0 })
+check('search never returns drafts', (await fetch(`${BASE}/api/search?q=${hiddenTitle}`).then(r => r.json())).results.length === 0)
+
 // ---- community: reviews, posts, replies, votes, reports
 const rev = await a.call('PUT', '/games/11/review', { recommend: true, text: 'A fine, relaxing game to unwind with.' })
 check('a review can be posted', rev.status === 200)

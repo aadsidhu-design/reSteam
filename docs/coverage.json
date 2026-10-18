@@ -1,6 +1,6 @@
 {
   "generated": "2026-10-18",
-  "commit": "68dec18",
+  "commit": "1f3e19e",
   "summary": {
     "client": {
       "d": 224,
@@ -9,16 +9,16 @@
       "n": 250
     },
     "backend": {
-      "d": 78,
+      "d": 79,
       "p": 1,
-      "m": 11,
+      "m": 10,
       "n": 90
     },
     "visualAvg": 75.35,
     "behaviorAvg": 70.45,
-    "endpoints": 110,
-    "tested": 110,
-    "checks": 274,
+    "endpoints": 111,
+    "tested": 111,
+    "checks": 279,
     "routes": 25,
     "dbTables": 34
   },
@@ -608,6 +608,14 @@
     {
       "method": "GET",
       "path": "/games/:id/news",
+      "area": "Publishing and files",
+      "auth": false,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "GET",
+      "path": "/search",
       "area": "Publishing and files",
       "auth": false,
       "write": false,

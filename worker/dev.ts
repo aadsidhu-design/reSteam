@@ -330,6 +330,22 @@ export const devRoutes: Route[] = [
     ).bind(gameId(c)).all()
     return json({ news: results })
   }),
+  /** Ranked search over published games: exact title, title prefix, word match, then developer and tags. */
+  route('GET', '/search', { auth: false }, async c => {
+    const q = (c.url.searchParams.get('q') ?? '').trim().toLowerCase().slice(0, 40)
+    if (q.length < 1) return json({ results: [] })
+    const esc = q.replace(/[\\%_]/g, m => `\\${m}`)
+    const { results } = await c.env.DB.prepare(
+      `SELECT g.id, g.title, g.price, g.discount, g.has_cover AS hasCover, g.hue, g.motif,
+        CASE WHEN lower(g.title) = ?1 THEN 0 WHEN lower(g.title) LIKE ?2 ESCAPE '\\' THEN 1 WHEN lower(g.title) LIKE ?3 ESCAPE '\\' THEN 2
+             WHEN lower(g.dev) LIKE ?3 ESCAPE '\\' THEN 3 ELSE 4 END AS rank,
+        (SELECT COUNT(*) FROM library l WHERE l.game_id = g.id) AS owners
+       FROM games g WHERE g.status = 'published' AND (lower(g.title) LIKE ?3 ESCAPE '\\' OR lower(g.dev) LIKE ?3 ESCAPE '\\' OR lower(g.tags) LIKE ?3 ESCAPE '\\')
+       ORDER BY rank, owners DESC, g.title LIMIT 10`,
+    ).bind(q, `${esc}%`, `%${esc}%`).all()
+    return json({ results }, 200, { 'cache-control': 'public, max-age=10' })
+  }),
+
   /** The news hub: everything developers have announced, optionally only for games you follow or own. */
   route('GET', '/news', { auth: false }, async c => {
     const mine = c.url.searchParams.get('scope') === 'mine'

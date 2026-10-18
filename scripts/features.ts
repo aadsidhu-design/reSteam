@@ -65,7 +65,7 @@ export const BACKEND: Group = {
     'Username + password:d', 'PBKDF2 hashing:d', 'Cookie sessions:d', 'Recovery key:d', 'QR sign-in:d', 'Login throttling:d', 'Per-user wallet:d', 'Display name:d', 'Presence status:d', 'Delete account:d', 'Email on account:m', 'Two-factor:m',
   ],
   'Catalog': [
-    'Games API:d', 'Tags and publisher:d', 'Live review stats:d', 'Seed from one source:d', 'Upserting migrations:d', 'Search API:m', 'Recommendations:m', 'Developer uploads:m',
+    'Games API:d', 'Tags and publisher:d', 'Live review stats:d', 'Seed from one source:d', 'Upserting migrations:d', 'Search API:d', 'Recommendations:m', 'Developer uploads:m',
   ],
   'Commerce': [
     'Cart add/remove:d', 'Atomic checkout:d', 'Server-side pricing:d', 'Wishlist:d', 'Add funds (capped):d', 'Free claim:d', 'Promo codes:d', 'Gift cards:d',
