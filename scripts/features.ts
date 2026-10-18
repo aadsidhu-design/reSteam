@@ -22,7 +22,7 @@ export const CLIENT: Group = {
     'Hero art:p', 'Install split button:d', 'Install options menu:d', 'Play button:d', 'Stop button:d', 'Pause/Resume:d', 'Space required:d',
     'Last played:d', 'Play time:d', 'Achievements stat:d', 'Gear menu:d', 'Info dialog:d', 'Favorite heart:d', 'Store Page tab:d', 'Community Hub tab:d',
     'Discussions tab:d', 'Guides tab:d', 'Activity post box:d', 'Activity feed:d', 'View Latest News:d',
-    'Friends who play panel:d', 'Achievements list:m', 'Trading cards:m', 'Controller config:m', 'Cloud sync status:m', 'Properties dialog:m',
+    'Friends who play panel:d', 'Achievements list:d', 'Trading cards:m', 'Controller config:m', 'Cloud sync status:m', 'Properties dialog:m',
   ],
   'Downloads': [
     'Network stat:d', 'Peak stat:d', 'Disk usage stat:d', 'Live bandwidth graph:d', 'Active download panel:d', 'Phase labels:d', 'Progress and ETA:d',

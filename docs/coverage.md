@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `a1f86ff`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `a0bc708`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -8,14 +8,14 @@ Generated 2026-10-18 from commit `a1f86ff`. Run `npm run coverage` to refresh.
 
 | Measure | Value |
 | --- | --- |
-| Client behaviors replicated | 220 of 250 (12 partial, 18 not yet) |
+| Client behaviors replicated | 221 of 250 (12 partial, 17 not yet) |
 | Backend behaviors replicated | 74 of 90 (1 partial, 15 not yet) |
 | Visual fidelity (average of compared pages) | 75 / 100 over 20 pages |
 | Behavior fidelity | 70 / 100 |
-| API endpoints | 103 (103 exercised by e2e checks) |
-| Automated checks | 236 |
+| API endpoints | 105 (105 exercised by e2e checks) |
+| Automated checks | 241 |
 | Client routes | 24 |
-| Database tables | 31 |
+| Database tables | 32 |
 | Languages | 12 (368 strings) |
 
 ## Fidelity by page
@@ -89,6 +89,8 @@ Generated 2026-10-18 from commit `a1f86ff`. Run `npm run coverage` to refresh.
 | PUT | `/dev/games/:id/web` | Publishing and files | yes | yes | yes |
 | DELETE | `/dev/games/:id/build` | Publishing and files | yes | yes | yes |
 | DELETE | `/dev/games/:id/web` | Publishing and files | yes | yes | yes |
+| GET | `/games/:id/achievements` | Publishing and files | public | - | yes |
+| PUT | `/dev/games/:id/achievements` | Publishing and files | yes | yes | yes |
 | PUT | `/dev/games/:id/discount` | Publishing and files | yes | yes | yes |
 | GET | `/games/:id/news` | Publishing and files | public | - | yes |
 | GET | `/news` | Publishing and files | public | - | yes |
@@ -179,10 +181,11 @@ Generated 2026-10-18 from commit `a1f86ff`. Run `npm run coverage` to refresh.
 | NewsHub.tsx | 0 | 18 | 0% |
 | ui.tsx | 0 | 3 | 0% |
 | Community.tsx | 11 | 28 | 28% |
+| Achievements.tsx | 1 | 2 | 33% |
 | NewReleases.tsx | 3 | 4 | 43% |
 | Auth.tsx | 16 | 17 | 48% |
-| Library.tsx | 35 | 32 | 52% |
-| Developer.tsx | 23 | 20 | 53% |
+| Developer.tsx | 25 | 23 | 52% |
+| Library.tsx | 36 | 32 | 53% |
 | StorePages.tsx | 50 | 37 | 57% |
 | Settings.tsx | 48 | 27 | 64% |
 | Chrome.tsx | 47 | 19 | 71% |
@@ -265,7 +268,7 @@ Generated 2026-10-18 from commit `a1f86ff`. Run `npm run coverage` to refresh.
 - [~] Game icons in list
 - [ ] Drag to reorder
 
-**Game page** (20/26)
+**Game page** (21/26)
 
 - [x] Install split button
 - [x] Install options menu
@@ -287,8 +290,8 @@ Generated 2026-10-18 from commit `a1f86ff`. Run `npm run coverage` to refresh.
 - [x] Activity feed
 - [x] View Latest News
 - [x] Friends who play panel
+- [x] Achievements list
 - [~] Hero art
-- [ ] Achievements list
 - [ ] Trading cards
 - [ ] Controller config
 - [ ] Cloud sync status

@@ -77,6 +77,7 @@ function purgeStatements(env: Env, id: number) {
     db.prepare('DELETE FROM replies WHERE post_id IN (SELECT id FROM posts WHERE game_id = ?)').bind(id),
     db.prepare('DELETE FROM posts WHERE game_id = ?').bind(id),
     db.prepare('DELETE FROM events WHERE game_id = ?').bind(id),
+    db.prepare('DELETE FROM game_achievements WHERE game_id = ?').bind(id),
     db.prepare('DELETE FROM news_likes WHERE news_id IN (SELECT id FROM game_news WHERE game_id = ?)').bind(id),
     db.prepare('DELETE FROM news_comments WHERE news_id IN (SELECT id FROM game_news WHERE game_id = ?)').bind(id),
     db.prepare('DELETE FROM game_news WHERE game_id = ?').bind(id),
@@ -247,6 +248,29 @@ export const devRoutes: Route[] = [
     await deletePrefix(c.env, `games/${g.id}/web/`)
     await c.env.DB.prepare('UPDATE games SET web_entry = NULL WHERE id = ?').bind(g.id).run()
     return json({ ok: true })
+  }),
+
+  route('GET', '/games/:id/achievements', { auth: false }, async c => {
+    const { results } = await c.env.DB.prepare(
+      `SELECT a.idx, a.name, a.description FROM game_achievements a JOIN games g ON g.id = a.game_id WHERE a.game_id = ? AND (g.status = 'published' OR g.owner_id = ?) ORDER BY a.idx`).bind(gameId(c), c.user?.id ?? '').all()
+    return json({ achievements: results })
+  }),
+  /** Replaces the whole list; the game's achievement count follows it. */
+  route('PUT', '/dev/games/:id/achievements', {}, async c => {
+    const g = await ownedGame(c)
+    if (!g) return fail(404, 'no such game')
+    const b = await readJson<{ items: unknown }>(c.req, 20_000)
+    const items = (Array.isArray(b.items) ? b.items : []).slice(0, 50).map(x => {
+      const o = (x ?? {}) as Record<string, unknown>
+      return { name: cleanText(o.name, 60), description: cleanText(o.description, 200) }
+    })
+    if (items.some(i => i.name.length < 2)) return fail(400, 'Every achievement needs a name of at least 2 characters')
+    await c.env.DB.batch([
+      c.env.DB.prepare('DELETE FROM game_achievements WHERE game_id = ?').bind(g.id),
+      ...items.map((i, n) => c.env.DB.prepare('INSERT INTO game_achievements (game_id, idx, name, description) VALUES (?, ?, ?, ?)').bind(g.id, n, i.name, i.description)),
+      c.env.DB.prepare('UPDATE games SET achievements = ? WHERE id = ?').bind(items.length, g.id),
+    ])
+    return json({ ok: true, count: items.length })
   }),
 
   /** Sets a sale price. Players who wishlisted the game are told when a new sale starts. */

@@ -146,6 +146,26 @@ const News = ({ g }: { g: Mine }) => {
   )
 }
 
+const AchEditor = ({ g, done }: { g: Mine; done: (r: { error?: string }) => Promise<void> }) => {
+  const [text, setText] = useState('')
+  const [loaded, setLoaded] = useState(false)
+  const [msg, setMsg] = useState('')
+  useEffect(() => { void api<{ achievements: { name: string; description: string }[] }>('GET', `/games/${g.id}/achievements`).then(r => { setText((r?.achievements ?? []).map(a => a.description ? `${a.name} | ${a.description}` : a.name).join('\n')); setLoaded(true) }) }, [g.id])
+  return (
+    <div className="dv-slot dv-news">
+      <div className="grow"><b>{t('sg.achievements')}</b><div className="muted small">One per line as <code>Name | description</code> (up to 50). Players unlock them in order as they play.</div>
+        <textarea className="input" rows={4} value={text} disabled={!loaded} onChange={e => { setText(e.target.value); setMsg('') }} placeholder={'First ripple | Make a ripple.\nPond master | Make 100 ripples.'} />
+        {msg && <div className={`small ${msg === 'Saved' ? 'pos' : 'err'}`}>{msg}</div>}
+        <button className="btn small blue" onClick={async () => {
+          const items = text.split('\n').map(l => l.trim()).filter(Boolean).map(l => { const [name, ...rest] = l.split('|'); return { name: name.trim(), description: rest.join('|').trim() } })
+          const r = await call('PUT', `/dev/games/${g.id}/achievements`, { items })
+          setMsg(r.error ?? 'Saved'); if (!r.error) await done({})
+        }}>{t('pf.save')}</button>
+      </div>
+    </div>
+  )
+}
+
 const GameCard = observer(({ g, genres, reload }: { g: Mine; genres: string[]; reload: () => Promise<void> }) => {
   const [edit, setEdit] = useState(false)
   const published = g.status === 'published'
@@ -160,6 +180,7 @@ const GameCard = observer(({ g, genres, reload }: { g: Mine; genres: string[]; r
           have={g.hasCover ? 'Cover uploaded' : null}
           onFile={async (f, p) => { const e = await upload(`/dev/games/${g.id}/cover`, f, p); await reload(); await store.loadCatalog(); return e }} />
         <ShotsSlot g={g} reload={reload} />
+        <AchEditor g={g} done={done} />
         <Sale g={g} done={done} />
         <News g={g} />
         <FileSlot title={t('dv.web')} hint="A .zip with index.html at the top level (HTML5 / JavaScript / WebAssembly). Up to 15 MB zipped. Runs in a sandbox." accept=".zip,application/zip" limit={LIMITS.web}

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { t } from './i18n'
+import { AchievementList } from './Achievements'
 import { NavLink, Link, useNavigate, useParams } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { GAMES, isLocal, type Game } from './data'
@@ -404,6 +405,7 @@ const LibGame = observer(({ g }: { g: Game }) => {
           )}
         </div>
         <div className="gp-right">
+          {!custom && g.achievements > 0 && (<div className="side-panel"><h2>{t('sg.achievements')}</h2><div className="sp-box"><div>{unlocked}/{g.achievements}</div><AchievementList gameId={g.id} unlocked={unlocked} /></div></div>)}
           {!custom && (
             <div className="side-panel">
               <h2>{t('lb.friendsplay')}</h2>

@@ -9,6 +9,7 @@ import { Icon } from './icons'
 import { Price } from './ui'
 import { Plats, reviewClass, Tags } from './StorePages'
 import { t } from './i18n'
+import { AchievementsModal } from './Achievements'
 
 interface NewsItem { id: number; title: string; body: string; at: number; author: string }
 const GameNews = ({ g }: { g: Game }) => {
@@ -52,6 +53,7 @@ export const StoreGame = observer(() => {
   const nav = useNavigate()
   const g = GAMES.find(x => x.id === Number(id))
   const [allTags, setAllTags] = useState(false)
+  const [achOpen, setAchOpen] = useState(false)
     useEffect(() => { if (g) store.view(g.id) }, [g])
   if (!g) return <div className="container"><h1>{t('sg.unavail')}</h1><Link to="/store">{t('dq.back')}</Link></div>
 
@@ -138,7 +140,7 @@ export const StoreGame = observer(() => {
             <div className="feat-row"><span className="fi">☷</span>{compact(g.owners)} {g.owners === 1 ? 'owner' : 'owners'} on reSteam</div>
           </div>
           <div className="rail-box"><div className="muted small">Achievements</div>
-            <div className="ach-tiles">{[0, 1, 2, 3].map(n => <div key={n} className="ach-tile"><Art game={g} kind="icon" variant={n} /></div>)}<Link to={`/library/${g.id}`} className="ach-more">{t('sg.viewall')}<br />{g.achievements}</Link></div></div>
+            <div className="ach-tiles">{[0, 1, 2, 3].map(n => <div key={n} className="ach-tile"><Art game={g} kind="icon" variant={n} /></div>)}<button className="ach-more" onClick={() => setAchOpen(true)}>{t('sg.viewall')}<br />{g.achievements}</button></div></div>
           <div className="rail-box details">
             <div><span>{t('sg.title').toUpperCase()}:</span> {g.title}</div>
             <div><span>{t('sg.genre').toUpperCase()}:</span> {g.genre.map((x, i) => <span key={x}><Link to={`/store/browse?genre=${encodeURIComponent(x)}`}>{x}</Link>{i < g.genre.length - 1 ? ', ' : ''}</span>)}</div>
@@ -155,6 +157,7 @@ export const StoreGame = observer(() => {
         <Link key={s.id} to={`/store/${s.id}`} className="scard"><div className="scard-art"><Art game={s} kind="header" /></div><div className="scard-body"><div className="scard-title">{s.title}</div><Tags g={s} n={2} /><Price game={s} /></div></Link>))}</div></>)}
       <div className="muted small" style={{ margin: '20px 0 40px' }}>{fmt(priceOf(g))} · {g.dev}</div>
     </div>
+    {achOpen && <AchievementsModal gameId={g.id} title={g.title} unlocked={store.owned.includes(g.id) ? Math.min(g.achievements, Math.floor((store.playtime[g.id] ?? 0) / 3)) : null} onClose={() => setAchOpen(false)} />}
     </div>
   )
 })

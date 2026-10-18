@@ -105,6 +105,13 @@ check('the feed carries like and comment counts', mineRow.likes === 1 && mineRow
 check('others cannot delete a comment', (await a.call('DELETE', `/news-comments/${cm.data.id}`)).status === 404)
 check('the author can delete a comment', (await b.call('DELETE', `/news-comments/${cm.data.id}`)).status === 200)
 check('a news post can be deleted by its author', (await b.call('DELETE', `/dev/news/${news.data.id}`)).status === 404 && (await a.call('DELETE', `/dev/news/${news.data.id}`)).status === 200)
+const ach = await a.call('PUT', `/dev/games/${gid}/achievements`, { items: [{ name: 'First ripple', description: 'Make a ripple.' }, { name: 'Pond master', description: 'Make 100 ripples.' }] })
+check('a developer can define achievements', ach.status === 200 && ach.data.count === 2)
+check('achievement names are required', (await a.call('PUT', `/dev/games/${gid}/achievements`, { items: [{ name: '', description: 'x' }] })).status === 400)
+check('others cannot edit achievements', (await b.call('PUT', `/dev/games/${gid}/achievements`, { items: [] })).status === 404)
+const achs = await fetch(`${BASE}/api/games/${gid}/achievements`).then(r => r.json())
+check('the list is public and ordered', achs.achievements.length === 2 && achs.achievements[0].name === 'First ripple')
+check('the game count follows the list', (await fetch(`${BASE}/api/games`).then(r => r.json())).find(x => x.id === gid)?.achievements === 2)
 check('a game can be reported', (await b.call('POST', `/games/${gid}/report`, { reason: 'test' })).status === 200)
 await a.call('DELETE', `/dev/games/${gid}`)
 
