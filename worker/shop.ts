@@ -40,6 +40,24 @@ export async function me(env: Env, uid: string) {
   }
 }
 
+const REFUND_DAYS = 14
+const REFUND_MINUTES = 120
+
+/** Why a purchase can or cannot be refunded right now. */
+async function refundCheck(c: Ctx): Promise<{ eligible: boolean; reason: string; cents: number; daysLeft: number; minutesPlayed: number }> {
+  const row = await c.env.DB.prepare('SELECT acquired_at, paid, playtime FROM library WHERE user_id = ? AND game_id = ?').bind(c.user!.id, gameId(c)).first<{ acquired_at: number; paid: number; playtime: number }>()
+  const none = { eligible: false, cents: 0, daysLeft: 0, minutesPlayed: row?.playtime ?? 0 }
+  if (!row) return { ...none, reason: 'You do not own this game' }
+  if (row.paid <= 0 || row.acquired_at <= 0) return { ...none, reason: 'Only games you bought with wallet funds can be refunded' }
+  const daysLeft = REFUND_DAYS - (Date.now() - row.acquired_at) / 86_400_000
+  if (daysLeft <= 0) return { ...none, reason: `Refunds are only available within ${REFUND_DAYS} days of purchase` }
+  if (row.playtime >= REFUND_MINUTES) return { ...none, reason: `Refunds are only available under ${REFUND_MINUTES / 60} hours of play time` }
+  if (await c.env.DB.prepare('SELECT 1 FROM refunds WHERE user_id = ? AND game_id = ?').bind(c.user!.id, gameId(c)).first()) return { ...none, reason: 'You have already refunded this game once' }
+  const playing = await c.env.DB.prepare('SELECT 1 FROM users WHERE id = ? AND playing_game = ? AND playing_at > ?').bind(c.user!.id, gameId(c), Date.now() - 180_000).first()
+  if (playing) return { ...none, reason: 'Close the game before requesting a refund' }
+  return { eligible: true, reason: '', cents: row.paid, daysLeft: Math.ceil(daysLeft), minutesPlayed: row.playtime }
+}
+
 export const shopRoutes: Route[] = [
   route('GET', '/games', { auth: false }, async c => {
     // drafts are visible only to their author (through /dev/games)
@@ -96,7 +114,7 @@ export const shopRoutes: Route[] = [
     const debit = await c.env.DB.prepare('UPDATE users SET wallet = wallet - ? WHERE id = ? AND wallet >= ?').bind(total, c.user!.id, total).run()
     if (debit.meta.changes === 0) return fail(402, 'insufficient funds')
     await c.env.DB.batch([
-      ...results.map(g => c.env.DB.prepare('INSERT OR IGNORE INTO library (user_id, game_id) VALUES (?, ?)').bind(c.user!.id, g.id)),
+      ...results.map(g => c.env.DB.prepare('INSERT OR IGNORE INTO library (user_id, game_id, acquired_at, paid) VALUES (?, ?, ?, ?)').bind(c.user!.id, g.id, Date.now(), salePrice(g))),
       c.env.DB.prepare('DELETE FROM wishlist WHERE user_id = ? AND game_id IN (SELECT game_id FROM cart WHERE user_id = ?)').bind(c.user!.id, c.user!.id),
       c.env.DB.prepare('DELETE FROM cart WHERE user_id = ?').bind(c.user!.id),
     ])
@@ -117,6 +135,20 @@ export const shopRoutes: Route[] = [
     if (!g) return fail(404, 'no such game')
     if (salePrice(g) !== 0) return fail(402, 'not free')
     await c.env.DB.prepare('INSERT OR IGNORE INTO library (user_id, game_id) VALUES (?, ?)').bind(c.user!.id, gameId(c)).run()
+    return json(await me(c.env, c.user!.id))
+  }),
+
+  // ---- refunds: within 14 days of buying and under 2 hours played, paid back into the wallet ----
+  route('GET', '/refund/:id', {}, async c => json(await refundCheck(c))),
+  route('POST', '/refund/:id', {}, async c => {
+    const r = await refundCheck(c)
+    if (!r.eligible) return fail(409, r.reason)
+    await c.env.DB.batch([
+      c.env.DB.prepare('DELETE FROM library WHERE user_id = ? AND game_id = ?').bind(c.user!.id, gameId(c)),
+      c.env.DB.prepare('DELETE FROM cart WHERE user_id = ? AND game_id = ?').bind(c.user!.id, gameId(c)),
+      c.env.DB.prepare('INSERT INTO refunds (user_id, game_id, cents, at) VALUES (?, ?, ?, ?)').bind(c.user!.id, gameId(c), r.cents, Date.now()),
+      c.env.DB.prepare('UPDATE users SET wallet = wallet + ? WHERE id = ?').bind(r.cents, c.user!.id),
+    ])
     return json(await me(c.env, c.user!.id))
   }),
 

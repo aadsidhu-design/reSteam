@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `54212fe`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `6b42ad4`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -9,13 +9,13 @@ Generated 2026-10-18 from commit `54212fe`. Run `npm run coverage` to refresh.
 | Measure | Value |
 | --- | --- |
 | Client behaviors replicated | 222 of 250 (12 partial, 16 not yet) |
-| Backend behaviors replicated | 77 of 90 (1 partial, 12 not yet) |
+| Backend behaviors replicated | 78 of 90 (1 partial, 11 not yet) |
 | Visual fidelity (average of compared pages) | 75 / 100 over 20 pages |
 | Behavior fidelity | 70 / 100 |
-| API endpoints | 107 (107 exercised by e2e checks) |
-| Automated checks | 264 |
+| API endpoints | 109 (109 exercised by e2e checks) |
+| Automated checks | 270 |
 | Client routes | 25 |
-| Database tables | 33 |
+| Database tables | 34 |
 | Languages | 12 (368 strings) |
 
 ## Fidelity by page
@@ -127,6 +127,8 @@ Generated 2026-10-18 from commit `54212fe`. Run `npm run coverage` to refresh.
 | POST | `/checkout` | Store, cart, library | yes | yes | yes |
 | POST | `/wallet` | Store, cart, library | yes | yes | yes |
 | POST | `/claim/:id` | Store, cart, library | yes | yes | yes |
+| GET | `/refund/:id` | Store, cart, library | yes | - | yes |
+| POST | `/refund/:id` | Store, cart, library | yes | yes | yes |
 | POST | `/redeem` | Store, cart, library | yes | yes | yes |
 | POST | `/gift` | Store, cart, library | yes | yes | yes |
 | POST | `/playtime/:id` | Store, cart, library | yes | yes | yes |
@@ -182,14 +184,14 @@ Generated 2026-10-18 from commit `54212fe`. Run `npm run coverage` to refresh.
 | Admin.tsx | 0 | 9 | 0% |
 | App.tsx | 0 | 2 | 0% |
 | NewsHub.tsx | 0 | 18 | 0% |
-| Versions.tsx | 0 | 7 | 0% |
+| Versions.tsx | 0 | 11 | 0% |
 | ui.tsx | 0 | 3 | 0% |
 | Community.tsx | 11 | 28 | 28% |
 | Achievements.tsx | 1 | 2 | 33% |
 | NewReleases.tsx | 3 | 4 | 43% |
 | Developer.tsx | 25 | 28 | 47% |
 | Auth.tsx | 16 | 17 | 48% |
-| Library.tsx | 36 | 33 | 52% |
+| Library.tsx | 36 | 34 | 51% |
 | StorePages.tsx | 50 | 37 | 57% |
 | Settings.tsx | 48 | 27 | 64% |
 | Chrome.tsx | 47 | 20 | 70% |
@@ -513,7 +515,7 @@ Generated 2026-10-18 from commit `54212fe`. Run `npm run coverage` to refresh.
 - [ ] Recommendations
 - [ ] Developer uploads
 
-**Commerce** (8/11)
+**Commerce** (9/11)
 
 - [x] Cart add/remove
 - [x] Atomic checkout
@@ -523,7 +525,7 @@ Generated 2026-10-18 from commit `54212fe`. Run `npm run coverage` to refresh.
 - [x] Free claim
 - [x] Promo codes
 - [x] Gift cards
-- [ ] Refunds
+- [x] Refunds
 - [ ] Real payments
 - [ ] Regional pricing
 

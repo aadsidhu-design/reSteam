@@ -1,6 +1,6 @@
 {
   "generated": "2026-10-18",
-  "commit": "54212fe",
+  "commit": "6b42ad4",
   "summary": {
     "client": {
       "d": 222,
@@ -9,18 +9,18 @@
       "n": 250
     },
     "backend": {
-      "d": 77,
+      "d": 78,
       "p": 1,
-      "m": 12,
+      "m": 11,
       "n": 90
     },
     "visualAvg": 75.35,
     "behaviorAvg": 70.45,
-    "endpoints": 107,
-    "tested": 107,
-    "checks": 264,
+    "endpoints": 109,
+    "tested": 109,
+    "checks": 270,
     "routes": 25,
-    "dbTables": 33
+    "dbTables": 34
   },
   "pages": [
     {
@@ -870,6 +870,22 @@
       "tested": true
     },
     {
+      "method": "GET",
+      "path": "/refund/:id",
+      "area": "Store, cart, library",
+      "auth": true,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/refund/:id",
+      "area": "Store, cart, library",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
       "method": "POST",
       "path": "/redeem",
       "area": "Store, cart, library",
@@ -1204,7 +1220,7 @@
     {
       "file": "Versions.tsx",
       "translated": 0,
-      "literals": 7,
+      "literals": 11,
       "pct": 0
     },
     {
@@ -1246,8 +1262,8 @@
     {
       "file": "Library.tsx",
       "translated": 36,
-      "literals": 33,
-      "pct": 52.17391304347826
+      "literals": 34,
+      "pct": 51.42857142857142
     },
     {
       "file": "StorePages.tsx",

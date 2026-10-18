@@ -79,6 +79,7 @@ function purgeStatements(env: Env, id: number) {
     db.prepare('DELETE FROM posts WHERE game_id = ?').bind(id),
     db.prepare('DELETE FROM events WHERE game_id = ?').bind(id),
     db.prepare('DELETE FROM game_achievements WHERE game_id = ?').bind(id),
+    db.prepare('DELETE FROM refunds WHERE game_id = ?').bind(id),
     db.prepare('DELETE FROM game_versions WHERE game_id = ?').bind(id),
     db.prepare('DELETE FROM news_likes WHERE news_id IN (SELECT id FROM game_news WHERE game_id = ?)').bind(id),
     db.prepare('DELETE FROM news_comments WHERE news_id IN (SELECT id FROM game_news WHERE game_id = ?)').bind(id),

@@ -41,6 +41,20 @@ check('a promo code adds wallet funds', redeemed.status === 200 && redeemed.data
 check('a promo code works only once', (await a.call('POST', '/redeem', { code: 'RESTEAM-WELCOME-10' })).status >= 400)
 check('an unknown code is refused', (await a.call('POST', '/redeem', { code: 'NOPE-NOPE' })).status >= 400)
 
+// ---- refunds (game 5 costs real wallet money; the starter game 11 and free claims are not refundable)
+check('free or starter games cannot be refunded', (await a.call('POST', '/refund/11')).status === 409)
+await a.call('PUT', '/cart/5')
+const walletBefore = (await a.call('GET', '/me')).data.wallet
+const bought = await a.call('POST', '/checkout')
+check('a purchase succeeds', bought.status === 200 && bought.data.owned.includes(5))
+const elig = await a.call('GET', '/refund/5')
+check('a fresh purchase is eligible for a refund', elig.data.eligible === true && elig.data.cents > 0)
+const refunded = await a.call('POST', '/refund/5')
+check('a refund returns the money and the game', refunded.status === 200 && !refunded.data.owned.includes(5) && refunded.data.wallet === walletBefore)
+check('the same game cannot be refunded twice', (await a.call('POST', '/refund/5')).status === 409)
+await a.call('PUT', '/cart/5'); await a.call('POST', '/checkout')
+check('a re-bought game stays non-refundable', (await a.call('GET', '/refund/5')).data.eligible === false)
+
 // ---- community: reviews, posts, replies, votes, reports
 const rev = await a.call('PUT', '/games/11/review', { recommend: true, text: 'A fine, relaxing game to unwind with.' })
 check('a review can be posted', rev.status === 200)

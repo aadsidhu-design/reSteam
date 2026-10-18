@@ -210,6 +210,7 @@ export const authRoutes: Route[] = [
       db.prepare('DELETE FROM cart WHERE user_id = ?').bind(id),
       db.prepare('DELETE FROM wishlist WHERE user_id = ?').bind(id),
       db.prepare('DELETE FROM library WHERE user_id = ?').bind(id),
+      db.prepare('DELETE FROM refunds WHERE user_id = ?').bind(id),
       db.prepare('DELETE FROM news_likes WHERE user_id = ?').bind(id),
       db.prepare('DELETE FROM news_comments WHERE user_id = ?').bind(id),
       db.prepare('DELETE FROM play_tokens WHERE user_id = ?').bind(id),

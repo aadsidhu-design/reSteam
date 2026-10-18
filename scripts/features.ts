@@ -69,7 +69,7 @@ export const BACKEND: Group = {
   ],
   'Commerce': [
     'Cart add/remove:d', 'Atomic checkout:d', 'Server-side pricing:d', 'Wishlist:d', 'Add funds (capped):d', 'Free claim:d', 'Promo codes:d', 'Gift cards:d',
-    'Refunds:m', 'Real payments:m', 'Regional pricing:m',
+    'Refunds:d', 'Real payments:m', 'Regional pricing:m',
   ],
   'Library': [
     'Ownership:d', 'Install state:d', 'Favorites:d', 'Playtime logging:d', 'Last played:d', 'Cloud saves:m', 'Family sharing:m', 'Achievement unlocks:d',
