@@ -55,7 +55,7 @@ export const Tags = ({ g, n = 4 }: { g: Game; n?: number }) => (
 )
 
 /** Hovering a capsule cycles through screenshots that fade into each other, like the real store's hover preview. */
-const Card = ({ g }: { g: Game }) => {
+export const Card = ({ g }: { g: Game }) => {
   const [on, setOn] = useState(false)
   const [i, setI] = useState(0)
   useEffect(() => {

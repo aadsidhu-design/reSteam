@@ -31,7 +31,7 @@ const Browse = ({ go }: { go: () => void }) => {
   const hero = topOf(g => g.discount > 0) ?? GAMES[0]
   const rows: [string, string, string?][] = [
     [t('mm.storehome'), '/store'],
-    [t('mm.newreleases'), '/store/browse?sort=new', t('mm.newreleasesdesc')],
+    [t('mm.newreleases'), '/store/new', t('mm.newreleasesdesc')],
     [t('mm.charts'), '/charts', t('mm.chartsdesc')],
     [t('home.discounts'), '/store/browse?sale=1'],
     [t('home.free'), '/store/browse?free=1'],
@@ -74,7 +74,7 @@ const Recommendations = observer(({ go }: { go: () => void }) => {
       <div className="mg-list narrow right">
         <Link to="/explore" onClick={go} className="mg-link">{t('mm.queue')}</Link>
         <Link to="/community" onClick={go} className="mg-link">{t('mm.commrec')}</Link>
-        <Link to="/store/browse?sort=new" onClick={go} className="mg-link">{t('mm.newq')}</Link>
+        <Link to="/store/new" onClick={go} className="mg-link">{t('mm.newq')}</Link>
         <Link to={store.signedIn ? '/store/browse?friends=1' : '/login?next=/store'} onClick={go} className="mg-link">{t('mm.friendsplay')}</Link>
         <Link to={store.signedIn ? '/store/browse?followed=1' : '/login?next=/store'} onClick={go} className="mg-link">{t('mm.followed')}</Link>
         <Link to="/store/browse?sort=rating" onClick={go} className="mg-link">{t('mm.highest')}</Link>

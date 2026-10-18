@@ -12,6 +12,7 @@ import { About } from './About'
 import { Player } from './Player'
 import { Explore } from './Explore'
 import { ChartsPage } from './Charts'
+import { NewReleases } from './NewReleases'
 import { Developer } from './Developer'
 import { GAMES } from './data'
 import { store } from './store'
@@ -41,6 +42,7 @@ const App = observer(() => {
             <Route path="/library/:id" element={guard(<Library />)} />
             <Route element={<StoreLayout />}>
               <Route path="/store" element={<StoreHome />} />
+              <Route path="/store/new" element={<NewReleases />} />
               <Route path="/store/browse" element={<Browse />} />
               <Route path="/store/:id" element={<StoreGame />} />
               <Route path="/cart" element={guard(<Cart />)} />

@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `31cf359`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `fcf36b7`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -8,13 +8,13 @@ Generated 2026-10-18 from commit `31cf359`. Run `npm run coverage` to refresh.
 
 | Measure | Value |
 | --- | --- |
-| Client behaviors replicated | 215 of 245 (12 partial, 18 not yet) |
+| Client behaviors replicated | 216 of 246 (12 partial, 18 not yet) |
 | Backend behaviors replicated | 74 of 90 (1 partial, 15 not yet) |
-| Visual fidelity (average of compared pages) | 75 / 100 over 17 pages |
+| Visual fidelity (average of compared pages) | 75 / 100 over 18 pages |
 | Behavior fidelity | 71 / 100 |
 | API endpoints | 98 (98 exercised by e2e checks) |
 | Automated checks | 225 |
-| Client routes | 21 |
+| Client routes | 22 |
 | Database tables | 29 |
 | Languages | 12 (368 strings) |
 
@@ -33,6 +33,7 @@ Generated 2026-10-18 from commit `31cf359`. Run `npm run coverage` to refresh.
 | Discovery queue | `/explore` | screenshot+css | 48 | 60 | 2026-10-18 | Only the home banner was compared; the queue page is modelled on its behavior. |
 | Login | `/login` | network-capture | 66 | 86 | 2026-10-17 | Form, QR sign-in handshake and recovery flow studied; visual treatment is approximate. |
 | Charts | `/charts` | connected-browser | 78 | 80 | 2026-10-18 | Sub-nav, centered title over blurred art and the rank, price, change and weeks columns match; no regions and 25 rows instead of 100. Movement and weeks come from daily snapshots. |
+| New Releases | `/store/new` | connected-browser | 76 | 64 | 2026-10-18 | Breadcrumb, large title, patterned header and two spotlight capsules with caption bars match; the real page has more sections below that were not captured. |
 | Footer | `(all)` | connected-browser | 74 | 60 | 2026-10-18 | Four-column layout matched; legal pages do not exist. |
 | Loading and motion | `(all)` | screenshot+css | 94 | 88 | 2026-10-18 | Throbber, carousel fades, hover lifts and menu timings copied from the real CSS values. |
 | Language menu | `(header)` | connected-browser | 70 | 55 | 2026-10-18 | 12 of about 29 languages, chrome strings only; real store translates every page. |
@@ -170,6 +171,7 @@ Generated 2026-10-18 from commit `31cf359`. Run `npm run coverage` to refresh.
 | App.tsx | 0 | 2 | 0% |
 | ui.tsx | 0 | 3 | 0% |
 | Community.tsx | 11 | 28 | 28% |
+| NewReleases.tsx | 3 | 4 | 43% |
 | Auth.tsx | 16 | 17 | 48% |
 | Library.tsx | 35 | 32 | 52% |
 | Developer.tsx | 23 | 20 | 53% |
@@ -304,7 +306,7 @@ Generated 2026-10-18 from commit `31cf359`. Run `npm run coverage` to refresh.
 - [ ] Scheduled updates
 - [ ] Download region
 
-**Store** (51/57)
+**Store** (52/58)
 
 - [x] Browse menu
 - [x] Recommendations menu
@@ -333,6 +335,7 @@ Generated 2026-10-18 from commit `31cf359`. Run `npm run coverage` to refresh.
 - [x] More like this
 - [x] Discovery Queue
 - [x] Charts and stats
+- [x] New Releases page
 - [x] Chart history (movement, weeks)
 - [x] Account page layout
 - [x] Profile layout

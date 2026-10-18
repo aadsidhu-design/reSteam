@@ -1,12 +1,12 @@
 {
   "generated": "2026-10-18",
-  "commit": "31cf359",
+  "commit": "fcf36b7",
   "summary": {
     "client": {
-      "d": 215,
+      "d": 216,
       "p": 12,
       "m": 18,
-      "n": 245
+      "n": 246
     },
     "backend": {
       "d": 74,
@@ -14,12 +14,12 @@
       "m": 15,
       "n": 90
     },
-    "visualAvg": 75.23529411764706,
-    "behaviorAvg": 71.23529411764706,
+    "visualAvg": 75.27777777777777,
+    "behaviorAvg": 70.83333333333333,
     "endpoints": 98,
     "tested": 98,
     "checks": 225,
-    "routes": 21,
+    "routes": 22,
     "dbTables": 29
   },
   "pages": [
@@ -132,6 +132,16 @@
       "behavior": 80,
       "verified": "2026-10-18",
       "notes": "Sub-nav, centered title over blurred art and the rank, price, change and weeks columns match; no regions and 25 rows instead of 100. Movement and weeks come from daily snapshots."
+    },
+    {
+      "page": "New Releases",
+      "route": "/store/new",
+      "real": "/explore/new/",
+      "method": "connected-browser",
+      "visual": 76,
+      "behavior": 64,
+      "verified": "2026-10-18",
+      "notes": "Breadcrumb, large title, patterned header and two spotlight capsules with caption bars match; the real page has more sections below that were not captured."
     },
     {
       "page": "Footer",
@@ -1098,6 +1108,12 @@
       "translated": 11,
       "literals": 28,
       "pct": 28.205128205128204
+    },
+    {
+      "file": "NewReleases.tsx",
+      "translated": 3,
+      "literals": 4,
+      "pct": 42.857142857142854
     },
     {
       "file": "Auth.tsx",
