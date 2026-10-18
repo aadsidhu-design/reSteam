@@ -1,6 +1,6 @@
 {
   "generated": "2026-10-18",
-  "commit": "d5b365b",
+  "commit": "a6692ea",
   "summary": {
     "client": {
       "d": 219,
@@ -14,8 +14,8 @@
       "m": 15,
       "n": 90
     },
-    "visualAvg": 74.45,
-    "behaviorAvg": 70.35,
+    "visualAvg": 75.35,
+    "behaviorAvg": 70.45,
     "endpoints": 99,
     "tested": 99,
     "checks": 228,
@@ -158,10 +158,10 @@
       "route": "/news",
       "real": "/news/",
       "method": "connected-browser",
-      "visual": 62,
-      "behavior": 66,
+      "visual": 80,
+      "behavior": 68,
       "verified": "2026-10-18",
-      "notes": "Sidebar, day-grouped feed and news cards follow the real page; built from the capture and not yet checked side by side. No likes, comments or curators."
+      "notes": "Checked side by side: sidebar, day-grouped feed and cards match. No likes, comments, curators or events."
     },
     {
       "page": "Footer",

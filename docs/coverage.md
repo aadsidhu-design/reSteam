@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `d5b365b`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `a6692ea`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -10,7 +10,7 @@ Generated 2026-10-18 from commit `d5b365b`. Run `npm run coverage` to refresh.
 | --- | --- |
 | Client behaviors replicated | 219 of 249 (12 partial, 18 not yet) |
 | Backend behaviors replicated | 74 of 90 (1 partial, 15 not yet) |
-| Visual fidelity (average of compared pages) | 74 / 100 over 20 pages |
+| Visual fidelity (average of compared pages) | 75 / 100 over 20 pages |
 | Behavior fidelity | 70 / 100 |
 | API endpoints | 99 (99 exercised by e2e checks) |
 | Automated checks | 228 |
@@ -35,7 +35,7 @@ Generated 2026-10-18 from commit `d5b365b`. Run `npm run coverage` to refresh.
 | Charts | `/charts` | connected-browser | 78 | 80 | 2026-10-18 | Sub-nav, centered title over blurred art and the rank, price, change and weeks columns match; no regions and 25 rows instead of 100. Movement and weeks come from daily snapshots. |
 | New Releases | `/store/new` | connected-browser | 76 | 64 | 2026-10-18 | Breadcrumb, large title, patterned header and two spotlight capsules with caption bars match; the real page has more sections below that were not captured. |
 | Discounts and events | `/store/specials` | connected-browser | 72 | 66 | 2026-10-18 | Large title over blurred art and the spotlight carousel (media left, capsule, tags and wishlist star right) match; no video and no event sections below. |
-| News hub | `/news` | connected-browser | 62 | 66 | 2026-10-18 | Sidebar, day-grouped feed and news cards follow the real page; built from the capture and not yet checked side by side. No likes, comments or curators. |
+| News hub | `/news` | connected-browser | 80 | 68 | 2026-10-18 | Checked side by side: sidebar, day-grouped feed and cards match. No likes, comments, curators or events. |
 | Footer | `(all)` | connected-browser | 74 | 60 | 2026-10-18 | Four-column layout matched; legal pages do not exist. |
 | Loading and motion | `(all)` | screenshot+css | 94 | 88 | 2026-10-18 | Throbber, carousel fades, hover lifts and menu timings copied from the real CSS values. |
 | Language menu | `(header)` | connected-browser | 70 | 55 | 2026-10-18 | 12 of about 29 languages, chrome strings only; real store translates every page. |
