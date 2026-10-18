@@ -1,6 +1,6 @@
 {
   "generated": "2026-10-18",
-  "commit": "672625d",
+  "commit": "c6395c5",
   "summary": {
     "client": {
       "d": 214,
@@ -18,9 +18,9 @@
     "behaviorAvg": 70.6875,
     "endpoints": 98,
     "tested": 98,
-    "checks": 224,
+    "checks": 225,
     "routes": 21,
-    "dbTables": 28
+    "dbTables": 29
   },
   "pages": [
     {
@@ -994,74 +994,74 @@
     {
       "code": "schinese",
       "name": "Chinese (Simplified)",
-      "have": 362,
-      "total": 362
+      "have": 368,
+      "total": 368
     },
     {
       "code": "english",
       "name": "English",
-      "have": 362,
-      "total": 362
+      "have": 368,
+      "total": 368
     },
     {
       "code": "french",
       "name": "French",
-      "have": 362,
-      "total": 362
+      "have": 368,
+      "total": 368
     },
     {
       "code": "german",
       "name": "German",
-      "have": 362,
-      "total": 362
+      "have": 368,
+      "total": 368
     },
     {
       "code": "italian",
       "name": "Italian",
-      "have": 362,
-      "total": 362
+      "have": 368,
+      "total": 368
     },
     {
       "code": "japanese",
       "name": "Japanese",
-      "have": 362,
-      "total": 362
+      "have": 368,
+      "total": 368
     },
     {
       "code": "koreana",
       "name": "Korean",
-      "have": 362,
-      "total": 362
+      "have": 368,
+      "total": 368
     },
     {
       "code": "polish",
       "name": "Polish",
-      "have": 362,
-      "total": 362
+      "have": 368,
+      "total": 368
     },
     {
       "code": "brazilian",
       "name": "Portuguese (Brazil)",
-      "have": 362,
-      "total": 362
+      "have": 368,
+      "total": 368
     },
     {
       "code": "russian",
       "name": "Russian",
-      "have": 362,
-      "total": 362
+      "have": 368,
+      "total": 368
     },
     {
       "code": "spanish",
       "name": "Spanish",
-      "have": 362,
-      "total": 362
+      "have": 368,
+      "total": 368
     },
     {
       "code": "turkish",
       "name": "Turkish",
-      "have": 362,
-      "total": 362
+      "have": 368,
+      "total": 368
     }
   ],
   "textCoverage": [
@@ -1151,7 +1151,7 @@
     },
     {
       "file": "Charts.tsx",
-      "translated": 2,
+      "translated": 9,
       "literals": 0,
       "pct": 100
     },

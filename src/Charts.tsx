@@ -1,55 +1,61 @@
 import { useEffect, useState } from 'react'
-import { t } from './i18n'
 import { Link } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
-import { GAMES, compact } from './data'
+import { GAMES, compact, fmt, priceOf } from './data'
 import { api } from './store'
 import { Art } from './art'
 import { Loading } from './ui'
-import { CapPrice } from './StorePages'
+import { t } from './i18n'
 import './charts.css'
 
-type Row = { gameId: number; value: number | string; minutes?: number }
-interface Charts { topselling: Row[]; mostplayed: Row[]; wishlisted: Row[]; new: Row[] }
-const TABS = [
-  ['topselling', 'Top Sellers', 'Games owned by the most players'],
-  ['mostplayed', 'Most Played', 'Players in a game right now, then total hours played'],
+type Row = { gameId: number; value: number | string; minutes?: number; rank: number; change: number | null; isNew: boolean; weeks: number }
+type Kind = 'topselling' | 'mostplayed' | 'wishlisted' | 'new'
+type Charts = Record<Kind, Row[]>
+const TABS: [Kind, string, string][] = [
+  ['topselling', 'Top Sellers', 'Games owned by the most players right now'],
+  ['mostplayed', 'Most Played', 'Games with the most players in them right now, then by total hours'],
   ['wishlisted', 'Most Wishlisted', 'Games on the most wishlists'],
   ['new', 'New Releases', 'The newest published games'],
-] as const
+]
 
 export const ChartsPage = observer(() => {
   const [data, setData] = useState<Charts | null>(null)
-  const [tab, setTab] = useState<(typeof TABS)[number][0]>('topselling')
+  const [tab, setTab] = useState<Kind>('topselling')
   useEffect(() => { void api<Charts>('GET', '/charts').then(r => setData(r ?? { topselling: [], mostplayed: [], wishlisted: [], new: [] })) }, [])
-  const meta = TABS.find(t => t[0] === tab)!
+  const meta = TABS.find(x => x[0] === tab)!
+  const rows = data?.[tab] ?? []
+  const lead = GAMES.find(g => g.id === rows[0]?.gameId)
   return (
-    <div className="container charts">
-      <h1>{t('ch.title')}</h1>
-      <div className="ch-tabs">{TABS.map(([k, label]) => <button key={k} className={k === tab ? 'on' : ''} onClick={() => setTab(k)}>{label}</button>)}</div>
-      <p className="muted">{meta[2]}.</p>
-      {data === null ? <Loading /> : (
-        <div className="ch-list">
-          {data[tab].map((r, i) => {
-            const g = GAMES.find(x => x.id === r.gameId)
-            if (!g) return null
-            return (
-              <Link key={r.gameId} to={`/store/${g.id}`} className="ch-row">
-                <span className="ch-rank">{i + 1}</span>
-                <div className="ch-art"><Art game={g} kind="header" /></div>
-                <div className="ch-main"><b>{g.title}</b><span className="muted small">{g.genre.join(', ')}</span></div>
-                <div className="ch-val">
-                  {tab === 'mostplayed' ? <><b>{compact(Number(r.value))}</b> <span className="muted small">playing now</span><div className="muted small">{compact(Math.round((r.minutes ?? 0) / 60))} hrs total</div></>
-                    : tab === 'new' ? <span className="muted">{new Date(String(r.value)).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                    : <><b>{compact(Number(r.value))}</b> <span className="muted small">{tab === 'topselling' ? 'owners' : 'wishlists'}</span></>}
-                </div>
-                <CapPrice g={g} />
-              </Link>
-            )
-          })}
-          {data[tab].length === 0 && <p className="muted">{t('ch.nothing')}</p>}
-        </div>
-      )}
+    <div className="charts">
+      <div className="ch-subnav"><div className="ch-subnav-in">{TABS.map(([k, label]) => <button key={k} className={k === tab ? 'on' : ''} onClick={() => setTab(k)}>{label}</button>)}</div></div>
+      <div className="ch-hero">
+        {lead && <div className="ch-bd" aria-hidden><Art game={lead} kind="hero" showTitle={false} /></div>}
+        <h1>{meta[1].toUpperCase()}</h1>
+        <p>{meta[2]}.</p>
+      </div>
+      <div className="ch-wrap">
+        <div className="ch-head"><span className="ch-c-rank">{t('ch.rank')}</span><span className="grow" />{tab !== 'new' && <span className="ch-c-val">{tab === 'topselling' ? t('ch.owners') : tab === 'mostplayed' ? t('ch.playing') : t('ch.wishlists')}</span>}<span className="ch-c-price">{t('browse.price')}</span><span className="ch-c-chg">{t('ch.change')}</span><span className="ch-c-wk">{t('ch.weeks')}</span></div>
+        {data === null ? <Loading /> : (
+          <div className="ch-list">
+            {rows.map(r => {
+              const g = GAMES.find(x => x.id === r.gameId)
+              if (!g) return null
+              return (
+                <Link key={r.gameId} to={`/store/${g.id}`} className="ch-row">
+                  <span className="ch-rank">{r.rank}</span>
+                  <div className="ch-art"><Art game={g} kind="header" /></div>
+                  <div className="ch-main"><b>{g.title}</b></div>
+                  {tab !== 'new' && <div className="ch-val">{compact(Number(r.value))}{tab === 'mostplayed' && <div className="muted small">{compact(Math.round((r.minutes ?? 0) / 60))} hrs</div>}</div>}
+                  <div className="ch-price">{g.price === 0 ? t('home.free') : fmt(priceOf(g))}</div>
+                  <div className="ch-chg">{r.isNew ? <span className="up">NEW</span> : r.change === null || r.change === 0 ? <span className="muted">–</span> : r.change > 0 ? <span className="up">▲ {r.change}</span> : <span className="down">▼ {-r.change}</span>}</div>
+                  <div className="ch-wk">{r.weeks}</div>
+                </Link>
+              )
+            })}
+            {rows.length === 0 && <p className="muted ch-empty">{t('ch.nothing')}</p>}
+          </div>
+        )}
+      </div>
     </div>
   )
 })

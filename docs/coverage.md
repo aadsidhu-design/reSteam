@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `672625d`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `c6395c5`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -13,10 +13,10 @@ Generated 2026-10-18 from commit `672625d`. Run `npm run coverage` to refresh.
 | Visual fidelity (average of compared pages) | 75 / 100 over 16 pages |
 | Behavior fidelity | 71 / 100 |
 | API endpoints | 98 (98 exercised by e2e checks) |
-| Automated checks | 224 |
+| Automated checks | 225 |
 | Client routes | 21 |
-| Database tables | 28 |
-| Languages | 12 (362 strings) |
+| Database tables | 29 |
+| Languages | 12 (368 strings) |
 
 ## Fidelity by page
 
@@ -148,18 +148,18 @@ Generated 2026-10-18 from commit `672625d`. Run `npm run coverage` to refresh.
 
 | Language | Strings | Coverage |
 | --- | --- | --- |
-| Chinese (Simplified) | 362/362 | 100% |
-| English | 362/362 | 100% |
-| French | 362/362 | 100% |
-| German | 362/362 | 100% |
-| Italian | 362/362 | 100% |
-| Japanese | 362/362 | 100% |
-| Korean | 362/362 | 100% |
-| Polish | 362/362 | 100% |
-| Portuguese (Brazil) | 362/362 | 100% |
-| Russian | 362/362 | 100% |
-| Spanish | 362/362 | 100% |
-| Turkish | 362/362 | 100% |
+| Chinese (Simplified) | 368/368 | 100% |
+| English | 368/368 | 100% |
+| French | 368/368 | 100% |
+| German | 368/368 | 100% |
+| Italian | 368/368 | 100% |
+| Japanese | 368/368 | 100% |
+| Korean | 368/368 | 100% |
+| Polish | 368/368 | 100% |
+| Portuguese (Brazil) | 368/368 | 100% |
+| Russian | 368/368 | 100% |
+| Spanish | 368/368 | 100% |
+| Turkish | 368/368 | 100% |
 
 ## UI text going through the translator
 
@@ -179,7 +179,7 @@ Generated 2026-10-18 from commit `672625d`. Run `npm run coverage` to refresh.
 | Friends.tsx | 37 | 8 | 82% |
 | Reviews.tsx | 14 | 3 | 82% |
 | StoreGame.tsx | 35 | 7 | 83% |
-| Charts.tsx | 2 | 0 | 100% |
+| Charts.tsx | 9 | 0 | 100% |
 | Downloads.tsx | 13 | 0 | 100% |
 | Explore.tsx | 6 | 0 | 100% |
 | MegaMenu.tsx | 40 | 0 | 100% |

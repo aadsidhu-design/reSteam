@@ -53,9 +53,10 @@ export const communityRoutes: Route[] = [
     return json({ stats: Object.fromEntries(results.map(r => [r.id, r])) }, 200, { 'cache-control': 'public, max-age=20' })
   }),
 
-  // ---- charts: ranked lists built only from real activity ----
+  // ---- charts: ranked lists built only from real activity, with movement from daily snapshots ----
   route('GET', '/charts', { auth: false }, async c => {
     const now = Date.now()
+    const today = new Date(now).toISOString().slice(0, 10)
     const base = "FROM games g WHERE g.status = 'published'"
     const [sell, played, wished, fresh] = await c.env.DB.batch([
       c.env.DB.prepare(`SELECT g.id AS gameId, (SELECT COUNT(*) FROM library l WHERE l.game_id = g.id) AS value ${base} ORDER BY value DESC, g.id LIMIT 25`),
@@ -64,7 +65,22 @@ export const communityRoutes: Route[] = [
       c.env.DB.prepare(`SELECT g.id AS gameId, (SELECT COUNT(*) FROM wishlist w WHERE w.game_id = g.id) AS value ${base} ORDER BY value DESC, g.id LIMIT 25`),
       c.env.DB.prepare(`SELECT g.id AS gameId, g.released AS value ${base} AND g.released != '' ORDER BY g.released DESC, g.id DESC LIMIT 25`),
     ])
-    return json({ topselling: sell.results, mostplayed: played.results, wishlisted: wished.results, new: fresh.results }, 200, { 'cache-control': 'public, max-age=20' })
+    const lists: Record<string, { gameId: number; value: number | string; minutes?: number }[]> = {
+      topselling: sell.results as never, mostplayed: played.results as never, wishlisted: wished.results as never, new: fresh.results as never,
+    }
+    // record today's ranking once per chart, then compare with the most recent earlier day
+    const writes = Object.entries(lists).flatMap(([kind, rows]) => rows.map((r, i) =>
+      c.env.DB.prepare('INSERT OR IGNORE INTO chart_snapshots (day, kind, game_id, rank) VALUES (?, ?, ?, ?)').bind(today, kind, r.gameId, i + 1)))
+    if (writes.length) await c.env.DB.batch(writes)
+    const out: Record<string, unknown[]> = {}
+    for (const [kind, rows] of Object.entries(lists)) {
+      const prevDay = (await c.env.DB.prepare('SELECT MAX(day) AS d FROM chart_snapshots WHERE kind = ? AND day < ?').bind(kind, today).first<{ d: string | null }>())?.d ?? null
+      const prev = prevDay ? new Map(((await c.env.DB.prepare('SELECT game_id, rank FROM chart_snapshots WHERE kind = ? AND day = ?').bind(kind, prevDay).all<{ game_id: number; rank: number }>()).results).map(r => [r.game_id, r.rank])) : null
+      const weeks = new Map(((await c.env.DB.prepare(
+        `SELECT game_id, COUNT(DISTINCT CAST(julianday(day) / 7 AS INTEGER)) AS w FROM chart_snapshots WHERE kind = ? GROUP BY game_id`).bind(kind).all<{ game_id: number; w: number }>()).results).map(r => [r.game_id, r.w]))
+      out[kind] = rows.map((r, i) => ({ ...r, rank: i + 1, change: prev ? (prev.has(r.gameId) ? prev.get(r.gameId)! - (i + 1) : null) : null, isNew: prev ? !prev.has(r.gameId) : false, weeks: weeks.get(r.gameId) ?? 1 }))
+    }
+    return json(out, 200, { 'cache-control': 'public, max-age=20' })
   }),
 
   // ---- reviews ----

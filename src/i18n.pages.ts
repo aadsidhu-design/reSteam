@@ -320,6 +320,12 @@ const ROWS: Row[] = [
   ['dv.whatsnew', 'What is new?', '¿Qué hay de nuevo?', 'Quoi de neuf ?', 'Was gibt es Neues?', 'Cosa c\'è di nuovo?', 'O que há de novo?', '新しい情報は？', '새로운 소식은?', '有什么新内容？', 'Что нового?', 'Yenilikler neler?', 'Co nowego?'],
   ['dv.statuspub', 'Published', 'Publicado', 'Publié', 'Veröffentlicht', 'Pubblicato', 'Publicado', '公開中', '게시됨', '已发布', 'Опубликовано', 'Yayında', 'Opublikowano'],
   ['dv.statusdraft', 'Draft', 'Borrador', 'Brouillon', 'Entwurf', 'Bozza', 'Rascunho', '下書き', '초안', '草稿', 'Черновик', 'Taslak', 'Szkic'],
+  ['ch.rank', 'RANK', 'CLASIF.', 'RANG', 'RANG', 'POS.', 'POS.', '順位', '순위', '排名', 'МЕСТО', 'SIRA', 'MIEJSCE'],
+  ['ch.owners', 'OWNERS', 'PROPIETARIOS', 'POSSESSEURS', 'BESITZER', 'POSSESSORI', 'DONOS', '所有者', '보유자', '拥有者', 'ВЛАДЕЛЬЦЫ', 'SAHİPLER', 'WŁAŚCICIELE'],
+  ['ch.playing', 'PLAYING NOW', 'JUGANDO AHORA', 'EN JEU', 'SPIELEN GERADE', 'IN GIOCO ORA', 'JOGANDO AGORA', 'プレイ中', '현재 플레이 중', '正在游玩', 'СЕЙЧАС ИГРАЮТ', 'ŞU AN OYNANIYOR', 'GRAJĄ TERAZ'],
+  ['ch.wishlists', 'WISHLISTS', 'LISTAS DE DESEADOS', 'LISTES DE SOUHAITS', 'WUNSCHLISTEN', 'LISTE DESIDERI', 'LISTAS DE DESEJOS', 'ウィッシュリスト', '위시리스트', '愿望单', 'СПИСКИ ЖЕЛАЕМОГО', 'İSTEK LİSTELERİ', 'LISTY ŻYCZEŃ'],
+  ['ch.change', 'CHANGE', 'CAMBIO', 'ÉVOLUTION', 'ÄNDERUNG', 'VARIAZIONE', 'MUDANÇA', '変動', '변동', '变化', 'ИЗМЕНЕНИЕ', 'DEĞİŞİM', 'ZMIANA'],
+  ['ch.weeks', 'WEEKS', 'SEMANAS', 'SEMAINES', 'WOCHEN', 'SETTIMANE', 'SEMANAS', '週数', '주', '周数', 'НЕДЕЛИ', 'HAFTA', 'TYGODNIE'],
 ]
 
 export const PAGE_STRINGS: Record<Lang, Record<string, string>> = Object.fromEntries(
