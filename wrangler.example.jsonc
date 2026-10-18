@@ -18,7 +18,12 @@
     // approximate and per Cloudflare location, which is fine for abuse protection
     { "name": "GENERAL_LIMITER", "namespace_id": "1001", "simple": { "limit": 120, "period": 60 } },
     { "name": "WRITE_LIMITER", "namespace_id": "1002", "simple": { "limit": 30, "period": 60 } },
-    { "name": "NEW_USER_LIMITER", "namespace_id": "1003", "simple": { "limit": 10, "period": 60 } }
+    { "name": "NEW_USER_LIMITER", "namespace_id": "1003", "simple": { "limit": 10, "period": 60 } },
+    // sign-in is throttled per IP and, separately, per account name so one account cannot be guessed at from many IPs
+    { "name": "AUTH_LIMITER", "namespace_id": "1004", "simple": { "limit": 10, "period": 60 } },
+    { "name": "LOGIN_LIMITER", "namespace_id": "1005", "simple": { "limit": 8, "period": 60 } }
   ],
+  "durable_objects": { "bindings": [{ "name": "USER_HUB", "class_name": "UserHub" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["UserHub"] }],
   "observability": { "enabled": true }
 }
