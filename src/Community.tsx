@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { t } from './i18n'
 import { Link, useSearchParams } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { GAMES, compact, fmt, priceOf, type Game } from './data'
@@ -16,6 +17,7 @@ interface FeedItem { type: 'review' | 'discussion' | 'guide'; at: number; score:
 interface Hub { gameId: number; posts: number; guides: number; reviews: number; playing: number; owners: number }
 
 const TABS = ['All', 'Discussions', 'Guides', 'Reviews'] as const
+const TAB_KEY: Record<string, string> = { All: 'comm.all', Discussions: 'comm.discussions', Guides: 'comm.guides', Reviews: 'comm.reviews' }
 type Tab = (typeof TABS)[number]
 const gameOf = (id: number) => GAMES.find(g => g.id === id)
 
@@ -179,7 +181,7 @@ export const Community = observer(() => {
                     <button className="link-btn" onClick={() => { const n = new URLSearchParams(sp); n.delete('hub'); n.delete('tab'); setSp(n) }}>All of the community</button></div></div>
               </div>
             </div>
-            <div className="cm-tabs hubtabs">{TABS.map(t => <button key={t} className={t === tab ? 'on' : ''} onClick={() => setParams('tab', t === 'All' ? null : t)}>{t}</button>)}
+            <div className="cm-tabs hubtabs">{TABS.map(tb => <button key={tb} className={tb === tab ? 'on' : ''} onClick={() => setParams('tab', tb === 'All' ? null : tb)}>{t(TAB_KEY[tb])}</button>)}
               <span className="grow" />
               <button className="btn small" onClick={() => store.needLogin() || setWriting('discussion')}>New discussion</button>
               <button className="btn small" disabled={store.signedIn && !store.owned.includes(hubGame.id)} title={store.signedIn && !store.owned.includes(hubGame.id) ? 'Only owners can write guides' : undefined} onClick={() => store.needLogin() || setWriting('guide')}>Write a guide</button>
@@ -187,7 +189,7 @@ export const Community = observer(() => {
           </>
         ) : (
           <>
-            <h1>Community Activity</h1><p className="cm-sub">Reviews, discussions and guides from people on reSteam.</p>
+            <h1>{t('comm.activity')}</h1><p className="cm-sub">Reviews, discussions and guides from people on reSteam.</p>
             <div className="cm-panels">
               <div className="cm-panel cols2">
                 <div>
@@ -203,26 +205,26 @@ export const Community = observer(() => {
                 </div>
               </div>
               <div className="cm-panel">
-                <h4>FIND HUBS</h4>
+                <h4>{t('comm.findhubs')}</h4>
                 <div className="cm-search"><input placeholder="Search for products" value={hubQ} onChange={e => setHubQ(e.target.value)} aria-label="Search for products" /><Icon name="search" size={22} /></div>
                 {hubHits.map(g => <Link key={g.id} to={`/community?hub=${g.id}`} className="hl-hit">{g.title}</Link>)}
-                <h4 className="mt">FIND PEOPLE</h4>
+                <h4 className="mt">{t('comm.findpeople')}</h4>
                 <div className="cm-search"><input placeholder={store.signedIn ? 'Search by account name' : 'Sign in to search people'} disabled={!store.signedIn} value={peopleQ} onChange={e => setPeopleQ(e.target.value)} aria-label="Search for people" /><Icon name="search" size={22} /></div>
                 {people.map(u => <Link key={u.username} to={`/profile/${u.username}`} className="hl-hit"><Avatar f={{ name: u.name }} size={22} ring={false} /> {u.name} <span className="muted small">@{u.username}</span></Link>)}
                 {store.signedIn && peopleQ.trim().length >= 2 && people.length === 0 && <div className="small muted">No accounts match "{peopleQ.trim()}".</div>}
               </div>
             </div>
             <div className="cm-tabs">
-              {TABS.map(t => <button key={t} className={t === tab ? 'on' : ''} onClick={() => setParams('tab', t === 'All' ? null : t)}>{t}</button>)}
+              {TABS.map(tb => <button key={tb} className={tb === tab ? 'on' : ''} onClick={() => setParams('tab', tb === 'All' ? null : tb)}>{t(TAB_KEY[tb])}</button>)}
               <span className="grow" />
-              <span className="muted viewing">Viewing</span>
-              <button className={`seg ${popular ? 'on' : ''}`} onClick={() => setPopular(true)}>MOST POPULAR</button>
-              <button className={`seg ${!popular ? 'on' : ''}`} onClick={() => setPopular(false)}>MOST RECENT</button>
+              <span className="muted viewing">{t('comm.viewing')}</span>
+              <button className={`seg ${popular ? 'on' : ''}`} onClick={() => setPopular(true)}>{t('comm.popular')}</button>
+              <button className={`seg ${!popular ? 'on' : ''}`} onClick={() => setPopular(false)}>{t('comm.recent')}</button>
             </div>
           </>
         )}
-        {hubGame && <div className="cm-tabs viewrow"><span className="grow" /><span className="muted viewing">Viewing</span>
-          <button className={`seg ${popular ? 'on' : ''}`} onClick={() => setPopular(true)}>MOST POPULAR</button><button className={`seg ${!popular ? 'on' : ''}`} onClick={() => setPopular(false)}>MOST RECENT</button></div>}
+        {hubGame && <div className="cm-tabs viewrow"><span className="grow" /><span className="muted viewing">{t('comm.viewing')}</span>
+          <button className={`seg ${popular ? 'on' : ''}`} onClick={() => setPopular(true)}>{t('comm.popular')}</button><button className={`seg ${!popular ? 'on' : ''}`} onClick={() => setPopular(false)}>{t('comm.recent')}</button></div>}
 
         {feed === null && <Loading />}
         <div className="cm-grid one">

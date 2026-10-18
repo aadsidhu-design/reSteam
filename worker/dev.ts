@@ -1,6 +1,6 @@
 import { unzipSync } from 'fflate'
 import { type Ctx, type Env, type Route, b64url, cleanText, fail, json, randomBytes, readJson, route, sha256Hex, tooMany } from './util'
-import { logEvent } from './social'
+import { logEvent, notify } from './social'
 
 // Limits are deliberately small: this runs on a free-plan Worker and anyone can sign up.
 const MAX_GAMES_PER_USER = 10
@@ -77,6 +77,7 @@ function purgeStatements(env: Env, id: number) {
     db.prepare('DELETE FROM replies WHERE post_id IN (SELECT id FROM posts WHERE game_id = ?)').bind(id),
     db.prepare('DELETE FROM posts WHERE game_id = ?').bind(id),
     db.prepare('DELETE FROM events WHERE game_id = ?').bind(id),
+    db.prepare('DELETE FROM game_news WHERE game_id = ?').bind(id),
     db.prepare('DELETE FROM play_tokens WHERE game_id = ?').bind(id),
     db.prepare('UPDATE users SET playing_game = NULL WHERE playing_game = ?').bind(id),
     ...['library', 'wishlist', 'cart', 'ignored', 'followed'].map(t => db.prepare(`DELETE FROM ${t} WHERE game_id = ?`).bind(id)),
@@ -99,11 +100,13 @@ function parseMeta(b: Record<string, unknown>) {
   const genre = (Array.isArray(b.genre) ? b.genre : []).filter((g): g is string => typeof g === 'string' && GENRES.includes(g)).slice(0, 3)
   const tags = (Array.isArray(b.tags) ? b.tags : []).map(t => cleanText(t, 24)).filter(Boolean).slice(0, 10)
   const price = Number(b.price)
+  const achievements = b.achievements === undefined ? 0 : Number(b.achievements)
+  if (!Number.isInteger(achievements) || achievements < 0 || achievements > 50) return { error: 'Achievements must be between 0 and 50' }
   if (title.length < 3) return { error: 'Give your game a title of at least 3 characters' }
   if (blurb.length < 10) return { error: 'Write a short description (at least 10 characters)' }
   if (genre.length === 0) return { error: 'Pick at least one genre' }
   if (!Number.isInteger(price) || price < 0 || price > MAX_PRICE) return { error: `Price must be between $0 and $${MAX_PRICE / 100}` }
-  return { title, blurb, genre, tags, price }
+  return { title, blurb, genre, tags, price, achievements }
 }
 
 export const devRoutes: Route[] = [
@@ -126,8 +129,8 @@ export const devRoutes: Route[] = [
     // user games start at id 1000; the built-in catalog is below that
     const r = await c.env.DB.prepare(
       `INSERT INTO games (id, title, dev, genre, price, discount, rating, released, blurb, hue, icon, tags, publisher, reviews, achievements, size_gb, motif, owner_id, status, created_at)
-       SELECT MAX(1000, COALESCE(MAX(id), 0) + 1), ?, ?, ?, ?, 0, 0, '', ?, ?, ?, ?, ?, 0, 0, 0, ?, ?, 'draft', ? FROM games RETURNING id`,
-    ).bind(m.title, c.user!.display_name, genre, m.price, m.blurb, Math.floor(Math.random() * 360), m.title[0], tags, c.user!.display_name,
+       SELECT MAX(1000, COALESCE(MAX(id), 0) + 1), ?, ?, ?, ?, 0, 0, '', ?, ?, ?, ?, ?, 0, ?, 0, ?, ?, 'draft', ? FROM games RETURNING id`,
+    ).bind(m.title, c.user!.display_name, genre, m.price, m.blurb, Math.floor(Math.random() * 360), m.title[0], tags, c.user!.display_name, m.achievements,
       ['space', 'mountain', 'ocean', 'city', 'forest', 'desert', 'circuit', 'dungeon', 'sun'][Math.floor(Math.random() * 9)], c.user!.id, now).first<{ id: number }>()
     return json({ id: r!.id }, 201)
   }),
@@ -137,8 +140,8 @@ export const devRoutes: Route[] = [
     if (!g) return fail(404, 'no such game')
     const m = parseMeta(await readJson<Record<string, unknown>>(c.req, 8_000))
     if ('error' in m) return fail(400, m.error!)
-    await c.env.DB.prepare('UPDATE games SET title = ?, blurb = ?, genre = ?, tags = ?, price = ?, icon = ? WHERE id = ?')
-      .bind(m.title, m.blurb, JSON.stringify(m.genre), JSON.stringify(m.tags), m.price, m.title![0], g.id).run()
+    await c.env.DB.prepare('UPDATE games SET title = ?, blurb = ?, genre = ?, tags = ?, price = ?, icon = ?, achievements = ? WHERE id = ?')
+      .bind(m.title, m.blurb, JSON.stringify(m.genre), JSON.stringify(m.tags), m.price, m.title![0], m.achievements, g.id).run()
     return json({ ok: true })
   }),
 
@@ -242,6 +245,50 @@ export const devRoutes: Route[] = [
     await deletePrefix(c.env, `games/${g.id}/web/`)
     await c.env.DB.prepare('UPDATE games SET web_entry = NULL WHERE id = ?').bind(g.id).run()
     return json({ ok: true })
+  }),
+
+  /** Sets a sale price. Players who wishlisted the game are told when a new sale starts. */
+  route('PUT', '/dev/games/:id/discount', {}, async c => {
+    const g = await ownedGame(c)
+    if (!g) return fail(404, 'no such game')
+    const b = await readJson<{ percent: number }>(c.req)
+    const pct = Number(b.percent)
+    if (!Number.isInteger(pct) || pct < 0 || pct > 90) return fail(400, 'A discount is a whole number from 0 to 90')
+    await c.env.DB.prepare('UPDATE games SET discount = ? WHERE id = ?').bind(pct, g.id).run()
+    if (pct > g.discount && g.status === 'published') {
+      const { results } = await c.env.DB.prepare('SELECT user_id FROM wishlist WHERE game_id = ? AND user_id != ? LIMIT 200').bind(g.id, c.user!.id).all<{ user_id: string }>()
+      for (const w of results) c.wait(notify(c.env, w.user_id, 'wishlist_sale', { gameId: g.id, title: g.title, percent: pct }))
+    }
+    return json({ ok: true, discount: pct })
+  }),
+
+  // ---- news / announcements ----
+  route('GET', '/games/:id/news', { auth: false }, async c => {
+    const { results } = await c.env.DB.prepare(
+      `SELECT n.id, n.title, n.body, n.created_at AS at, u.display_name AS author FROM game_news n JOIN users u ON u.id = n.user_id
+       JOIN games g ON g.id = n.game_id WHERE n.game_id = ? AND g.status = 'published' ORDER BY n.created_at DESC LIMIT 20`,
+    ).bind(gameId(c)).all()
+    return json({ news: results })
+  }),
+  route('POST', '/dev/games/:id/news', {}, async c => {
+    const g = await ownedGame(c)
+    if (!g) return fail(404, 'no such game')
+    const b = await readJson<{ title: string; body: string }>(c.req, 12_000)
+    const title = cleanText(b.title, 120), body = cleanText(b.body, 6000, true)
+    if (title.length < 3 || body.length < 10) return fail(400, 'Write a title and at least a sentence of news')
+    const recent = await c.env.DB.prepare('SELECT COUNT(*) AS n FROM game_news WHERE user_id = ? AND created_at > ?').bind(c.user!.id, Date.now() - HOUR).first<{ n: number }>()
+    if ((recent?.n ?? 0) >= 5) return fail(429, 'You are posting news too quickly. Try again later.')
+    const r = await c.env.DB.prepare('INSERT INTO game_news (game_id, user_id, title, body, created_at) VALUES (?, ?, ?, ?, ?)').bind(g.id, c.user!.id, title, body, Date.now()).run()
+    if (g.status === 'published') {
+      const { results } = await c.env.DB.prepare('SELECT user_id FROM followed WHERE game_id = ? AND user_id != ? LIMIT 200').bind(g.id, c.user!.id).all<{ user_id: string }>()
+      for (const f of results) c.wait(notify(c.env, f.user_id, 'game_news', { gameId: g.id, title: g.title, headline: title }))
+      c.wait(logEvent(c.env, c.user!.id, 'news', g.id, { title }))
+    }
+    return json({ id: r.meta.last_row_id }, 201)
+  }),
+  route('DELETE', '/dev/news/:id', {}, async c => {
+    const r = await c.env.DB.prepare('DELETE FROM game_news WHERE id = ? AND user_id = ?').bind(c.params.id, c.user!.id).run()
+    return r.meta.changes ? json({ ok: true }) : fail(404, 'no such post')
   }),
 
   route('POST', '/dev/games/:id/publish', {}, async c => {

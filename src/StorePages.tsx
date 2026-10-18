@@ -377,11 +377,11 @@ export const Browse = observer(() => {
         <div>
           <form className="sbar" onSubmit={e => { e.preventDefault(); set('q', draft.trim()) }}>
             <input value={draft} onChange={e => setDraft(e.target.value)} aria-label="Search" />
-            <button className="sbtn">Search</button>
+            <button className="sbtn">{tr('browse.search')}</button>
             <span className="grow" />
-            <label className="sortlbl">Sort by
+            <label className="sortlbl">{tr('browse.sort')}
               <select value={sort} onChange={e => set('sort', e.target.value)} aria-label="Sort by">
-                <option value="relevance">Relevance</option><option value="new">Release date</option><option value="top">Most reviews</option><option value="rating">User reviews</option><option value="price">Price</option>
+                <option value="relevance">{tr('browse.relevance')}</option><option value="new">{tr('browse.release')}</option><option value="top">{tr('browse.mostreviews')}</option><option value="rating">{tr('browse.userreviews')}</option><option value="price">{tr('browse.price')}</option>
               </select></label>
           </form>
           <div className="resinfo"><span>{list.length} result{list.length === 1 ? '' : 's'} match your search.{store.ignored.length > 0 && !showIgnored && ` ${store.ignored.length} title${store.ignored.length === 1 ? ' has' : 's have'} been excluded based on your preferences.`} {store.ignored.length > 0 && <button className="link-btn small" onClick={() => set('ignored', showIgnored ? null : '1')}>{showIgnored ? 'Back to results' : 'Show ignored'}</button>}</span></div>
@@ -399,22 +399,22 @@ export const Browse = observer(() => {
           </div>
         </div>
         <aside className="nside">
-          <Panel title="Narrow by Price" open0>
+          <Panel title={tr('browse.nprice')} open0>
             <input type="range" min={0} max={6000} step={500} value={under || 6000} onChange={e => set('under', Number(e.target.value) >= 6000 ? null : e.target.value)} aria-label="Maximum price" />
-            <div className="anyprice">{under ? `Under ${fmt(under)}` : 'Any Price'}</div>
+            <div className="anyprice">{under ? `Under ${fmt(under)}` : tr('browse.anyprice')}</div>
             <label className="chk"><input type="checkbox" checked={sale} onChange={() => set('sale', sale ? null : '1')} /> Discounts &amp; Events</label>
-            <label className="chk"><input type="checkbox" checked={hideFree} onChange={() => set('hidefree', hideFree ? null : '1')} /> Hide free to play items</label>
+            <label className="chk"><input type="checkbox" checked={hideFree} onChange={() => set('hidefree', hideFree ? null : '1')} /> {tr('browse.hidefree')}</label>
           </Panel>
-          <Panel title="Narrow by tag" open0>
+          <Panel title={tr('browse.ntag')} open0>
             {tagCounts.filter(([t]) => t.toLowerCase().includes(tagQ.toLowerCase())).slice(0, tagQ ? 12 : 6).map(([t, n]) => (
               <div key={t} className="chk tagline"><label><input type="checkbox" checked={tag === t} onChange={() => set('tag', tag === t ? null : t)} /> {t} <i>{n}</i></label>
                 <button className="excl" onClick={() => set('notag', noTag === t ? null : t)} aria-label={`Exclude ${t}`} title="Exclude">−</button></div>
             ))}
             <input className="tagsearch" placeholder="search for more tags" value={tagQ} onChange={e => setTagQ(e.target.value)} aria-label="Search tags" />
           </Panel>
-          <Panel title="Narrow by genre">{GENRES.map(g => <label key={g} className="chk"><input type="checkbox" checked={genre === g} onChange={() => set('genre', genre === g ? null : g)} /> {g} <i>{GAMES.filter(x => x.genre.includes(g)).length}</i></label>)}</Panel>
+          <Panel title={tr('browse.ngenre')}>{GENRES.map(g => <label key={g} className="chk"><input type="checkbox" checked={genre === g} onChange={() => set('genre', genre === g ? null : g)} /> {g} <i>{GAMES.filter(x => x.genre.includes(g)).length}</i></label>)}</Panel>
           <Panel title="Narrow by number of players">{['Singleplayer', 'Multiplayer', 'Co-op', 'Local Multiplayer'].map(t => <label key={t} className="chk"><input type="checkbox" checked={tag === t} onChange={() => set('tag', tag === t ? null : t)} /> {t}</label>)}</Panel>
-          <Panel title="Narrow by user reviews">{[95, 80, 70].map(r => <label key={r} className="chk"><input type="checkbox" checked={minRating === r} onChange={() => set('minRating', minRating === r ? null : String(r))} /> {r}% or higher</label>)}</Panel>
+          <Panel title={tr('browse.nreviews')}>{[95, 80, 70].map(r => <label key={r} className="chk"><input type="checkbox" checked={minRating === r} onChange={() => set('minRating', minRating === r ? null : String(r))} /> {r}% or higher</label>)}</Panel>
         </aside>
       </div>
     </div>

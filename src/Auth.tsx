@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { t } from './i18n'
 import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import qrcode from 'qrcode-generator'
@@ -46,7 +47,7 @@ const QrPanel = observer(({ onDone }: { onDone: () => void }) => {
   }, [round]) // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <div className="auth-qr">
-      <div className="auth-sub">Or sign in with QR</div>
+      <div className="auth-sub">{t('auth.qr')}</div>
       {req && state === 'wait' ? <Qr text={`${location.origin}${location.pathname}#/qr/${req.id}`} /> : <div className="qr qr-off">{state === 'wait' ? 'Loading…' : state === 'expired' ? 'Code expired' : 'Unavailable'}</div>}
       {state !== 'wait' && <button className="btn small" onClick={() => setRound(round + 1)}>Get a new code</button>}
       <p className="small muted">Open reSteam on a device you are already signed in on, then scan this code or open its link and approve the sign-in.</p>
@@ -124,28 +125,28 @@ export const LoginPage = observer(() => {
       <div className="auth-card">
         <div className="auth-form">
           <div className="auth-logo"><Logo size={34} /><span>reSteam</span></div>
-          <h1>{mode === 'signin' ? 'Sign in' : mode === 'join' ? 'Create your account' : 'Reset your password'}</h1>
+          <h1>{mode === 'signin' ? t('auth.signin') : mode === 'join' ? t('auth.create') : t('auth.reset')}</h1>
           <form onSubmit={submit} autoComplete="on">
-            <label className="auth-sub" htmlFor="u">{mode === 'signin' ? 'Sign in with account name' : 'Account name'}</label>
+            <label className="auth-sub" htmlFor="u">{mode === 'signin' ? t('auth.withname') : t('auth.account')}</label>
             <input id="u" className="input" name="username" autoComplete="username" autoFocus value={username} onChange={e => setUsername(e.target.value)} maxLength={24} />
             {mode === 'recover' && (<>
               <label className="auth-sub" htmlFor="rc">Recovery key</label>
               <input id="rc" className="input mono" placeholder="XXXXX-XXXXX-XXXXX-XXXXX" value={code} onChange={e => setCode(e.target.value.toUpperCase())} autoComplete="off" />
             </>)}
-            <label className="auth-sub" htmlFor="p">{mode === 'recover' ? 'New password' : 'Password'}</label>
+            <label className="auth-sub" htmlFor="p">{mode === 'recover' ? t('auth.password') : t('auth.password')}</label>
             <input id="p" className="input" type="password" name="password" autoComplete={mode === 'signin' ? 'current-password' : 'new-password'} value={password} onChange={e => setPassword(e.target.value)} />
             {mode !== 'signin' && (<>
-              <label className="auth-sub" htmlFor="p2">Confirm password</label>
+              <label className="auth-sub" htmlFor="p2">{t('auth.confirm')}</label>
               <input id="p2" className="input" type="password" autoComplete="new-password" value={confirm} onChange={e => setConfirm(e.target.value)} />
               <div className="small muted">Use at least 8 characters. Account names are 3–24 letters, numbers, dots, dashes or underscores.</div>
             </>)}
-            {mode !== 'recover' && <label className="check"><input type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)} /> Remember me</label>}
+            {mode !== 'recover' && <label className="check"><input type="checkbox" checked={remember} onChange={e => setRemember(e.target.checked)} /> {t('auth.remember')}</label>}
             {err && <div className="err" role="alert">{err}</div>}
-            <button className="btn blue big auth-submit" disabled={busy || !username.trim() || !password}>{mode === 'signin' ? 'Sign in' : mode === 'join' ? 'Create account' : 'Change password'}</button>
+            <button className="btn blue big auth-submit" disabled={busy || !username.trim() || !password}>{mode === 'signin' ? t('auth.signin') : mode === 'join' ? t('auth.createbtn') : t('auth.changepw')}</button>
           </form>
           <div className="auth-links">
-            {mode === 'signin' && <><button className="link-btn" onClick={() => switchTo('recover')}>Help, I can't sign in</button><button className="link-btn" onClick={() => switchTo('join')}>Create a new account</button></>}
-            {mode !== 'signin' && <button className="link-btn" onClick={() => switchTo('signin')}>Back to sign in</button>}
+            {mode === 'signin' && <><button className="link-btn" onClick={() => switchTo('recover')}>{t('auth.help')}</button><button className="link-btn" onClick={() => switchTo('join')}>{t('auth.newacct')}</button></>}
+            {mode !== 'signin' && <button className="link-btn" onClick={() => switchTo('signin')}>{t('auth.back')}</button>}
           </div>
         </div>
         {mode === 'signin' && <QrPanel onDone={() => nav(next, { replace: true })} />}

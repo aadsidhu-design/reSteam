@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react'
+import { t } from './i18n'
 import { NavLink, Navigate, useNavigate, useParams } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { GAMES, fmt } from './data'
@@ -8,9 +9,9 @@ import { Avatar, Modal } from './ui'
 import './settings.css'
 
 const NAV: ([string, string, string] | null)[] = [
-  ['account', 'Account', 'person'], ['friends', 'Friends & Chat', 'group'], ['security', 'Security', 'shield'], null,
-  ['notifications', 'Notifications', 'bell'], ['interface', 'Interface', 'monitor'], ['store', 'Store', 'cart'], ['library', 'Library', 'grid'], ['downloads', 'Downloads', 'download'],
-  ['storage', 'Storage', 'storage'], ['ingame', 'In Game', 'monitor'], ['accessibility', 'Accessibility', 'info'],
+  ['account', 'set.account', 'person'], ['friends', 'friends.title', 'group'], ['security', 'set.security', 'shield'], null,
+  ['notifications', 'set.notifications', 'bell'], ['interface', 'set.interface', 'monitor'], ['store', 'set.store', 'cart'], ['library', 'nav.library', 'grid'], ['downloads', 'lib.downloads', 'download'],
+  ['storage', 'set.storage', 'storage'], ['ingame', 'In Game', 'monitor'], ['accessibility', 'set.accessibility', 'info'],
 ]
 
 const Row = ({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) => (
@@ -167,7 +168,7 @@ export const SettingsPage = observer(() => {
       <aside className="srail">
         <div className="stitle">RESTEAM SETTINGS</div>
         {NAV.map((n, i) => n === null ? <hr key={i} /> : (
-          <NavLink key={n[0]} to={`/settings/${n[0]}`} className="sitem"><Icon name={n[2]} size={22} /> {n[1]}</NavLink>
+          <NavLink key={n[0]} to={`/settings/${n[0]}`} className="sitem"><Icon name={n[2]} size={22} /> {n[1].includes('.') ? t(n[1]) : n[1]}</NavLink>
         ))}
       </aside>
       <section className="sbody"><h1>{cur.title}</h1>{cur.el()}</section>

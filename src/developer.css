@@ -21,3 +21,6 @@
 @media (max-width: 800px) { .dv-card { grid-template-columns: 1fr; } }
 .dv-shots { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
 .dv-shots img { width: 96px; height: 54px; object-fit: cover; }
+.dv-pct { width: 90px; }
+.dv-news textarea, .dv-news input { margin: 6px 0; }
+.dv-newsitem { display: flex; gap: 10px; align-items: baseline; padding: 4px 0; }

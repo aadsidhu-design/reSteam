@@ -14,7 +14,7 @@
   --accent: #4b9df8;
   --green: #5ba32b;
   --btn: #3d4450;
-  --font: 'Nunito Sans', 'Motiva Sans', Arial, Helvetica, sans-serif;
+  --font: 'Albert Sans', 'Hiragino Sans', 'PingFang SC', 'Apple SD Gothic Neo', 'Noto Sans', Arial, Helvetica, sans-serif;
 }
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; margin: 0; }

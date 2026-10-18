@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { t } from './i18n'
 import { NavLink, Link, useNavigate, useParams } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { GAMES, isLocal, type Game } from './data'
@@ -94,7 +95,7 @@ const Home = observer(() => {
         const items = store.activity.filter(e => e.gameId !== null && ['playing', 'achievement', 'review', 'purchase'].includes(e.kind)).slice(0, 10)
         return (
           <section className="shelf whatsnew" key={s}>
-            <ShelfHeader title="What's New" onRemove={rm} />
+            <ShelfHeader title={t('lib.whatsnew')} onRemove={rm} />
             {items.length === 0 ? <p className="muted">Activity from you and your friends appears here: games started, achievements and reviews.</p> : (
               <Shelf step={800}>
                 {items.map(e => {
@@ -116,7 +117,7 @@ const Home = observer(() => {
       case 'recent':
         return (
           <section className="shelf" key={s}>
-            <ShelfHeader title="Recent Games" onRemove={rm} caret />
+            <ShelfHeader title={t('lib.recent')} onRemove={rm} caret />
             {recent.length === 0 ? (
               <div className="panel"><p>You have ({owned.length}) games.</p><Link to="/store">Visit the store to find games to add</Link></div>
             ) : (
@@ -219,7 +220,7 @@ export const Library = observer(() => {
     <div className="library">
       <aside className="lib-side">
         <div className="side-top">
-          <NavLink to="/library" end className="home-btn">Home</NavLink>
+          <NavLink to="/library" end className="home-btn">{t('lib.home')}</NavLink>
           <button className={`gridbtn ${store.libraryGrid ? 'on' : ''}`} onClick={() => { store.libraryGrid = !store.libraryGrid; nav('/library') }} aria-label="Toggle grid view" title="Grid view"><Icon name="grid" size={28} /></button>
         </div>
         <div className="side-filters">
@@ -243,7 +244,7 @@ export const Library = observer(() => {
           )}
         </div>
         <div className="side-list">
-          {favs.length > 0 && section('fav', 'FAVORITES', favs)}
+          {favs.length > 0 && section('fav', t('lib.favorites').toUpperCase(), favs)}
           {store.collections.map(c => (
             <div key={c.id} className="colsec">
               {section(c.id, c.name.toUpperCase(), list.filter(g => c.games.includes(g.id) && !store.favorites.includes(g.id)))}
@@ -253,7 +254,7 @@ export const Library = observer(() => {
               </span>
             </div>
           ))}
-          {section('rest', favs.length > 0 || store.collections.length > 0 ? 'UNCATEGORIZED' : 'ALL GAMES', rest)}
+          {section('rest', favs.length > 0 || store.collections.length > 0 ? 'UNCATEGORIZED' : t('lib.allgames').toUpperCase(), rest)}
           {list.length === 0 && <div className="muted small side-empty">{all.length === 0 ? 'Your library is empty. Find something in the store.' : 'No games match.'}</div>}
         </div>
         <div className="side-foot">
@@ -320,18 +321,18 @@ const LibGame = observer(({ g }: { g: Game }) => {
         <div className="gp-action">
           {g.build && !g.playable && !running ? (
             dl ? <button className="btn big blue" onClick={() => (dl.paused ? store.resume(g.id) : store.pause(g.id))}><Icon name={dl.paused ? 'play' : 'pause'} size={26} /> {dl.paused ? 'RESUME' : 'PAUSE'}</button>
-              : <button className="btn big blue" onClick={() => store.install(g.id, true)}><Icon name="download" size={26} /> {installed ? 'DOWNLOAD AGAIN' : 'DOWNLOAD'}</button>
+              : <button className="btn big blue" onClick={() => store.install(g.id, true)}><Icon name="download" size={26} /> {installed ? t('lib.download') + ' ↻' : t('lib.download')}</button>
           ) : running ? (
-            <button className="btn red big" onClick={() => store.stop()}><Icon name="close" size={26} /> STOP</button>
+            <button className="btn red big" onClick={() => store.stop()}><Icon name="close" size={26} /> {t('lib.stop')}</button>
           ) : installed ? (
-            <button className="btn play big" disabled={store.running !== null} onClick={() => store.play(g.id)}><Icon name="play" size={28} /> PLAY</button>
+            <button className="btn play big" disabled={store.running !== null} onClick={() => store.play(g.id)}><Icon name="play" size={28} /> {t('lib.play')}</button>
           ) : dl ? (
             <button className="btn big blue" onClick={() => (dl.paused ? store.resume(g.id) : store.pause(g.id))}>
               <Icon name={dl.paused ? 'play' : 'pause'} size={26} /> {dl.paused ? 'RESUME' : 'PAUSE'}
             </button>
           ) : (
             <span className="split popwrap" ref={caretRef}>
-              <button className="btn big blue" onClick={() => store.install(g.id)}><Icon name="download" size={26} /> INSTALL</button>
+              <button className="btn big blue" onClick={() => store.install(g.id)}><Icon name="download" size={26} /> {t('lib.install')}</button>
               <button className="btn blue caret" onClick={() => setCaret(!caret)} aria-label="Install options"><Icon name="chevronDown" size={22} /></button>
               {caret && (
                 <div className="popover" style={{ left: 0 }}>

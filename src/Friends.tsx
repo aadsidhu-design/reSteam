@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { t } from './i18n'
 import { useNavigate } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { GAMES } from './data'
@@ -32,8 +33,8 @@ export const FriendsDock = observer(() => {
   const n = store.onlineFriends.length
   return (
     <button className="fdock" onClick={() => (store.friendsOpen = !store.friendsOpen)} aria-expanded={store.friendsOpen}>
-      Friends &amp; Chat
-      <span className="online-n">{n} online</span>
+      {t('friends.title')}
+      <span className="online-n">{n} {t('friends.online')}</span>
       {(store.unreadChats + store.incoming.length) > 0 && <span className="badge">{store.unreadChats + store.incoming.length}</span>}
     </button>
   )
@@ -140,9 +141,9 @@ export const FriendsWindow = observer(() => {
         )}
 
         <div className="fbar">
-          <span>FRIENDS</span><span className="grow" />
+          <span>{t('friends.friends')}</span><span className="grow" />
           <button className="icon-btn" onClick={() => { setSearching(!searching); setSearch('') }} aria-label="Search friends"><Icon name="search" size={22} /></button>
-          <button className="icon-btn" onClick={() => setAdding(!adding)} aria-label="Add a friend"><Icon name="personAdd" size={24} /></button>
+          <button className="icon-btn" onClick={() => setAdding(!adding)} aria-label={t('friends.add')}><Icon name="personAdd" size={24} /></button>
         </div>
         {searching && <div className="fextra"><input className="input" autoFocus placeholder="Search friends" value={search} onChange={e => setSearch(e.target.value)} /></div>}
         {adding && <AddFriend />}
@@ -150,13 +151,13 @@ export const FriendsWindow = observer(() => {
         <div className="flist">
           {store.incoming.length > 0 && (
             <div>
-              <div className="ghead"><span className="gtoggle">Friend requests <span className="muted">({store.incoming.length})</span></span></div>
+              <div className="ghead"><span className="gtoggle">{t('friends.requests')} <span className="muted">({store.incoming.length})</span></span></div>
               {store.incoming.map(r => (
                 <div key={r.username} className="frow static">
                   <Avatar f={{ name: r.name }} size={46} ring={false} />
                   <div className="finfo"><div className="fname">{r.name}</div><div className="fstatus">wants to be friends</div></div>
-                  <button className="btn small green" onClick={() => void store.acceptRequest(r.username)}>Accept</button>
-                  <button className="btn small" onClick={() => void store.declineRequest(r.username)}>Ignore</button>
+                  <button className="btn small green" onClick={() => void store.acceptRequest(r.username)}>{t('friends.accept')}</button>
+                  <button className="btn small" onClick={() => void store.declineRequest(r.username)}>{t('friends.ignore')}</button>
                 </div>
               ))}
             </div>
@@ -191,7 +192,7 @@ export const FriendsWindow = observer(() => {
         </div>
 
         <div className="gbar">
-          <button className="gtoggle" onClick={() => setCollapsed({ ...collapsed, groups: !collapsed.groups })}><Icon name={collapsed.groups ? 'chevronRight' : 'chevronDown'} size={18} /> GROUP CHATS</button>
+          <button className="gtoggle" onClick={() => setCollapsed({ ...collapsed, groups: !collapsed.groups })}><Icon name={collapsed.groups ? 'chevronRight' : 'chevronDown'} size={18} /> {t('friends.groups')}</button>
           <span className="grow" />
           <button className="icon-btn round" onClick={() => setNewGroup(true)} aria-label="Start a group chat"><Icon name="plus" size={22} /></button>
         </div>
@@ -294,7 +295,7 @@ const ChatWindow = observer(({ id }: { id: string }) => {
         <div ref={end} />
       </div>
       <form className="chat-form" onSubmit={async e => { e.preventDefault(); const t = text; setText(''); const err = isGroup ? await store.sendGroup(gid, t) : await store.send(id, t); if (err) setText(t) }}>
-        <input className="input" maxLength={500} placeholder={friend?.presence.status === 'offline' ? `${friend.name} is offline — they will see this later` : 'Send a message'} value={text}
+        <input className="input" maxLength={500} placeholder={friend?.presence.status === 'offline' ? `${friend.name} is offline — they will see this later` : t('friends.send')} value={text}
           onChange={e => { setText(e.target.value); if (friend) store.sendTyping(friend.username) }} />
       </form>
     </div>

@@ -224,7 +224,7 @@ class Store {
         const ids = new Set(list.map(g => g.id))
         for (const s of list) {
           const have = GAMES.find(g => g.id === s.id)
-          if (have) Object.assign(have, { price: s.price, discount: s.discount, hasCover: s.hasCover, shots: s.shots, playable: s.playable, build: s.build, owner: s.owner, user: s.user, sizeGb: s.sizeGb || have.sizeGb })
+          if (have) Object.assign(have, { price: s.price, discount: s.discount, hasCover: s.hasCover, shots: s.shots, achievements: s.achievements, playable: s.playable, build: s.build, owner: s.owner, user: s.user, sizeGb: s.sizeGb || have.sizeGb })
           else GAMES.push({ ...s, rating: 0, reviews: 0, owners: 0, playing: 0 })
         }
         // drop uploaded games that were unpublished or deleted
@@ -708,6 +708,8 @@ export const notificationText = (n: Pick<Notification, 'kind' | 'data'>): string
     case 'group_invite': return `${who} invited you to the group chat "${n.data.group?.name ?? 'Group chat'}"`
     case 'post_reply': return `${who} replied to your post "${n.data.title ?? ''}"`
     case 'review_helpful': return `${who} found your review helpful`
+    case 'wishlist_sale': return `${n.data.title ?? 'A game on your wishlist'} is now ${n.data.percent}% off`
+    case 'game_news': return `${n.data.title ?? 'A game you follow'}: ${n.data.headline ?? 'new announcement'}`
     case 'gift': return `${who} sent you ${n.data.cents ? `$${(Number(n.data.cents) / 100).toFixed(2)}` : 'a gift'} in wallet funds`
     default: return 'You have a new notification'
   }

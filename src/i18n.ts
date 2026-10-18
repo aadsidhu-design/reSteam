@@ -1,4 +1,5 @@
 import { makeAutoObservable } from 'mobx'
+import { PAGE_STRINGS } from './i18n.pages'
 
 export type Lang = 'english' | 'spanish' | 'french' | 'german' | 'italian' | 'brazilian' | 'japanese' | 'koreana' | 'schinese' | 'russian' | 'turkish' | 'polish'
 
@@ -208,7 +209,7 @@ if (typeof document !== 'undefined') document.documentElement.lang = ({ english:
 
 /** Translates a key (falling back to English) and fills {placeholders}. Reading i18n.lang makes observers re-render on change. */
 export const t = (key: string, vars?: Record<string, string>): string => {
-  let s = T[i18n.lang][key] ?? en[key] ?? key
+  let s = T[i18n.lang][key] ?? PAGE_STRINGS[i18n.lang]?.[key] ?? en[key] ?? PAGE_STRINGS.english[key] ?? key
   if (vars) for (const [k, v] of Object.entries(vars)) s = s.replace(`{${k}}`, v)
   return s
 }

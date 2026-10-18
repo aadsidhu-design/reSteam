@@ -48,7 +48,7 @@ export const CLIENT: Group = {
   'Community': [
     'Activity page:d', 'Recently played hubs:d', 'Popular hubs:d', 'Find hubs search:d', 'Find people search:d', 'Content tabs:d', 'Most popular / recent:d',
     'Content cards:d', 'Review cards:d', 'Hub pages:d', 'Discussions:d', 'Guides:d', 'Market:m',
-    'Hub header and stats:d', 'Hub store banner:d', 'Guide cards:d', 'Post replies and votes:d', 'Real posts and users:d', 'Upload your own game:d', 'Real file downloads:d',
+    'Hub header and stats:d', 'Hub store banner:d', 'Guide cards:d', 'Post replies and votes:d', 'Real posts and users:d', 'Upload your own game:d', 'Sale pricing:d', 'Game news and follower alerts:d', 'Developer achievements:d', 'Wishlist sale alerts:d', 'UI translation (11 languages):d', 'Language menu:d', 'Real file downloads:d',
   ],
   'Settings': [
     'Settings window:d', 'Account page:d', 'Add funds:d', 'Privacy settings:d', 'Change password:d', 'Delete account:d', 'Friends & Chat page:d', 'Notifications page:d',

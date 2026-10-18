@@ -3,12 +3,27 @@ import { Link, useNavigate, useParams } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { GAMES, compact, fmt, priceOf, reviewLabel, type Game } from './data'
 import { GameReviews } from './Reviews'
-import { store } from './store'
+import { api, store } from './store'
 import { Art } from './art'
 import { Icon } from './icons'
 import { Price } from './ui'
 import { Plats, reviewClass, Tags } from './StorePages'
 import { t } from './i18n'
+
+interface NewsItem { id: number; title: string; body: string; at: number; author: string }
+const GameNews = ({ g }: { g: Game }) => {
+  const [news, setNews] = useState<NewsItem[]>([])
+  useEffect(() => { let live = true; void api<{ news: NewsItem[] }>('GET', `/games/${g.id}/news`).then(r => { if (live) setNews(r?.news ?? []) }); return () => { live = false } }, [g.id])
+  if (news.length === 0) return null
+  return (
+    <>
+      <h2 className="ul">Recent news</h2>
+      {news.slice(0, 3).map(n => (
+        <div className="news-item" key={n.id}><b>{n.title}</b><div className="muted small">{new Date(n.at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })} · {n.author}</div><p>{n.body}</p></div>
+      ))}
+    </>
+  )
+}
 
 const Media = ({ g }: { g: Game }) => {
   const [i, setI] = useState(0)
@@ -111,6 +126,7 @@ export const StoreGame = observer(() => {
             <p><b>Features</b> – {g.tags.join(', ')}.</p>
           </div>
 
+          <GameNews g={g} />
           <GameReviews g={g} />
         </div>
 
