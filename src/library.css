@@ -99,3 +99,7 @@
 .kv { display: grid; grid-template-columns: 110px 1fr; gap: 8px 12px; margin: 0; }
 .kv dt { color: var(--muted); }
 .kv dd { margin: 0; }
+
+.colsec { position: relative; }
+.colbtns { position: absolute; right: 8px; top: 6px; display: none; gap: 2px; }
+.colsec:hover .colbtns { display: flex; }

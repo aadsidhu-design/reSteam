@@ -174,8 +174,10 @@ export const Library = observer(() => {
   if (store.installedOnly) list = list.filter(isInstalled)
   if (favOnly) list = list.filter(g => store.favorites.includes(g.id))
   list = [...list].sort((a, b) => store.recentSort ? (store.lastPlayed[b.id] ?? 0) - (store.lastPlayed[a.id] ?? 0) : a.title.localeCompare(b.title))
+  const inCollection = new Set(store.collections.flatMap(c => c.games))
   const favs = list.filter(g => store.favorites.includes(g.id))
-  const rest = list.filter(g => !store.favorites.includes(g.id))
+  const rest = list.filter(g => !store.favorites.includes(g.id) && !inCollection.has(g.id))
+  const [nameDlg, setNameDlg] = useState<null | { mode: 'new' | 'rename'; id?: string; gameId?: number; value: string }>(null)
   const sel = all.find(g => g.id === Number(id))
 
   const section = (key: string, title: string, items: Game[]) => (
@@ -226,19 +228,40 @@ export const Library = observer(() => {
         </div>
         <div className="side-list">
           {favs.length > 0 && section('fav', 'FAVORITES', favs)}
-          {section('rest', favs.length > 0 ? 'UNCATEGORIZED' : 'ALL GAMES', rest)}
+          {store.collections.map(c => (
+            <div key={c.id} className="colsec">
+              {section(c.id, c.name.toUpperCase(), list.filter(g => c.games.includes(g.id) && !store.favorites.includes(g.id)))}
+              <span className="colbtns">
+                <button className="icon-btn" title="Rename collection" aria-label={`Rename ${c.name}`} onClick={() => setNameDlg({ mode: 'rename', id: c.id, value: c.name })}><Icon name="edit" size={14} /></button>
+                <button className="icon-btn" title="Delete collection" aria-label={`Delete ${c.name}`} onClick={() => store.deleteCollection(c.id)}><Icon name="trash" size={14} /></button>
+              </span>
+            </div>
+          ))}
+          {section('rest', favs.length > 0 || store.collections.length > 0 ? 'UNCATEGORIZED' : 'ALL GAMES', rest)}
           {list.length === 0 && <div className="muted small side-empty">No games match.</div>}
         </div>
       </aside>
       <section className="lib-main">
         {sel ? <LibGame g={sel} /> : store.libraryGrid ? <GridView list={list} /> : <Home />}
       </section>
+      {nameDlg && (
+        <Modal title={nameDlg.mode === 'new' ? 'New collection' : 'Rename collection'} onClose={() => setNameDlg(null)} width={400}>
+          <form onSubmit={e => { e.preventDefault(); if (nameDlg.mode === 'new') store.createCollection(nameDlg.value, nameDlg.gameId); else if (nameDlg.id) store.renameCollection(nameDlg.id, nameDlg.value); setNameDlg(null) }}>
+            <input className="input" autoFocus maxLength={30} placeholder="Collection name" value={nameDlg.value} onChange={e => setNameDlg({ ...nameDlg, value: e.target.value })} />
+            <div className="modal-actions"><button type="button" className="btn" onClick={() => setNameDlg(null)}>Cancel</button><button className="btn blue" disabled={!nameDlg.value.trim()}>{nameDlg.mode === 'new' ? 'Create' : 'Save'}</button></div>
+          </form>
+        </Modal>
+      )}
       {ctx && (
         <div className="ctx popover" ref={ctxRef} style={{ position: 'fixed', left: ctx.x, top: ctx.y, minWidth: 220 }}>
           {isInstalled(ctx.g)
             ? <button className="pop-item" onClick={() => { setCtx(null); nav(`/library/${ctx.g.id}`); store.play(ctx.g.id) }} disabled={store.running !== null}>Play</button>
             : ctx.g.id < 1000 && <button className="pop-item" onClick={() => { setCtx(null); store.install(ctx.g.id) }}>Install</button>}
           <button className="pop-item" onClick={() => { store.toggleFavorite(ctx.g.id); setCtx(null) }}>{store.favorites.includes(ctx.g.id) ? 'Remove from favorites' : 'Add to favorites'}</button>
+          {store.collections.map(c => c.games.includes(ctx.g.id)
+            ? <button key={c.id} className="pop-item" onClick={() => { store.removeFromCollection(c.id, ctx.g.id); setCtx(null) }}>Remove from {c.name}</button>
+            : <button key={c.id} className="pop-item" onClick={() => { store.addToCollection(c.id, ctx.g.id); setCtx(null) }}>Add to {c.name}</button>)}
+          <button className="pop-item" onClick={() => { const g = ctx.g; setCtx(null); setNameDlg({ mode: 'new', gameId: g.id, value: '' }) }}>Add to new collection…</button>
           {ctx.g.id < 1000 && <button className="pop-item" onClick={() => { setCtx(null); nav(`/store/${ctx.g.id}`) }}>View store page</button>}
           {ctx.g.id < 1000 && isInstalled(ctx.g) && <button className="pop-item" onClick={() => { store.uninstall(ctx.g.id); setCtx(null) }}>Uninstall</button>}
         </div>

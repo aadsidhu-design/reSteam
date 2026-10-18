@@ -16,7 +16,7 @@ const NAV: ([string, string, string] | null)[] = [
 ]
 
 const Row = ({ label, hint, children }: { label: string; hint?: string; children: ReactNode }) => (
-  <div className="srow"><div><div className="sl">{label}</div>{hint && <div className="muted small">{hint}</div>}</div><div className="sctl">{children}</div></div>
+  <div className="setrow"><div><div className="sl">{label}</div>{hint && <div className="muted small">{hint}</div>}</div><div className="sctl">{children}</div></div>
 )
 // must be an observer: it reads the store directly, so it has to re-render when the value changes
 const Toggle = observer(({ k }: { k: keyof S }) => <input type="checkbox" className="toggle" checked={store.settings[k] as boolean} onChange={e => ((store.settings[k] as boolean) = e.target.checked)} aria-label={String(k)} />)
@@ -75,7 +75,7 @@ const Storage = observer(() => {
   return (
     <>
       <Row label="Local drive" hint="Space used by installed games"><b>{store.storageUsedGb.toFixed(1)} GB</b> <span className="muted">of {total} GB</span></Row>
-      <div className="sbar"><span style={{ width: `${Math.min(100, (store.storageUsedGb / total) * 100)}%` }} /></div>
+      <div className="stbar"><span style={{ width: `${Math.min(100, (store.storageUsedGb / total) * 100)}%` }} /></div>
       {list.length === 0 && <p className="muted">No games are installed.</p>}
       {list.map(g => <Row key={g.id} label={g.title} hint={`${g.sizeGb.toFixed(1)} GB`}><button className="btn small" disabled={store.running === g.id} onClick={() => store.uninstall(g.id)}>Uninstall</button></Row>)}
     </>

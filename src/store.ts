@@ -18,6 +18,7 @@ export interface Settings {
   profilePrivacy: 'public' | 'friends' | 'private'
 }
 export interface CustomGame { id: number; title: string }
+export interface Collection { id: string; name: string; games: number[] }
 export interface GroupChat { id: string; name: string; members: string[]; messages: ChatMessage[] }
 export type Shelf = 'whatsnew' | 'recent' | 'favorites' | 'playnext' | 'installed'
 
@@ -50,6 +51,10 @@ interface LocalState {
   recentSort: boolean
   groups: GroupChat[]
   viewed: number[]
+  ignored: number[]
+  followed: number[]
+  collections: Collection[]
+  favFriends: string[]
 }
 
 const DEFAULT_SETTINGS: Settings = {
@@ -115,6 +120,10 @@ class Store {
   recentSort = false
   groups: GroupChat[] = []
   viewed: number[] = []
+  ignored: number[] = []
+  followed: number[] = []
+  collections: Collection[] = []
+  favFriends: string[] = []
   // session
   queue: DownloadItem[] = []
   speedHistory: number[] = []
@@ -142,7 +151,7 @@ class Store {
       }
       const l: LocalState = {
         settings: this.settings, customGames: this.customGames, hints: this.hints, readNotifs: this.readNotifs, posts: this.posts,
-        shelves: this.shelves, libraryGrid: this.libraryGrid, installedOnly: this.installedOnly, recentSort: this.recentSort, groups: this.groups, viewed: this.viewed,
+        shelves: this.shelves, libraryGrid: this.libraryGrid, installedOnly: this.installedOnly, recentSort: this.recentSort, groups: this.groups, viewed: this.viewed, ignored: this.ignored, followed: this.followed, collections: this.collections, favFriends: this.favFriends,
       }
       try { localStorage.setItem(KEY, JSON.stringify(s)); localStorage.setItem(LOCAL, JSON.stringify(l)) } catch { /* storage unavailable */ }
     })
@@ -236,6 +245,25 @@ class Store {
     return err
   }
 
+  // ---- custom library collections (kept on this browser) ----
+  createCollection(name: string, gameId?: number) {
+    const n = name.trim().slice(0, 30)
+    if (!n) return
+    this.collections.push({ id: `c${Date.now()}`, name: n, games: gameId ? [gameId] : [] })
+  }
+  renameCollection(id: string, name: string) { const c = this.collections.find(x => x.id === id); const n = name.trim().slice(0, 30); if (c && n) c.name = n }
+  deleteCollection(id: string) { this.collections = this.collections.filter(c => c.id !== id) }
+  addToCollection(id: string, gameId: number) { const c = this.collections.find(x => x.id === id); if (c && !c.games.includes(gameId)) c.games.push(gameId) }
+  removeFromCollection(id: string, gameId: number) { const c = this.collections.find(x => x.id === id); if (c) c.games = c.games.filter(g => g !== gameId) }
+  toggleFavFriend(id: string) { this.favFriends = this.favFriends.includes(id) ? this.favFriends.filter(x => x !== id) : [...this.favFriends, id] }
+  toggleIgnore(id: number) {
+    const had = this.ignored.includes(id)
+    this.ignored = had ? this.ignored.filter(x => x !== id) : [...this.ignored, id]
+    if (!had) this.wishlist.includes(id) && this.toggleWishlist(id)
+  }
+  toggleFollow(id: number) {
+    this.followed = this.followed.includes(id) ? this.followed.filter(x => x !== id) : [...this.followed, id]
+  }
   view(id: number) { this.viewed = [id, ...this.viewed.filter(x => x !== id)].slice(0, 12) }
 
   // ---- library ----

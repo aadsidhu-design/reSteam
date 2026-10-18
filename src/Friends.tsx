@@ -13,7 +13,7 @@ const statusLine = (f: Friend) =>
   : f.status === 'pending' ? 'Invite sent' : `Last online ${lastOnline(f.id)}`
 
 const Row = observer(({ f, onMenu, onOpen }: { f: Friend; onMenu: (e: React.MouseEvent, f: Friend) => void; onOpen: () => void }) => (
-  <button className={`frow ${f.status === 'pending' ? 'dim' : ''}`} disabled={f.status === 'pending'} onClick={onOpen} onContextMenu={e => onMenu(e, f)}>
+  <button className={`frow ${f.status === 'pending' ? 'dim' : ''}`} disabled={f.status === 'pending'} draggable={f.status !== 'pending'} onDragStart={e => { e.dataTransfer.setData('text/friend', f.id); e.dataTransfer.effectAllowed = 'copy' }} onClick={onOpen} onContextMenu={e => onMenu(e, f)}>
     <Avatar f={f} size={46} />
     <div className="finfo">
       <div className={`fname st-${f.status}`}>{f.name}</div>
@@ -37,6 +37,8 @@ export const FriendsWindow = observer(() => {
   const [ctx, setCtx] = useState<{ x: number; y: number; f: Friend } | null>(null)
   const [profile, setProfile] = useState<Friend | null>(null)
   const [newGroup, setNewGroup] = useState(false)
+  const [dropHot, setDropHot] = useState(false)
+  const dropFav = (e: React.DragEvent) => { e.preventDefault(); setDropHot(false); const id = e.dataTransfer.getData('text/friend'); if (id && !store.favFriends.includes(id)) store.toggleFavFriend(id) }
   const statusRef = useDismiss(statusMenu, () => setStatusMenu(false))
   const ctxRef = useDismiss(!!ctx, () => setCtx(null))
   const me = { name: store.name, hue: nameHue(store.name), status: store.status }
@@ -89,8 +91,14 @@ export const FriendsWindow = observer(() => {
           </div>
         </div>
 
-        {!store.hints.drag && (
-          <div className="fhint"><span>Drag Friends &amp; Chats here for easy access</span><button className="gotit" onClick={() => (store.hints.drag = true)}>GOT IT!</button></div>
+        {store.favFriends.length > 0 ? (
+          <div className={`ffav ${dropHot ? 'hot' : ''}`} onDragOver={e => { e.preventDefault(); setDropHot(true) }} onDragLeave={() => setDropHot(false)} onDrop={dropFav}>
+            {store.favFriends.map(id => store.friends.find(x => x.id === id)).filter((f): f is Friend => !!f).map(f => (
+              <button key={f.id} className="fav-chip" onClick={() => store.openChat(f.id)} onContextMenu={e => openMenu(e, f)} title={`${f.name} — ${statusLine(f)}`}><Avatar f={f} size={40} /><span>{f.name}</span></button>
+            ))}
+          </div>
+        ) : !store.hints.drag && (
+          <div className={`fhint ${dropHot ? 'hot' : ''}`} onDragOver={e => { e.preventDefault(); setDropHot(true) }} onDragLeave={() => setDropHot(false)} onDrop={dropFav}><span>Drag Friends &amp; Chats here for easy access</span><button className="gotit" onClick={() => (store.hints.drag = true)}>GOT IT!</button></div>
         )}
 
         <div className="fbar">
@@ -144,6 +152,7 @@ export const FriendsWindow = observer(() => {
       {ctx && (
         <div className="popover" ref={ctxRef} style={{ position: 'fixed', left: Math.min(ctx.x, window.innerWidth - 250), top: Math.min(ctx.y, window.innerHeight - 260), minWidth: 230, zIndex: 90 }}>
           {ctx.f.status !== 'pending' && <button className="pop-item" onClick={() => { store.openChat(ctx.f.id); setCtx(null) }}>Send Message</button>}
+          {ctx.f.status !== 'pending' && <button className="pop-item" onClick={() => { store.toggleFavFriend(ctx.f.id); setCtx(null) }}>{store.favFriends.includes(ctx.f.id) ? 'Remove from Favorites' : 'Add to Favorites'}</button>}
           <button className="pop-item" onClick={() => { setProfile(ctx.f); setCtx(null) }}>View Profile</button>
           {ctx.f.gameId && <button className="pop-item" onClick={() => { nav(`/store/${ctx.f.gameId}`); setCtx(null) }}>Store Page</button>}
           {ctx.f.gameId && store.owned.includes(ctx.f.gameId) && <button className="pop-item" onClick={() => { nav(`/library/${ctx.f.gameId}`); setCtx(null) }}>View Game in Library</button>}

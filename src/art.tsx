@@ -1,7 +1,7 @@
 import type { ReactElement } from 'react'
 import type { Game } from './data'
 
-export type ArtKind = 'hero' | 'wide' | 'header' | 'capsule' | 'icon' | 'shot'
+export type ArtKind = 'hero' | 'wide' | 'tile' | 'header' | 'capsule' | 'icon' | 'shot'
 
 /** Deterministic PRNG so every game always renders the same art. */
 const rng = (seed: number) => () => {
@@ -120,7 +120,7 @@ const splitTitle = (title: string, max: number) => {
 }
 
 const DIMS: Record<ArtKind, [number, number]> = {
-  hero: [1920, 620], wide: [1200, 600], header: [460, 215], capsule: [600, 900], icon: [64, 64], shot: [1280, 720],
+  hero: [1920, 620], wide: [1200, 680], tile: [1000, 730], header: [460, 215], capsule: [600, 900], icon: [64, 64], shot: [1280, 720],
 }
 
 /** Procedural stand-in for key art. Everything is generated in-browser, no external assets. */
@@ -132,7 +132,10 @@ export function Art({ game, kind = 'header', variant = 0, className = '', showTi
   const id = `g${game.id}-${kind}-${variant}`
   const portrait = kind === 'capsule'
   const lines = splitTitle(game.title.toUpperCase(), portrait ? 11 : 20)
-  const fs = kind === 'icon' ? 0 : portrait ? w * 0.14 : kind === 'hero' ? h * 0.16 : kind === 'wide' ? h * 0.13 : h * 0.17
+  const base = kind === 'icon' ? 0 : portrait ? w * 0.14 : kind === 'hero' ? h * 0.16 : kind === 'wide' ? h * 0.13 : kind === 'tile' ? h * 0.12 : h * 0.17
+  // uppercase bold glyphs are ~0.68em wide; shrink so the longest line stays inside the art
+  const longest = Math.max(1, ...lines.map(l => l.length))
+  const fs = kind === 'icon' ? 0 : Math.min(base, (w * (portrait ? 0.9 : 0.86)) / (longest * 0.68))
 
   return (
     <svg className={`art-svg ${className}`} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="xMidYMid slice" role="img" aria-label={game.title}>

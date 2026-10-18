@@ -47,3 +47,8 @@
 .msg.me { align-self: flex-end; background: #2b5d86; border-radius: 12px 12px 2px 12px; }
 .msg-from { display: block; font-size: 11px; color: #9ec3de; font-weight: 700; }
 .chat-form { padding: 10px; }
+
+.fhint.hot, .ffav.hot { border-color: #67c1f5; background: #1d4e8633; }
+.ffav { margin: 10px 14px; padding: 10px; border: 1px dashed #2f6c93; display: flex; flex-wrap: wrap; gap: 12px; min-height: 64px; }
+.fav-chip { background: none; border: 0; color: #c6ccd2; display: grid; justify-items: center; gap: 4px; font-size: 12px; max-width: 64px; }
+.fav-chip:hover { color: #fff; }

@@ -15,12 +15,12 @@
 .tile3:hover { background: #2b303a; }
 .tile3 b { font-weight: 500; font-size: 20px; }
 .infobox { display: flex; align-items: center; gap: 16px; background: #23262e; padding: 26px 24px; margin-bottom: 12px; font-size: 20px; }
-.srow { display: flex; align-items: center; justify-content: space-between; gap: 24px; background: #23262e; padding: 16px 22px; margin-bottom: 10px; }
+.setrow { display: flex; align-items: center; justify-content: space-between; gap: 24px; background: #23262e; padding: 16px 22px; margin-bottom: 10px; }
 .sl { font-size: 18px; color: #dfe3e6; }
 .sctl { display: flex; align-items: center; gap: 12px; }
 .sctl .input { width: 180px; }
-.sbar { height: 10px; background: #0007; border-radius: 5px; overflow: hidden; margin: -2px 0 16px; }
-.sbar span { display: block; height: 100%; background: linear-gradient(90deg, #2f7fe0, #5aa8ff); }
+.stbar { height: 10px; background: #0007; border-radius: 5px; overflow: hidden; margin: -2px 0 16px; }
+.stbar span { display: block; height: 100%; background: linear-gradient(90deg, #2f7fe0, #5aa8ff); }
 
 .profile { min-height: 100%; background: radial-gradient(900px 400px at 20% 0, #2b4a6d66, transparent 70%), #161c26; }
 .pf-wrap { max-width: 1000px; margin: 0 auto; padding: 36px 24px 80px; }

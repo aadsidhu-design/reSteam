@@ -13,9 +13,10 @@ export const CLIENT: Group = {
   'Library': [
     'Home button:d', 'Grid view toggle:d', 'Category dropdown:d', 'Platform filter:p', 'Recent sort toggle:d', 'Ready-to-play toggle:d', 'Library search:d',
     'Filter popover:p', 'Favorites section:d', 'Uncategorized section:d', 'Collapsible sections:d', 'Game icons in list:p', 'Running indicator:d',
-    'Right-click menu:d', 'Custom collections:m', 'Drag to reorder:m', "What's New shelf:d", 'Shelf options menu:d', 'Add shelf:d',
+    'Right-click menu:d', 'Custom collections:d', 'Drag to reorder:m', "What's New shelf:d", 'Shelf options menu:d', 'Add shelf:d',
     'Recent Games shelf:d', 'Time-group labels:d', 'Wide capsule + Time Played:d', 'Shelf scroll arrows:d', 'Download badge on capsule:d',
     'Favorites shelf:d', 'Play Next shelf:d', 'Installed shelf:d', 'Friends Activity shelf:m', 'Grid size setting:d', 'Poster grid view:d',
+    'Rename and delete collections:d', 'Add to collection menu:d',
   ],
   'Game page': [
     'Hero art:p', 'Install split button:d', 'Install options menu:d', 'Play button:d', 'Stop button:d', 'Pause/Resume:d', 'Space required:d',
@@ -32,19 +33,22 @@ export const CLIENT: Group = {
     'Browse menu:d', 'Recommendations menu:d', 'Categories menu:d', 'Hardware menu:p', 'Ways to Play menu:d', 'Special Sections menu:d',
     'Search with suggestions:d', 'Wishlist link:d', 'Sale hero banner:d', 'Featured carousel:d', 'Carousel info panel:d', 'Send a Gift Card:d',
     'Special offers:d', 'Browse by genre:d', 'Top sellers tabs:d', 'Free to play row:d', 'Game page media viewer:p', 'Game page description:d',
-    'Review summary:d', 'Popular tags:d', 'Buy box:d', 'Follow / Ignore:p', 'System requirements:d', 'Customer reviews:p', 'More like this:d',
+    'Review summary:d', 'Popular tags:d', 'Buy box:d', 'Follow / Ignore:d', 'System requirements:d', 'Customer reviews:p', 'More like this:d',
     'Cart page:d', 'Checkout:d', 'Wishlist page:d', 'Free-to-play claim:d', 'Discount badges:d',
+    'Search results rows:d', 'Narrow-by filter panels:d', 'Sort options:d', 'Active filter chips:d', 'Excluded titles notice:d', 'Ignore hides games:d', 'Follow list:d', 'Payment step:d', 'Cart recommendations:d', 'Discovery queue banner:d', 'Promo banner:p', 'Featured tag grids:d', 'Top new releases:d', 'Popular tabs with preview:d', 'DLC list:p', 'Handheld compatibility box:p', 'Right rail details:d', 'Age rating box:p', 'Platform icons:p',
   ],
   'Friends & Chat': [
-    'Friends window:d', 'Profile header:d', 'Status menu:d', 'Drag hint:p', 'FRIENDS bar:d', 'Friend search:d', 'Add a friend:d', 'Collapsible groups:d',
+    'Friends window:d', 'Profile header:d', 'Status menu:d', 'Drag hint:d', 'FRIENDS bar:d', 'Friend search:d', 'Add a friend:d', 'Collapsible groups:d',
     'A-Z sort:d', 'Friend rows:d', 'Last online text:d', 'Right-click menu:d', 'View profile dialog:d', 'Chat window:d', 'Typing indicator:d',
     'Group chats list:d', 'Create group chat:d', 'Group chat window:d', 'Pending requests:d', 'Remove friend:d', 'Offline messaging:d', 'Invite to play:p',
     'Voice chat:m', 'Screenshot sharing:m', 'Emoji and stickers:m', 'Nicknames:m', 'Block user:m', 'Friend activity feed:m',
-    'Drag to pin friends:m', 'Friends window dragging:d',
+    'Drag to pin friends:d', 'Friends window dragging:d',
+    'Favorites strip:d', 'Add to Favorites menu:d',
   ],
   'Community': [
     'Activity page:d', 'Recently played hubs:d', 'Popular hubs:d', 'Find hubs search:d', 'Find people search:d', 'Content tabs:d', 'Most popular / recent:d',
-    'Content cards:p', 'Review cards:p', 'Hub pages:d', 'Discussions:p', 'Guides:p', 'Workshop browse:p', 'News posts:p', 'Market:m', 'Broadcasts:p',
+    'Content cards:d', 'Review cards:d', 'Hub pages:d', 'Discussions:d', 'Guides:d', 'Workshop browse:d', 'News posts:d', 'Market:m', 'Broadcasts:d',
+    'Mosaic feed layout:d', 'Hub header and stats:d', 'Hub store banner:d', 'Guide cards:d', 'Star ratings:d', 'Award and comment counts:d', 'Real posts and users:m',
   ],
   'Settings': [
     'Settings window:d', 'Account page:d', 'Add funds:d', 'Privacy settings:p', 'Friend code:d', 'Friends & Chat page:p', 'Notifications page:p',

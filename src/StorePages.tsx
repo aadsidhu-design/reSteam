@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Link, NavLink, Outlet, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, NavLink, Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { ALL_TAGS, GAMES, GENRES, compact, fmt, priceOf, reviewLabel, type Game } from './data'
 import { store } from './store'
@@ -18,7 +18,7 @@ const MENUS: Record<string, MenuItem[]> = {
     { label: 'Specials', to: '/store/browse?sale=1' }, { label: 'Free to Play', to: '/store/browse?free=1' },
   ],
   Recommendations: [
-    { label: 'Your Wishlist', to: '/wishlist' }, { label: 'Played by your friends', to: '/store/browse?friends=1' }, { label: 'Highly rated (95%+)', to: '/store/browse?minRating=95' },
+    { label: 'Your Wishlist', to: '/wishlist' }, { label: 'Played by your friends', to: '/store/browse?friends=1' }, { label: 'Games you follow', to: '/store/browse?followed=1' }, { label: 'Highly rated (95%+)', to: '/store/browse?minRating=95' },
   ],
   Categories: GENRES.map(g => ({ label: g, to: `/store/browse?genre=${encodeURIComponent(g)}` })),
   Hardware: [
@@ -73,7 +73,9 @@ const NavMenu = ({ label, items }: { label: string; items: MenuItem[] }) => {
   )
 }
 
-export const StoreLayout = observer(() => (
+export const StoreLayout = observer(() => {
+  const flat = useLocation().pathname !== '/store'
+  return (
   <div className="store">
     <div className="subnav">
       <div className="subnav-in">
@@ -84,25 +86,14 @@ export const StoreLayout = observer(() => (
         <NavLink to="/cart" className="wishlink"><Icon name="cart" size={20} /> {store.cart.length > 0 && <span className="cart-count">{store.cart.length}</span>}</NavLink>
       </div>
     </div>
-    <div className="store-page"><Outlet /></div>
+    <div className={`store-page ${flat ? 'flat' : ''}`}><Outlet /></div>
   </div>
-))
+  )
+})
 
 /* ---------- small shared pieces ---------- */
 export const Tags = ({ g, n = 4 }: { g: Game; n?: number }) => (
   <div className="tagrow">{g.tags.slice(0, n).map(t => <Link key={t} to={`/store/browse?tag=${encodeURIComponent(t)}`} className="tagchip">{t}</Link>)}</div>
-)
-
-const ListRow = ({ g }: { g: Game }) => (
-  <Link to={`/store/${g.id}`} className="lrow">
-    <div className="lrow-art"><Art game={g} kind="header" /></div>
-    <div className="lrow-main">
-      <div className="lrow-title">{g.title}</div>
-      <Tags g={g} n={3} />
-    </div>
-    <div className="lrow-rate"><span className={reviewClass(g.rating)}>{reviewLabel(g.rating)}</span></div>
-    <Price game={g} />
-  </Link>
 )
 
 const Card = ({ g }: { g: Game }) => (
@@ -137,26 +128,88 @@ const GiftModal = observer(({ onClose }: { onClose: () => void }) => {
   )
 })
 
-/* ---------- store home ---------- */
+/* ---------- store home (mirrors the real storefront's sections) ---------- */
+/** Capsule price row: lime discount, struck-through original, dark final price. */
+export const CapPrice = ({ g }: { g: Game }) => (
+  <div className="cap-price">
+    {g.discount > 0 && <span className="cp-off">-{g.discount}%</span>}
+    <span className="cp-final">{g.discount > 0 && <s>{fmt(g.price)}</s>}<b>{fmt(priceOf(g))}</b></span>
+  </div>
+)
+
+const Arrows = ({ onPrev, onNext }: { onPrev: () => void; onNext: () => void }) => (
+  <>
+    <button className="out-arrow l" onClick={onPrev} aria-label="Previous"><Icon name="chevronLeft" size={44} /></button>
+    <button className="out-arrow r" onClick={onNext} aria-label="Next"><Icon name="chevronRight" size={44} /></button>
+  </>
+)
+const Dots = ({ n, i, set }: { n: number; i: number; set: (i: number) => void }) => (
+  <div className="dots">{Array.from({ length: n }, (_, k) => <button key={k} className={k === i ? 'on' : ''} onClick={() => set(k)} aria-label={`Page ${k + 1}`} />)}</div>
+)
+const Head = ({ title, more, children }: { title: string; more?: string; children?: React.ReactNode }) => (
+  <div className="sec-head2"><h2>{title}{children}</h2>{more && <Link to={more} className="seebtn">See More</Link>}</div>
+)
+
+const PromoBanner = () => (
+  <Link to="/store/browse?tag=Cozy" className="promo" aria-label="Cozy Fest">
+    <svg viewBox="0 0 1180 187" preserveAspectRatio="xMidYMid slice" className="promo-svg">
+      <rect width="1180" height="187" fill="#f6ebcf" />
+      {Array.from({ length: 34 }, (_, i) => <circle key={i} cx={(i * 97) % 1180} cy={((i * 53) % 170) + 8} r={5 + (i % 4) * 3} fill="#efdcae" />)}
+      <circle cx="905" cy="150" r="90" fill="#8fc13a" opacity=".85" /><ellipse cx="905" cy="172" rx="150" ry="22" fill="#c9792b" />
+      <text x="60" y="88" fontSize="34" fontWeight="800" fill="#e8501f" fontStyle="italic">reSteam</text>
+      <text x="58" y="150" fontSize="74" fontWeight="800" fill="#e8501f" stroke="#fff" strokeWidth="5" paintOrder="stroke">Cozy Fest</text>
+      <text x="640" y="62" fontSize="28" fontWeight="800" fill="#e8501f" fontStyle="italic">Discounts, Demos, and More</text>
+      <rect x="470" y="86" width="560" height="78" rx="39" fill="#e8501f" />
+      <text x="750" y="120" textAnchor="middle" fontSize="26" fontWeight="800" fill="#fff6dc">ON NOW THROUGH OCTOBER 19</text>
+      <text x="750" y="150" textAnchor="middle" fontSize="26" fontWeight="800" fill="#fff6dc">AT 10 AM PT</text>
+    </svg>
+  </Link>
+)
+
 export const StoreHome = observer(() => {
-  const nav = useNavigate()
   const [idx, setIdx] = useState(0)
   const [paused, setPaused] = useState(false)
   const [gift, setGift] = useState(false)
-  const [tab, setTab] = useState<'new' | 'top' | 'sale'>('top')
-  const featured = useMemo(() => [...GAMES].sort((a, b) => b.reviews * b.rating - a.reviews * a.rating).slice(0, 7), [])
-  const sale = useMemo(() => [...GAMES].filter(g => g.discount > 0).sort((a, b) => b.discount - a.discount), [])
+  const [dPage, setDPage] = useState(0)
+  const [nPage, setNPage] = useState(0)
+  const [tab, setTab] = useState<'new' | 'top' | 'upcoming' | 'sale' | 'free'>('new')
+  const [hover, setHover] = useState<Game | null>(null)
+  const pool = GAMES.filter(g => !store.ignored.includes(g.id))
+  const featured = useMemo(() => [...pool].sort((a, b) => b.reviews * b.rating - a.reviews * a.rating).slice(0, 8), [])
+  const sale = useMemo(() => pool.filter(g => g.discount > 0).sort((a, b) => b.discount - a.discount), [pool.length])
   const hero = sale.slice(0, 3)
   const f = featured[idx]
   const maxOff = Math.max(...GAMES.map(g => g.discount))
-  const tabList = tab === 'new' ? [...GAMES].sort((a, b) => b.released.localeCompare(a.released)) : tab === 'top' ? [...GAMES].sort((a, b) => b.reviews - a.reviews) : sale
-  const free = GAMES.filter(g => g.price === 0)
+  const byReviews = useMemo(() => [...pool].sort((a, b) => b.reviews - a.reviews), [pool.length])
+  const newest = useMemo(() => [...pool].sort((a, b) => b.released.localeCompare(a.released)), [pool.length])
+  const month = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+  const freeGames = pool.filter(g => g.price === 0)
+  const tags = useMemo(() => {
+    const c = new Map<string, number>()
+    GAMES.forEach(g => g.tags.forEach(t => c.set(t, (c.get(t) ?? 0) + 1)))
+    const ok = [...c.entries()].filter(([t, n]) => n >= 4 && !['Free to Play', 'Multiplayer', 'Singleplayer'].includes(t)).sort((a, b) => b[1] - a[1]).map(([t]) => t)
+    const first = ok[0]
+    const set = (t: string) => new Set(GAMES.filter(g => g.tags.includes(t)).map(g => g.id))
+    const a = set(first)
+    // second tag: the popular one that shares the fewest games with the first
+    const second = ok.slice(1).sort((x, y) => [...set(x)].filter(i => a.has(i)).length - [...set(y)].filter(i => a.has(i)).length)[0]
+    return [first, second].filter(Boolean)
+  }, [])
+  const tabList = tab === 'new' ? newest : tab === 'top' ? byReviews : tab === 'sale' ? sale : tab === 'free' ? freeGames : [...GAMES].sort((a, b) => b.rating - a.rating)
+  const shown = hover ?? tabList[0]
+  const dealsPages = [
+    { big: hero[0], free: freeGames[0], deals: [sale[3], sale[4]] },
+    { big: hero[1], free: freeGames[1] ?? freeGames[0], deals: [sale[5], sale[6]] },
+  ]
+  const dp = dealsPages[dPage]
+  const rank = byReviews.findIndex(g => g.id === f.id) + 1
 
   useEffect(() => {
     if (paused || store.settings.reduceMotion) return
     const t = setInterval(() => setIdx(i => (i + 1) % featured.length), 6000)
     return () => clearInterval(t)
   }, [paused, featured.length])
+  useEffect(() => { if (idx >= featured.length) setIdx(0) }, [idx, featured.length])
 
   return (
     <div className="shome">
@@ -164,71 +217,138 @@ export const StoreHome = observer(() => {
         <div className="hb-left"><Art game={hero[0]} kind="hero" showTitle={false} variant={1} /></div>
         <div className="hb-body">
           <div className="hb-head"><div className="hb-mark">reSteam</div><div className="hb-sep" /><div className="hb-title">WEEKEND SALE</div></div>
-          <div className="hb-sub">Save up to {maxOff}% on {sale.length} games</div>
           <div className="hb-caps">
             {hero.map((g, i) => (
-              <Link key={g.id} to={`/store/${g.id}`} className={`hb-cap c${i}`}>
-                <Art game={g} kind="wide" />
-                <span className="hb-badge">-{g.discount}%</span>
-              </Link>
+              <Link key={g.id} to={`/store/${g.id}`} className={`hb-cap c${i}`}><Art game={g} kind="tile" /><span className="hb-badge">-{g.discount}%</span></Link>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="container">
+      <section className="container sec">
         <div className="sec-head2">
           <h2>Featured &amp; Recommended</h2>
           <button className="giftbtn" onClick={() => setGift(true)}><span className="giftart"><Icon name="gift" size={26} /></span> Send a Gift Card</button>
         </div>
-        <div className="feat" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-          <button className="feat-arrow l" onClick={() => setIdx((idx + featured.length - 1) % featured.length)} aria-label="Previous"><Icon name="chevronLeft" size={34} /></button>
-          <Link to={`/store/${f.id}`} className="feat-main"><Art game={f} kind="wide" variant={idx % 3} /></Link>
-          <div className="feat-panel">
-            <div className="fp-title">{f.title}</div>
-            <div className="fp-rev"><span className={reviewClass(f.rating)}>{reviewLabel(f.rating)}</span> <span className="muted">({compact(f.reviews)} Reviews)</span></div>
-            <div className="fp-shots">{[1, 2, 3, 4].map(n => <div key={n} className="fp-shot"><Art game={f} kind="shot" variant={n} showTitle={false} /></div>)}</div>
-            <Tags g={f} n={4} />
-            <div className="fp-foot">
-              {f.price === 0 ? <span className="fp-free">Free to Play</span> : <Price game={f} />}
-              <button className="btn green small" onClick={() => nav(`/store/${f.id}`)}>View</button>
+        <div className="feat-wrap" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+          <Arrows onPrev={() => setIdx((idx + featured.length - 1) % featured.length)} onNext={() => setIdx((idx + 1) % featured.length)} />
+          <div className="feat">
+            <Link to={`/store/${f.id}`} className="feat-main"><Art game={f} kind="wide" variant={idx % 3} /></Link>
+            <div className="feat-panel">
+              <div className="fp-title">{f.title}</div>
+              <div className="fp-rev"><span className={reviewClass(f.rating)}>{reviewLabel(f.rating)}</span> <span className="muted">({compact(f.reviews)} Reviews)</span></div>
+              <div className="fp-shots">{[1, 2, 3, 4].map(n => <div key={n} className="fp-shot"><Art game={f} kind="shot" variant={n} showTitle={false} /></div>)}</div>
+              <div className="fp-rank"><svg width="40" height="34" viewBox="0 0 40 34" aria-hidden><path d="M2 20l9-9 7 6 14-14" fill="none" stroke="#a4d007" strokeWidth="3" /><rect x="4" y="22" width="7" height="11" fill="#fff" /><rect x="15" y="16" width="7" height="17" fill="#fff" /><rect x="26" y="9" width="7" height="24" fill="#fff" /></svg>
+                <div><div className="rk-t">{rank <= 3 ? 'Top Seller' : 'Popular'}</div><div>Ranked #{rank} in your region</div></div></div>
+              <div className="fp-foot">{f.price === 0 ? <span className="fp-free">Free to Play</span> : <CapPrice g={f} />}</div>
             </div>
           </div>
-          <button className="feat-arrow r" onClick={() => setIdx((idx + 1) % featured.length)} aria-label="Next"><Icon name="chevronRight" size={34} /></button>
         </div>
-        <div className="dots">{featured.map((_, i) => <button key={i} className={i === idx ? 'on' : ''} onClick={() => setIdx(i)} aria-label={`Slide ${i + 1}`} />)}</div>
+        <Dots n={featured.length} i={idx} set={setIdx} />
       </section>
 
-      <section className="container">
-        <div className="sec-head2"><h2>Special Offers</h2><Link to="/store/browse?sale=1" className="more">Browse more</Link></div>
-        <div className="cards">{sale.slice(0, 4).map(g => <Card key={g.id} g={g} />)}</div>
-      </section>
+      <section className="container"><PromoBanner /></section>
 
-      <section className="container two">
-        <div>
-          <div className="tabs3">
-            {([['new', 'New & Trending'], ['top', 'Top Sellers'], ['sale', 'Specials']] as const).map(([k, l]) => <button key={k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>{l}</button>)}
+      <section className="container sec">
+        <Head title="Discounts & Events" more="/store/browse?sale=1" />
+        <div className="feat-wrap">
+          <Arrows onPrev={() => setDPage((dPage + 1) % 2)} onNext={() => setDPage((dPage + 1) % 2)} />
+          <div className="events">
+            <Link to="/store/browse?sale=1" className="ev big">
+              <span className="evtag t-purple">WEEKEND SALE</span>
+              <div className="ev-art split">
+                <div className="ev-top"><Art game={dp.big} kind="wide" variant={1} /></div>
+                <div className="ev-bottom"><div className="ev-brand">reSteam <b>WEEKEND SALE</b></div><div className="ev-thumbs">{sale.slice(0, 3).map(g => <div key={g.id} className="ev-thumb"><Art game={g} kind="header" /></div>)}</div></div>
+              </div>
+              <div className="ev-price"><span className="up-to">Up to -{maxOff}%</span></div>
+            </Link>
+            <Link to={`/store/${dp.free.id}`} className="ev">
+              <span className="evtag t-purple">FREE WEEKEND</span>
+              <div className="ev-art tall"><Art game={dp.free} kind="capsule" /></div>
+              <div className="ev-price"><CapPrice g={dp.free} /></div>
+            </Link>
+            <div className="ev stack">
+              {dp.deals.map(g => (
+                <Link key={g.id} to={`/store/${g.id}`} className="ev half">
+                  <span className="evtag t-blue">TODAY'S DEAL</span>
+                  <div className="ev-art short"><Art game={g} kind="header" /></div>
+                  <div className="ev-price"><CapPrice g={g} /></div>
+                </Link>
+              ))}
+            </div>
           </div>
-          <div className="list">{tabList.slice(0, 8).map(g => <ListRow key={g.id} g={g} />)}</div>
         </div>
-        <aside>
-          <h2>Browse by tag</h2>
-          <div className="tagcloud">{ALL_TAGS.slice(0, 24).map(t => <Link key={t} to={`/store/browse?tag=${encodeURIComponent(t)}`} className="tagchip">{t}</Link>)}</div>
-          {store.viewed.length > 0 && (
-            <>
-              <h2 className="mt">Recently viewed</h2>
-              <div className="recent-v">{store.viewed.slice(0, 5).map(id => { const g = GAMES.find(x => x.id === id)!; return <Link key={id} to={`/store/${id}`}>{g.title}</Link> })}</div>
-            </>
-          )}
-        </aside>
+        <Dots n={2} i={dPage} set={setDPage} />
       </section>
 
       <section className="container">
-        <div className="sec-head2"><h2>Free to Play</h2><Link to="/store/browse?free=1" className="more">Browse more</Link></div>
-        <div className="cards">{free.map(g => <Card key={g.id} g={g} />)}</div>
+        <div className="queue">
+          <div className="q-text">
+            <h3>Explore Your Discovery Queue</h3>
+            <p>Browse top-selling, new and recommended titles picked for you.</p>
+            <Link to="/store/browse?sort=top" className="btn bright">Start exploring</Link>
+          </div>
+          <div className="q-shots">{[2, 4, 6].map((v, i) => <div key={v} className={`q-shot s${i}`}><Art game={byReviews[i]} kind="shot" variant={v} showTitle={false} /></div>)}</div>
+        </div>
       </section>
 
-      <section className="container">
+      <section className="container two-col sec">
+        {tags.map((t, ti) => {
+          const used = new Set(tags.slice(0, ti).flatMap(x => GAMES.filter(g => g.tags.includes(x)).slice(0, 4).map(g => g.id)))
+          const list = GAMES.filter(g => g.tags.includes(t) && !used.has(g.id)).slice(0, 4)
+          return (
+            <div key={t}>
+              <h2 className="tag-title">{t.toUpperCase()} GAMES</h2><div className="tag-sub">Featured tag</div>
+              <div className="tag-panel">{list.map(g => <Link key={g.id} to={`/store/${g.id}`} className="tg"><div className="tg-art"><Art game={g} kind="header" /></div><CapPrice g={g} /></Link>)}</div>
+              <div className="seerow"><Link to={`/store/browse?tag=${encodeURIComponent(t)}`} className="seebtn">See More</Link></div>
+            </div>
+          )
+        })}
+      </section>
+
+      <section className="container sec newrel">
+        <Head title="Top New Releases" more="/store/browse?sort=new"><span className="monthchip">{month}</span></Head>
+        <div className="feat-wrap">
+          <Arrows onPrev={() => setNPage((nPage + 2) % 3)} onNext={() => setNPage((nPage + 1) % 3)} />
+          <div className="nr-panel">
+            {newest.slice(nPage * 4, nPage * 4 + 4).map(g => (
+              <Link key={g.id} to={`/store/${g.id}`} className="nr"><div className="nr-art"><Art game={g} kind="wide" /></div><CapPrice g={g} /></Link>
+            ))}
+            <Dots n={3} i={nPage} set={setNPage} />
+          </div>
+        </div>
+      </section>
+
+      <section className="container sec">
+        <div className="tabs-real">
+          {([['new', 'Popular New Releases'], ['top', 'Top Sellers'], ['upcoming', 'Popular Upcoming'], ['sale', 'Specials'], ['free', 'Trending Free']] as const).map(([k, l]) => (
+            <button key={k} className={tab === k ? 'on' : ''} onClick={() => { setTab(k); setHover(null) }}>{l}</button>
+          ))}
+        </div>
+        <div className="tab-grid">
+          <div className="list">{tabList.slice(0, 10).map(g => (
+            <Link key={g.id} to={`/store/${g.id}`} className={`lrow ${shown.id === g.id ? 'hov' : ''}`} onMouseEnter={() => setHover(g)}>
+              <div className="lrow-art"><Art game={g} kind="header" /></div>
+              <div className="lrow-main"><div className="lrow-title">{g.title}</div><Tags g={g} n={3} /></div>
+              <CapPrice g={g} />
+            </Link>))}
+          </div>
+          <aside className="preview">
+            <div className="pv-title">{shown.title}</div>
+            <div className="muted small">Released: {new Date(shown.released).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+            <div className="fp-shots">{[1, 2, 3, 4].map(n => <div key={n} className="fp-shot"><Art game={shown} kind="shot" variant={n} showTitle={false} /></div>)}</div>
+            <div><span className={reviewClass(shown.rating)}>{reviewLabel(shown.rating)}</span> <span className="muted small">({compact(shown.reviews)})</span></div>
+            <Tags g={shown} n={4} />
+          </aside>
+        </div>
+      </section>
+
+      <section className="container sec">
+        <Head title="Free to Play" more="/store/browse?free=1" />
+        <div className="cards">{freeGames.map(g => <Card key={g.id} g={g} />)}</div>
+      </section>
+
+      <section className="container sec">
         <h2>Browse by genre</h2>
         <div className="genres">
           {GENRES.map((gn, i) => {
@@ -242,93 +362,181 @@ export const StoreHome = observer(() => {
   )
 })
 
+/* ---------- shared bits for list pages ---------- */
+export const Plats = () => (
+  <span className="plats" aria-label="Windows and macOS">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden><rect x="1" y="1" width="6.5" height="6.5" /><rect x="8.5" y="1" width="6.5" height="6.5" /><rect x="1" y="8.5" width="6.5" height="6.5" /><rect x="8.5" y="8.5" width="6.5" height="6.5" /></svg>
+    <svg width="17" height="16" viewBox="0 0 17 16" fill="currentColor" aria-hidden><path d="M2 2h13v9H2z" opacity=".9" /><path d="M0 12.5h17v1.5H0z" /></svg>
+  </span>
+)
+
+/** Result-row price: lime discount block over struck price and lime final price; plain white when not discounted. */
+export const SearchPrice = ({ g }: { g: Game }) => g.discount > 0 ? (
+  <div className="sp-disc"><span className="sp-pct">-{g.discount}%</span><span className="sp-stack"><s>{fmt(g.price)}</s><b>{fmt(priceOf(g))}</b></span></div>
+) : <div className="sp-plain">{fmt(g.price)}</div>
+
+const Panel = ({ title, open0 = false, children }: { title: string; open0?: boolean; children?: React.ReactNode }) => {
+  const [open, setOpen] = useState(open0)
+  return (
+    <div className="npanel">
+      <button className="nhead" onClick={() => setOpen(!open)} aria-expanded={open}>{title}</button>
+      {open && <div className="nbody">{children}</div>}
+    </div>
+  )
+}
+
 /* ---------- browse / search results ---------- */
 export const Browse = observer(() => {
   const [sp, setSp] = useSearchParams()
   const q = sp.get('q') ?? ''
-  const genre = sp.get('genre'), tag = sp.get('tag'), sort = sp.get('sort') ?? 'relevance'
-  const free = sp.get('free') === '1', sale = sp.get('sale') === '1', friends = sp.get('friends') === '1'
+  const genre = sp.get('genre'), tag = sp.get('tag'), noTag = sp.get('notag'), sort = sp.get('sort') ?? 'relevance'
+  const free = sp.get('free') === '1', sale = sp.get('sale') === '1', friends = sp.get('friends') === '1', hideFree = sp.get('hidefree') === '1'
+  const handheld = sp.get('handheld')
   const maxSize = Number(sp.get('maxSize') ?? 0), minSize = Number(sp.get('minSize') ?? 0), under = Number(sp.get('under') ?? 0), minRating = Number(sp.get('minRating') ?? 0)
+  const [draft, setDraft] = useState(q)
+  const [tagQ, setTagQ] = useState('')
+  useEffect(() => setDraft(q), [q])
   const set = (k: string, v: string | null) => { const n = new URLSearchParams(sp); if (v === null || v === '') n.delete(k); else n.set(k, v); setSp(n) }
 
-  let list = GAMES.filter(g =>
-    (!q || g.title.toLowerCase().includes(q.toLowerCase()) || g.tags.some(t => t.toLowerCase().includes(q.toLowerCase()))) &&
-    (!genre || g.genre.includes(genre)) && (!tag || g.tags.includes(tag)) && (!free || g.price === 0) && (!sale || g.discount > 0) &&
+  const ignored = new Set(store.ignored)
+  const showIgnored = sp.get('ignored') === '1'
+  const base = GAMES.filter(g =>
+    (showIgnored ? ignored.has(g.id) : !ignored.has(g.id)) && (!sp.get('followed') || store.followed.includes(g.id)) &&
+    (!q || g.title.toLowerCase().includes(q.toLowerCase()) || g.dev.toLowerCase().includes(q.toLowerCase()) || g.tags.some(t => t.toLowerCase().includes(q.toLowerCase()))) &&
+    (!genre || g.genre.includes(genre)) && (!free || g.price === 0) && (!hideFree || g.price > 0) && (!sale || g.discount > 0) &&
     (!maxSize || g.sizeGb <= maxSize) && (!minSize || g.sizeGb >= minSize) && (!under || priceOf(g) <= under) && (!minRating || g.rating >= minRating) &&
-    (!friends || store.friends.some(f => f.gameId === g.id)))
-  list = [...list].sort((a, b) => sort === 'new' ? b.released.localeCompare(a.released) : sort === 'top' ? b.reviews - a.reviews : sort === 'price' ? priceOf(a) - priceOf(b) : sort === 'rating' ? b.rating - a.rating : b.reviews * b.rating - a.reviews * a.rating)
-  const chips: [string, string][] = [['q', q && `Search: ${q}`], ['genre', genre ?? ''], ['tag', tag ?? ''], ['free', free ? 'Free to Play' : ''], ['sale', sale ? 'On sale' : ''],
-    ['friends', friends ? 'Played by friends' : ''], ['maxSize', maxSize ? `Under ${maxSize} GB` : ''], ['minSize', minSize ? `Over ${minSize} GB` : ''], ['under', under ? `Under ${fmt(under)}` : ''], ['minRating', minRating ? `${minRating}%+ positive` : '']]
+    (!friends || store.friends.some(f => f.gameId === g.id)) && (!handheld || (handheld === 'verified' ? g.sizeGb <= 10 : g.sizeGb <= 30)) && (!noTag || !g.tags.includes(noTag)))
+  const list = [...base.filter(g => !tag || g.tags.includes(tag))].sort((a, b) => sort === 'new' ? b.released.localeCompare(a.released) : sort === 'top' ? b.reviews - a.reviews : sort === 'price' ? priceOf(a) - priceOf(b) : sort === 'rating' ? b.rating - a.rating : b.reviews * b.rating - a.reviews * a.rating)
+  const tagCounts = [...new Map(ALL_TAGS.map(t => [t, base.filter(g => g.tags.includes(t)).length])).entries()].filter(([, n]) => n > 0).sort((a, b) => b[1] - a[1])
+  const chips: [string, string][] = [['q', q && `"${q}"`], ['genre', genre ?? ''], ['tag', tag ?? ''], ['notag', noTag ? `not ${noTag}` : ''], ['free', free ? 'Free to Play' : ''], ['sale', sale ? 'Discounts & Events' : ''], ['hidefree', hideFree ? 'Hide free to play' : ''],
+    ['friends', friends ? 'Played by friends' : ''], ['maxSize', maxSize ? `Under ${maxSize} GB` : ''], ['minSize', minSize ? `Over ${minSize} GB` : ''], ['under', under ? `Under ${fmt(under)}` : ''], ['minRating', minRating ? `${minRating}%+ positive` : ''], ['handheld', handheld ? `Handheld: ${handheld}` : '']]
   const active = chips.filter(([, v]) => v)
+  const rvIcon = (r: number) => (r >= 70 ? 'rv-pos' : r >= 40 ? 'rv-mixed' : 'rv-neg')
 
   return (
-    <div className="container browse">
-      <div>
-        <h1>{list.length} result{list.length === 1 ? '' : 's'} match your search.</h1>
-        {list.length === 0 && <p className="muted">Try removing a filter. <Link to="/store">Back to featured</Link></p>}
-        <div className="list">{list.map(g => <ListRow key={g.id} g={g} />)}</div>
+    <div className="container browse2">
+      <div className="chips">{active.map(([k, v]) => <button key={k} className="fchip" onClick={() => set(k, null)}>{v} <span aria-hidden>⊗</span></button>)}</div>
+      <div className="browse-grid">
+        <div>
+          <form className="sbar" onSubmit={e => { e.preventDefault(); set('q', draft.trim()) }}>
+            <input value={draft} onChange={e => setDraft(e.target.value)} aria-label="Search" />
+            <button className="sbtn">Search</button>
+            <span className="grow" />
+            <label className="sortlbl">Sort by
+              <select value={sort} onChange={e => set('sort', e.target.value)} aria-label="Sort by">
+                <option value="relevance">Relevance</option><option value="new">Release date</option><option value="top">Most reviews</option><option value="rating">User reviews</option><option value="price">Price</option>
+              </select></label>
+          </form>
+          <div className="resinfo"><span>{list.length} result{list.length === 1 ? '' : 's'} match your search.{store.ignored.length > 0 && !showIgnored && ` ${store.ignored.length} title${store.ignored.length === 1 ? ' has' : 's have'} been excluded based on your preferences.`} {store.ignored.length > 0 && <button className="link-btn small" onClick={() => set('ignored', showIgnored ? null : '1')}>{showIgnored ? 'Back to results' : 'Show ignored'}</button>}</span></div>
+          <div className="srows">
+            {list.map(g => (
+              <Link key={g.id} to={`/store/${g.id}`} className="srow">
+                <div className="srow-art"><Art game={g} kind="header" /></div>
+                <div className="srow-main"><div className="srow-title">{g.title}</div><Plats /></div>
+                <div className="srow-date">{new Date(g.released).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                <span className={`rvthumb ${rvIcon(g.rating)}`} title={`${reviewLabel(g.rating)} (${compact(g.reviews)})`}><Icon name="thumbUp" size={14} /></span>
+                <SearchPrice g={g} />
+              </Link>
+            ))}
+            {list.length === 0 && <p className="muted" style={{ padding: 16 }}>No results. Try removing a filter or <Link to="/store">go back to the store</Link>.</p>}
+          </div>
+        </div>
+        <aside className="nside">
+          <Panel title="Narrow by Price" open0>
+            <input type="range" min={0} max={6000} step={500} value={under || 6000} onChange={e => set('under', Number(e.target.value) >= 6000 ? null : e.target.value)} aria-label="Maximum price" />
+            <div className="anyprice">{under ? `Under ${fmt(under)}` : 'Any Price'}</div>
+            <label className="chk"><input type="checkbox" checked={sale} onChange={() => set('sale', sale ? null : '1')} /> Discounts &amp; Events</label>
+            <label className="chk"><input type="checkbox" checked={hideFree} onChange={() => set('hidefree', hideFree ? null : '1')} /> Hide free to play items</label>
+          </Panel>
+          <Panel title="Narrow by tag" open0>
+            {tagCounts.filter(([t]) => t.toLowerCase().includes(tagQ.toLowerCase())).slice(0, tagQ ? 12 : 6).map(([t, n]) => (
+              <div key={t} className="chk tagline"><label><input type="checkbox" checked={tag === t} onChange={() => set('tag', tag === t ? null : t)} /> {t} <i>{n}</i></label>
+                <button className="excl" onClick={() => set('notag', noTag === t ? null : t)} aria-label={`Exclude ${t}`} title="Exclude">−</button></div>
+            ))}
+            <input className="tagsearch" placeholder="search for more tags" value={tagQ} onChange={e => setTagQ(e.target.value)} aria-label="Search tags" />
+          </Panel>
+          <Panel title="Narrow by genre">{GENRES.map(g => <label key={g} className="chk"><input type="checkbox" checked={genre === g} onChange={() => set('genre', genre === g ? null : g)} /> {g} <i>{GAMES.filter(x => x.genre.includes(g)).length}</i></label>)}</Panel>
+          <Panel title="Narrow by number of players">{['Singleplayer', 'Multiplayer', 'Co-op', 'Local Multiplayer'].map(t => <label key={t} className="chk"><input type="checkbox" checked={tag === t} onChange={() => set('tag', tag === t ? null : t)} /> {t}</label>)}</Panel>
+          <Panel title="Narrow by handheld compatibility">
+            {([['verified', 'Verified', GAMES.filter(g => g.sizeGb <= 10).length], ['playable', 'Playable', GAMES.filter(g => g.sizeGb <= 30).length]] as const).map(([k, l, n]) => (
+              <label key={k} className="chk"><input type="checkbox" checked={handheld === k} onChange={() => set('handheld', handheld === k ? null : k)} /> {l} <i>{n}</i></label>))}
+            <button className="link-btn small" onClick={() => store.toast('Compatibility is estimated from install size in this demo')}>Learn More</button>
+          </Panel>
+          <Panel title="Narrow by user reviews">{[95, 80, 70].map(r => <label key={r} className="chk"><input type="checkbox" checked={minRating === r} onChange={() => set('minRating', minRating === r ? null : String(r))} /> {r}% or higher</label>)}</Panel>
+        </aside>
       </div>
-      <aside className="filters">
-        <h2>Sort by</h2>
-        <select className="input" value={sort} onChange={e => set('sort', e.target.value)}>
-          <option value="relevance">Relevance</option><option value="new">Release date</option><option value="top">Most reviews</option><option value="rating">User reviews</option><option value="price">Price</option>
-        </select>
-        {active.length > 0 && (<><h2 className="mt">Active filters</h2><div className="tagcloud">{active.map(([k, v]) => <button key={k} className="tagchip x" onClick={() => set(k, null)}>{v} ✕</button>)}</div></>)}
-        <h2 className="mt">Narrow by genre</h2>
-        <div className="checks">{GENRES.map(g => <label key={g}><input type="checkbox" checked={genre === g} onChange={() => set('genre', genre === g ? null : g)} /> {g}</label>)}</div>
-        <h2 className="mt">Narrow by tag</h2>
-        <div className="tagcloud">{ALL_TAGS.slice(0, 16).map(t => <button key={t} className={`tagchip ${tag === t ? 'sel' : ''}`} onClick={() => set('tag', tag === t ? null : t)}>{t}</button>)}</div>
-        <h2 className="mt">Narrow by price</h2>
-        <input type="range" min={0} max={6000} step={500} value={under || 6000} onChange={e => set('under', Number(e.target.value) >= 6000 ? null : e.target.value)} />
-        <div className="small muted">{under ? `Under ${fmt(under)}` : 'Any price'}</div>
-      </aside>
     </div>
   )
 })
 
 /* ---------- cart ---------- */
+const PayModal = observer(({ onClose, onDone }: { onClose: () => void; onDone: (ids: number[]) => void }) => {
+  const [err, setErr] = useState('')
+  const short = store.cartTotal > store.wallet
+  return (
+    <Modal title="Payment method" onClose={onClose} width={480}>
+      <div className="paybox"><Icon name="card" size={34} /><div className="grow"><b>reSteam Wallet</b><div className="muted small">Balance {fmt(store.wallet)}</div></div><b>{fmt(store.cartTotal)}</b></div>
+      {short && <div className="err small">You need {fmt(store.cartTotal - store.wallet)} more. <button className="link-btn" onClick={() => store.addFunds(2000)}>Add {fmt(2000)} to wallet</button></div>}
+      {err && <div className="err">{err}</div>}
+      <p className="muted small">A purchase of a digital product grants a license for the product on reSteam.</p>
+      <div className="modal-actions"><button className="btn" onClick={onClose}>Back</button>
+        <button className="btn green" disabled={short} onClick={() => { const ids = store.cart.slice(); if (store.checkout()) onDone(ids); else setErr('Not enough funds in your wallet.') }}>Purchase</button></div>
+    </Modal>
+  )
+})
+
 export const Cart = observer(() => {
   const nav = useNavigate()
-  const [err, setErr] = useState('')
   const [done, setDone] = useState<number[] | null>(null)
+  const [pay, setPay] = useState(false)
+  const recs = useMemo(() => [...GAMES].filter(g => !store.owned.includes(g.id) && !store.cart.includes(g.id)).sort((a, b) => b.discount - a.discount || b.rating - a.rating).slice(0, 3), [store.owned.length, store.cart.length])
   if (done) {
     const gs = GAMES.filter(g => done.includes(g.id))
     return (
-      <div className="container">
-        <h1>Thank you for your purchase!</h1>
-        <p className="muted">Your new games are in your library.</p>
-        {gs.map(g => <div key={g.id} className="lrow"><div className="lrow-art"><Art game={g} kind="header" /></div><div className="lrow-main"><div className="lrow-title">{g.title}</div></div>
+      <div className="container cart2">
+        <h1 className="cart-h1">Thank you for your purchase!</h1>
+        <p className="muted">Your new games have been added to your library.</p>
+        {gs.map(g => <div key={g.id} className="cart-item"><div className="ci-art"><Art game={g} kind="header" /></div><div className="grow"><b>{g.title}</b></div>
           <button className="btn blue" onClick={() => { store.install(g.id); nav('/downloads') }}>Install</button></div>)}
         <p><Link to="/library" className="btn green">Go to my library</Link></p>
       </div>
     )
   }
-  const short = store.cartTotal > store.wallet
+  const empty = store.cartGames.length === 0
   return (
-    <div className="container cart">
-      <h1>Your Shopping Cart</h1>
-      {store.cartGames.length === 0 ? <p className="muted">Your cart is empty. <Link to="/store">Continue shopping</Link></p> : (
-        <div className="cart-grid">
-          <div>
-            {store.cartGames.map(g => (
-              <div className="lrow" key={g.id}>
-                <div className="lrow-art"><Art game={g} kind="header" /></div>
-                <div className="lrow-main"><Link to={`/store/${g.id}`} className="lrow-title">{g.title}</Link><div className="muted small">{g.sizeGb.toFixed(1)} GB</div></div>
-                <Price game={g} />
-                <button className="link-btn" onClick={() => store.removeFromCart(g.id)}>Remove</button>
-              </div>
-            ))}
+    <div className="container cart2">
+      <div className="crumbs2"><Link to="/store">Home</Link> &gt; <span>Your Shopping Cart</span></div>
+      <h1 className="cart-h1">Your Shopping Cart</h1>
+      <div className="cart-grid2">
+        <div>
+          <div className="cart-box">
+            {empty ? <div className="cart-empty">Your cart is empty.</div> : store.cartGames.map(g => (
+              <div className="cart-item" key={g.id}>
+                <div className="ci-art"><Art game={g} kind="header" /></div>
+                <div className="grow"><Link to={`/store/${g.id}`} className="ci-title">{g.title}</Link><div className="muted small"><Plats /> {g.sizeGb.toFixed(1)} GB</div></div>
+                <Price game={g} /><button className="link-btn" onClick={() => store.removeFromCart(g.id)}>Remove</button>
+              </div>))}
           </div>
-          <aside className="summary">
-            <div className="row-between"><span>Estimated total</span><b>{fmt(store.cartTotal)}</b></div>
-            <div className="row-between muted small"><span>Wallet balance</span><span>{fmt(store.wallet)}</span></div>
-            {short && <div className="err small">You need {fmt(store.cartTotal - store.wallet)} more in your wallet.</div>}
-            {err && <div className="err">{err}</div>}
-            <button className="btn green big-btn" disabled={short} onClick={() => { const ids = store.cart.slice(); if (store.checkout()) setDone(ids); else setErr('Not enough funds in your wallet.') }}>Purchase for myself</button>
-            <button className="btn" onClick={() => store.addFunds(2000)}>Add {fmt(2000)} to wallet</button>
-          </aside>
+          <div className="cart-btns">
+            <Link to="/store" className="btn gray">Continue Shopping</Link>
+            <button className="btn bluebig" disabled={empty} onClick={() => setPay(true)}>Continue to payment</button>
+          </div>
+          <h3 className="rec-title">RECOMMENDATIONS FOR YOU</h3>
+          <div className="rec3">{recs.map((g, i) => (
+            <Link key={g.id} to={`/store/${g.id}`} className="rec"><div className="rec-art"><Art game={g} kind="header" /></div>
+              <div className="rec-pill"><span className="rec-plats"><Plats /></span>{i < 2 && <span className="rec-new">NEW</span>}
+                {g.discount > 0 ? <><span className="rec-pct">-{g.discount}%</span><span className="rec-price"><s>{fmt(g.price)}</s><b>{fmt(priceOf(g))}</b></span></> : <span className="rec-price plain"><b>{fmt(g.price)}</b></span>}</div></Link>))}</div>
         </div>
-      )}
+        <aside className="cart-side">
+          <div className="est"><b>Estimated total</b><div className="est-total">{fmt(store.cartTotal)}</div><div className="small">Sales tax will be calculated during checkout where applicable</div>
+            <button className="btn bluebig full" disabled={empty} onClick={() => setPay(true)}>Continue to payment</button></div>
+          <div className="cart-ill">
+            <svg viewBox="0 0 300 150" aria-hidden><rect x="60" y="20" width="190" height="110" rx="4" fill="#0f1722" stroke="#33465c" /><rect x="70" y="30" width="60" height="90" fill="#17222f" /><rect x="136" y="30" width="104" height="52" fill="#2b3f66" /><rect x="136" y="90" width="104" height="8" fill="#1d2b3d" /><rect x="136" y="104" width="70" height="8" fill="#1d2b3d" /></svg>
+            <p>A purchase of a digital product grants a license for the product on reSteam.</p>
+          </div>
+        </aside>
+      </div>
+      {pay && <PayModal onClose={() => setPay(false)} onDone={ids => { setPay(false); setDone(ids) }} />}
     </div>
   )
 })

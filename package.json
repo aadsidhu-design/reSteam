@@ -12,7 +12,8 @@
     "db:seed": "node scripts/seed.ts",
     "db:local": "wrangler d1 migrations apply resteam --local",
     "deploy": "npm run build && wrangler deploy",
-    "coverage": "node scripts/treemap.ts"
+    "coverage": "node scripts/treemap.ts",
+    "check:css": "node scripts/css-collisions.ts"
   },
   "dependencies": {
     "mobx": "^7.0.6",
