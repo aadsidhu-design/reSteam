@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `0cebb7c`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `f888f72`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -16,7 +16,7 @@ Generated 2026-10-18 from commit `0cebb7c`. Run `npm run coverage` to refresh.
 | Automated checks | 283 |
 | Client routes | 25 |
 | Database tables | 34 |
-| Languages | 12 (460 strings) |
+| Languages | 12 (464 strings) |
 
 ## Fidelity by page
 
@@ -165,18 +165,18 @@ Generated 2026-10-18 from commit `0cebb7c`. Run `npm run coverage` to refresh.
 
 | Language | Strings | Coverage |
 | --- | --- | --- |
-| Chinese (Simplified) | 460/460 | 100% |
-| English | 460/460 | 100% |
-| French | 460/460 | 100% |
-| German | 460/460 | 100% |
-| Italian | 460/460 | 100% |
-| Japanese | 460/460 | 100% |
-| Korean | 460/460 | 100% |
-| Polish | 460/460 | 100% |
-| Portuguese (Brazil) | 460/460 | 100% |
-| Russian | 460/460 | 100% |
-| Spanish | 460/460 | 100% |
-| Turkish | 460/460 | 100% |
+| Chinese (Simplified) | 464/464 | 100% |
+| English | 464/464 | 100% |
+| French | 464/464 | 100% |
+| German | 464/464 | 100% |
+| Italian | 464/464 | 100% |
+| Japanese | 464/464 | 100% |
+| Korean | 464/464 | 100% |
+| Polish | 464/464 | 100% |
+| Portuguese (Brazil) | 464/464 | 100% |
+| Russian | 464/464 | 100% |
+| Spanish | 464/464 | 100% |
+| Turkish | 464/464 | 100% |
 
 ## UI text going through the translator
 
@@ -193,12 +193,12 @@ Generated 2026-10-18 from commit `0cebb7c`. Run `npm run coverage` to refresh.
 | NewReleases.tsx | 3 | 4 | 43% |
 | Developer.tsx | 32 | 22 | 59% |
 | Chrome.tsx | 47 | 20 | 70% |
-| Settings.tsx | 53 | 22 | 71% |
 | StorePages.tsx | 65 | 23 | 74% |
-| Friends.tsx | 37 | 10 | 79% |
+| Settings.tsx | 56 | 19 | 75% |
 | Reviews.tsx | 14 | 3 | 82% |
 | Library.tsx | 59 | 12 | 83% |
 | Community.tsx | 34 | 5 | 87% |
+| Friends.tsx | 43 | 4 | 91% |
 | Auth.tsx | 31 | 2 | 94% |
 | Profile.tsx | 22 | 1 | 96% |
 | StoreGame.tsx | 46 | 2 | 96% |

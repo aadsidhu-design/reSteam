@@ -166,7 +166,7 @@ const BODY: Record<string, { title: string; el: () => ReactNode }> = {
   security: { title: 'Security', el: () => <SecurityPane /> },
   notifications: { title: 'Notifications', el: () => (<>
     <Row label={t('se.sound')}><Toggle k="notifySounds" /></Row>
-    <Row label={t('se.marknotif')}><button className="btn small" onClick={() => void store.markAllRead()}>Mark read</button></Row></>) },
+    <Row label={t('se.marknotif')}><button className="btn small" onClick={() => void store.markAllRead()}>{t('set.markread')}</button></Row></>) },
   interface: { title: 'Interface', el: () => (<>
     <Row label={t('se.uiscale')} hint={`${Math.round(store.settings.uiScale * 100)}% of the default size`}><input type="range" min={0.85} max={1.3} step={0.05} value={store.settings.uiScale} onChange={e => (store.settings.uiScale = Number(e.target.value))} aria-label="UI scale" /></Row>
   </>) },
@@ -195,7 +195,7 @@ export const SettingsPage = observer(() => {
   return (
     <div className="settings">
       <div className="settings-in">
-        <div className="acct-crumbs"><Link to="/store">Home</Link> &gt; <span>Account</span></div>
+        <div className="acct-crumbs"><Link to="/store">{t('st.home')}</Link> &gt; <span>{t('set.account')}</span></div>
         <h1 className="acct-h1">{t('settings.title', { name: store.name })}</h1>
         <div className="acct-sub">Account name: {store.user?.username}</div>
         <div className="settings-grid">

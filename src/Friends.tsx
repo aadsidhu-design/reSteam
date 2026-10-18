@@ -68,7 +68,7 @@ const AddFriend = observer(() => {
           <div key={u.username} className="sres">
             <Avatar f={{ name: u.name }} size={32} ring={false} />
             <div className="grow"><div>{u.name}</div><div className="small muted">@{u.username}</div></div>
-            {isFriend ? <span className="small muted">Friends</span> : sent ? <span className="small muted">Invite sent</span> : <button className="btn small blue" onClick={() => void add(u.username)}>Add friend</button>}
+            {isFriend ? <span className="small muted">{t('pf.friendsn')}</span> : sent ? <span className="small muted">{t('pf.sent')}</span> : <button className="btn small blue" onClick={() => void add(u.username)}>Add friend</button>}
           </div>
         )
       })}
@@ -110,7 +110,7 @@ export const FriendsWindow = observer(() => {
   return (
     <>
       <ChatWindows />
-      <div className="fwin" role="dialog" aria-label="Friends and chat">
+      <div className="fwin" role="dialog" aria-label={t('fr2.window')}>
         <div className="fhead">
           <div className="fme">
             <Avatar f={me} size={52} />
@@ -179,7 +179,7 @@ export const FriendsWindow = observer(() => {
               {store.outgoing.map(r => (
                 <div key={r.username} className="frow static dim">
                   <Avatar f={{ name: r.name }} size={46} ring={false} />
-                  <div className="finfo"><div className="fname">{r.name}</div><div className="fstatus">Invite sent</div></div>
+                  <div className="finfo"><div className="fname">{r.name}</div><div className="fstatus">{t('pf.sent')}</div></div>
                   <button className="btn small" onClick={() => void store.declineRequest(r.username)}>Cancel</button>
                 </div>
               ))}
@@ -275,7 +275,7 @@ const ChatWindow = observer(({ id }: { id: string }) => {
         {grp ? <div className="gicon sm"><Icon name="group" size={16} /></div> : <Avatar f={{ name: friend!.name, status: friend!.presence.status }} size={26} />}
         <div className="chat-title"><b>{title}</b>{friend && <span className="small muted">{statusLine(friend)}</span>}{grp && members.length > 0 && <span className="small muted">{members.map(m => m.name).join(', ')}</span>}</div>
         <span className="grow" />
-        {friend && <button className="link-btn small" onClick={() => nav(`/profile/${friend.username}`)}>Profile</button>}
+        {friend && <button className="link-btn small" onClick={() => nav(`/profile/${friend.username}`)}>{t('fr2.profile')}</button>}
         {gameId && <button className="link-btn small" onClick={() => nav(`/store/${gameId}`)}>{t('fr.storepage')}</button>}
         {grp && <button className="link-btn small" onClick={() => setInviting(!inviting)}>{t('fr.invite')}</button>}
         {grp && <button className="link-btn small" onClick={() => void store.leaveGroup(gid)}>{t('fr.leave')}</button>}
@@ -300,7 +300,7 @@ const ChatWindow = observer(({ id }: { id: string }) => {
       </div>
       {emoji && <div className="emoji-pop">{EMOJI.map(e => <button key={e} type="button" onClick={() => { setText(text + e); setEmoji(false) }}>{e}</button>)}</div>}
       <form className="chat-form" onSubmit={async e => { e.preventDefault(); const t = text; setText(''); const err = isGroup ? await store.sendGroup(gid, t) : await store.send(id, t); if (err) setText(t) }}>
-        <button type="button" className="icon-btn emoji-btn" onClick={() => setEmoji(!emoji)} aria-label="Emoji">🙂</button>
+        <button type="button" className="icon-btn emoji-btn" onClick={() => setEmoji(!emoji)} aria-label={t('fr2.emoji')}>🙂</button>
         <input className="input" maxLength={500} placeholder={friend?.presence.status === 'offline' ? `${friend.name} is offline — they will see this later` : t('friends.send')} value={text}
           onChange={e => { setText(e.target.value); if (friend) store.sendTyping(friend.username) }} />
       </form>
