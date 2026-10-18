@@ -30,3 +30,15 @@ Notes from studying the public web storefront with [REA](https://github.com/morl
 - Accounts use cookie sessions, with a QR approval flow modeled on the two-device handshake above.
 - `ignored` and `followed` lists, like wishlist and library, are stored server-side with the account.
 - A single batched stats lookup feeds the store instead of per-card requests.
+
+## Store home load sequence (REA network capture, signed out)
+
+138 requests in 6 s. The non-asset calls, in order:
+
+1. `GET /` is server-rendered HTML for the shell and the first shelves.
+2. `GET /dynamicstore/saledata/` returns sale/event metadata for the banners.
+3. `GET /stats/monthlytopreleaseimages` supplies images for the "new releases" shelf.
+4. `GET /dynamicstore/userdata/` returns the signed-in user's wishlist, owned, ignored and followed ids (empty when signed out). reSteam folds this into `GET /api/me`.
+5. A batched `IStoreBrowseService/GetItems` call fetches full item data for every capsule at once. reSteam ships the catalog with the bundle and overlays live stats from `GET /api/stats`.
+
+The takeaway: render from a catalog fetch, then overlay per-user state, rather than one request per capsule.
