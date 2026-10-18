@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `6af0389`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `7a7bee7`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -12,11 +12,11 @@ Generated 2026-10-18 from commit `6af0389`. Run `npm run coverage` to refresh.
 | Backend behaviors replicated | 74 of 90 (1 partial, 15 not yet) |
 | Visual fidelity (average of compared pages) | 76 / 100 over 13 pages |
 | Behavior fidelity | 73 / 100 |
-| API endpoints | 98 (68 exercised by e2e checks) |
-| Automated checks | 176 |
+| API endpoints | 98 (98 exercised by e2e checks) |
+| Automated checks | 224 |
 | Client routes | 21 |
 | Database tables | 28 |
-| Languages | 12 (113 strings) |
+| Languages | 12 (186 strings) |
 
 ## Fidelity by page
 
@@ -48,7 +48,7 @@ Generated 2026-10-18 from commit `6af0389`. Run `npm run coverage` to refresh.
 | POST | `/auth/register` | Accounts | public | yes | yes |
 | POST | `/auth/login` | Accounts | public | yes | yes |
 | POST | `/auth/logout` | Accounts | public | - | yes |
-| GET | `/auth/me` | Accounts | yes | - | **no** |
+| GET | `/auth/me` | Accounts | yes | - | yes |
 | POST | `/auth/password` | Accounts | yes | yes | yes |
 | POST | `/auth/recover` | Accounts | public | yes | yes |
 | DELETE | `/auth/account` | Accounts | yes | yes | yes |
@@ -60,35 +60,35 @@ Generated 2026-10-18 from commit `6af0389`. Run `npm run coverage` to refresh.
 | GET | `/charts` | Community and stats | public | - | yes |
 | GET | `/games/:id/reviews` | Community and stats | public | - | yes |
 | PUT | `/games/:id/review` | Community and stats | yes | yes | yes |
-| DELETE | `/games/:id/review` | Community and stats | yes | yes | **no** |
+| DELETE | `/games/:id/review` | Community and stats | yes | yes | yes |
 | POST | `/reviews/:id/vote` | Community and stats | yes | yes | yes |
-| POST | `/reviews/:id/report` | Community and stats | yes | yes | **no** |
-| GET | `/games/:id/posts` | Community and stats | public | - | **no** |
+| POST | `/reviews/:id/report` | Community and stats | yes | yes | yes |
+| GET | `/games/:id/posts` | Community and stats | public | - | yes |
 | POST | `/games/:id/posts` | Community and stats | yes | yes | yes |
 | GET | `/posts/:id` | Community and stats | public | - | yes |
 | POST | `/posts/:id/replies` | Community and stats | yes | yes | yes |
-| POST | `/posts/:id/vote` | Community and stats | yes | yes | **no** |
+| POST | `/posts/:id/vote` | Community and stats | yes | yes | yes |
 | DELETE | `/posts/:id` | Community and stats | yes | yes | yes |
-| DELETE | `/replies/:id` | Community and stats | yes | yes | **no** |
+| DELETE | `/replies/:id` | Community and stats | yes | yes | yes |
 | POST | `/posts/:id/report` | Community and stats | yes | yes | yes |
-| POST | `/replies/:id/report` | Community and stats | yes | yes | **no** |
-| GET | `/community/feed` | Community and stats | public | - | **no** |
-| GET | `/community/hubs` | Community and stats | public | - | **no** |
-| GET | `/dev/genres` | Publishing and files | public | - | **no** |
-| GET | `/dev/games` | Publishing and files | yes | - | **no** |
+| POST | `/replies/:id/report` | Community and stats | yes | yes | yes |
+| GET | `/community/feed` | Community and stats | public | - | yes |
+| GET | `/community/hubs` | Community and stats | public | - | yes |
+| GET | `/dev/genres` | Publishing and files | public | - | yes |
+| GET | `/dev/games` | Publishing and files | yes | - | yes |
 | POST | `/dev/games` | Publishing and files | yes | yes | yes |
 | PUT | `/dev/games/:id` | Publishing and files | yes | yes | yes |
 | PUT | `/dev/games/:id/cover` | Publishing and files | yes | yes | yes |
 | PUT | `/dev/games/:id/shots/:n` | Publishing and files | yes | yes | yes |
-| DELETE | `/dev/games/:id/shots` | Publishing and files | yes | yes | **no** |
+| DELETE | `/dev/games/:id/shots` | Publishing and files | yes | yes | yes |
 | PUT | `/dev/games/:id/build` | Publishing and files | yes | yes | yes |
 | PUT | `/dev/games/:id/web` | Publishing and files | yes | yes | yes |
-| DELETE | `/dev/games/:id/build` | Publishing and files | yes | yes | **no** |
-| DELETE | `/dev/games/:id/web` | Publishing and files | yes | yes | **no** |
+| DELETE | `/dev/games/:id/build` | Publishing and files | yes | yes | yes |
+| DELETE | `/dev/games/:id/web` | Publishing and files | yes | yes | yes |
 | PUT | `/dev/games/:id/discount` | Publishing and files | yes | yes | yes |
 | GET | `/games/:id/news` | Publishing and files | public | - | yes |
 | POST | `/dev/games/:id/news` | Publishing and files | yes | yes | yes |
-| DELETE | `/dev/news/:id` | Publishing and files | yes | yes | **no** |
+| DELETE | `/dev/news/:id` | Publishing and files | yes | yes | yes |
 | POST | `/dev/games/:id/publish` | Publishing and files | yes | yes | yes |
 | POST | `/dev/games/:id/unpublish` | Publishing and files | yes | yes | yes |
 | DELETE | `/dev/games/:id` | Publishing and files | yes | yes | yes |
@@ -96,70 +96,70 @@ Generated 2026-10-18 from commit `6af0389`. Run `npm run coverage` to refresh.
 | GET | `/games/:id/shots/:n` | Publishing and files | public | - | yes |
 | GET | `/games/:id/download` | Publishing and files | yes | - | yes |
 | POST | `/games/:id/play-token` | Publishing and files | yes | yes | yes |
-| POST | `/games/:id/report` | Publishing and files | yes | yes | **no** |
+| POST | `/games/:id/report` | Publishing and files | yes | yes | yes |
 | GET | `/games` | Store, cart, library | public | - | yes |
 | GET | `/me` | Store, cart, library | yes | - | yes |
 | PUT | `/cart/:id` | Store, cart, library | yes | yes | yes |
 | DELETE | `/cart/:id` | Store, cart, library | yes | yes | yes |
 | PUT | `/wishlist/:id` | Store, cart, library | yes | yes | yes |
-| DELETE | `/wishlist/:id` | Store, cart, library | yes | yes | **no** |
+| DELETE | `/wishlist/:id` | Store, cart, library | yes | yes | yes |
 | PUT | `/ignored/:id` | Store, cart, library | yes | yes | yes |
-| DELETE | `/ignored/:id` | Store, cart, library | yes | yes | **no** |
+| DELETE | `/ignored/:id` | Store, cart, library | yes | yes | yes |
 | PUT | `/followed/:id` | Store, cart, library | yes | yes | yes |
-| DELETE | `/followed/:id` | Store, cart, library | yes | yes | **no** |
+| DELETE | `/followed/:id` | Store, cart, library | yes | yes | yes |
 | PUT | `/installed/:id` | Store, cart, library | yes | yes | yes |
-| DELETE | `/installed/:id` | Store, cart, library | yes | yes | **no** |
-| PUT | `/favorites/:id` | Store, cart, library | yes | yes | **no** |
-| DELETE | `/favorites/:id` | Store, cart, library | yes | yes | **no** |
+| DELETE | `/installed/:id` | Store, cart, library | yes | yes | yes |
+| PUT | `/favorites/:id` | Store, cart, library | yes | yes | yes |
+| DELETE | `/favorites/:id` | Store, cart, library | yes | yes | yes |
 | POST | `/checkout` | Store, cart, library | yes | yes | yes |
 | POST | `/wallet` | Store, cart, library | yes | yes | yes |
 | POST | `/claim/:id` | Store, cart, library | yes | yes | yes |
-| POST | `/redeem` | Store, cart, library | yes | yes | **no** |
+| POST | `/redeem` | Store, cart, library | yes | yes | yes |
 | POST | `/gift` | Store, cart, library | yes | yes | yes |
 | POST | `/playtime/:id` | Store, cart, library | yes | yes | yes |
 | PUT | `/profile` | Store, cart, library | yes | yes | yes |
 | GET | `/friends` | Friends, chat, presence | yes | - | yes |
 | POST | `/friends/requests` | Friends, chat, presence | yes | yes | yes |
 | POST | `/friends/requests/:username/accept` | Friends, chat, presence | yes | yes | yes |
-| DELETE | `/friends/requests/:username` | Friends, chat, presence | yes | yes | **no** |
-| DELETE | `/friends/:username` | Friends, chat, presence | yes | yes | **no** |
-| GET | `/blocks` | Friends, chat, presence | yes | - | **no** |
+| DELETE | `/friends/requests/:username` | Friends, chat, presence | yes | yes | yes |
+| DELETE | `/friends/:username` | Friends, chat, presence | yes | yes | yes |
+| GET | `/blocks` | Friends, chat, presence | yes | - | yes |
 | POST | `/blocks/:username` | Friends, chat, presence | yes | yes | yes |
 | DELETE | `/blocks/:username` | Friends, chat, presence | yes | yes | yes |
 | GET | `/users/search` | Friends, chat, presence | yes | - | yes |
 | GET | `/users/:username` | Friends, chat, presence | yes | - | yes |
 | PUT | `/presence` | Friends, chat, presence | yes | yes | yes |
 | POST | `/presence/playing` | Friends, chat, presence | yes | yes | yes |
-| POST | `/presence/ping` | Friends, chat, presence | yes | - | **no** |
+| POST | `/presence/ping` | Friends, chat, presence | yes | - | yes |
 | GET | `/chats/:username` | Friends, chat, presence | yes | - | yes |
 | POST | `/chats/:username` | Friends, chat, presence | yes | yes | yes |
-| POST | `/chats/:username/read` | Friends, chat, presence | yes | - | **no** |
+| POST | `/chats/:username/read` | Friends, chat, presence | yes | - | yes |
 | GET | `/groups` | Friends, chat, presence | yes | - | yes |
 | POST | `/groups` | Friends, chat, presence | yes | yes | yes |
 | GET | `/groups/:id/messages` | Friends, chat, presence | yes | - | yes |
 | POST | `/groups/:id/messages` | Friends, chat, presence | yes | yes | yes |
-| POST | `/groups/:id/invite` | Friends, chat, presence | yes | yes | **no** |
+| POST | `/groups/:id/invite` | Friends, chat, presence | yes | yes | yes |
 | POST | `/groups/:id/leave` | Friends, chat, presence | yes | yes | yes |
 | GET | `/notifications` | Friends, chat, presence | yes | - | yes |
-| POST | `/notifications/read` | Friends, chat, presence | yes | yes | **no** |
+| POST | `/notifications/read` | Friends, chat, presence | yes | yes | yes |
 | GET | `/activity` | Friends, chat, presence | yes | - | yes |
 
 ## Translation
 
 | Language | Strings | Coverage |
 | --- | --- | --- |
-| Chinese (Simplified) | 113/113 | 100% |
-| English | 113/113 | 100% |
-| French | 113/113 | 100% |
-| German | 113/113 | 100% |
-| Italian | 113/113 | 100% |
-| Japanese | 113/113 | 100% |
-| Korean | 113/113 | 100% |
-| Polish | 113/113 | 100% |
-| Portuguese (Brazil) | 113/113 | 100% |
-| Russian | 113/113 | 100% |
-| Spanish | 113/113 | 100% |
-| Turkish | 113/113 | 100% |
+| Chinese (Simplified) | 186/186 | 100% |
+| English | 186/186 | 100% |
+| French | 186/186 | 100% |
+| German | 186/186 | 100% |
+| Italian | 186/186 | 100% |
+| Japanese | 186/186 | 100% |
+| Korean | 186/186 | 100% |
+| Polish | 186/186 | 100% |
+| Portuguese (Brazil) | 186/186 | 100% |
+| Russian | 186/186 | 100% |
+| Spanish | 186/186 | 100% |
+| Turkish | 186/186 | 100% |
 
 ## UI text going through the translator
 
@@ -167,15 +167,9 @@ Generated 2026-10-18 from commit `6af0389`. Run `npm run coverage` to refresh.
 | --- | --- | --- | --- |
 | About.tsx | 0 | 8 | 0% |
 | App.tsx | 0 | 2 | 0% |
-| Charts.tsx | 0 | 2 | 0% |
-| Downloads.tsx | 0 | 13 | 0% |
-| Explore.tsx | 0 | 6 | 0% |
-| Player.tsx | 0 | 5 | 0% |
-| Profile.tsx | 0 | 19 | 0% |
 | Reviews.tsx | 0 | 17 | 0% |
 | ui.tsx | 0 | 3 | 0% |
 | Settings.tsx | 1 | 49 | 2% |
-| MegaMenu.tsx | 1 | 28 | 3% |
 | Developer.tsx | 3 | 37 | 8% |
 | Library.tsx | 10 | 56 | 15% |
 | Friends.tsx | 9 | 38 | 19% |
@@ -184,6 +178,12 @@ Generated 2026-10-18 from commit `6af0389`. Run `npm run coverage` to refresh.
 | Community.tsx | 11 | 26 | 30% |
 | StorePages.tsx | 31 | 56 | 36% |
 | Auth.tsx | 16 | 17 | 48% |
+| Profile.tsx | 18 | 1 | 95% |
+| Charts.tsx | 2 | 0 | 100% |
+| Downloads.tsx | 13 | 0 | 100% |
+| Explore.tsx | 6 | 0 | 100% |
+| MegaMenu.tsx | 40 | 0 | 100% |
+| Player.tsx | 5 | 0 | 100% |
 
 ## Features
 

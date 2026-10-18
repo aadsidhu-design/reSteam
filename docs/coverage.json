@@ -1,6 +1,6 @@
 {
   "generated": "2026-10-18",
-  "commit": "6af0389",
+  "commit": "7a7bee7",
   "summary": {
     "client": {
       "d": 211,
@@ -17,8 +17,8 @@
     "visualAvg": 75.76923076923077,
     "behaviorAvg": 72.84615384615384,
     "endpoints": 98,
-    "tested": 68,
-    "checks": 176,
+    "tested": 98,
+    "checks": 224,
     "routes": 21,
     "dbTables": 28
   },
@@ -235,7 +235,7 @@
       "area": "Accounts",
       "auth": true,
       "write": false,
-      "tested": false
+      "tested": true
     },
     {
       "method": "POST",
@@ -331,7 +331,7 @@
       "area": "Community and stats",
       "auth": true,
       "write": true,
-      "tested": false
+      "tested": true
     },
     {
       "method": "POST",
@@ -347,7 +347,7 @@
       "area": "Community and stats",
       "auth": true,
       "write": true,
-      "tested": false
+      "tested": true
     },
     {
       "method": "GET",
@@ -355,7 +355,7 @@
       "area": "Community and stats",
       "auth": false,
       "write": false,
-      "tested": false
+      "tested": true
     },
     {
       "method": "POST",
@@ -387,7 +387,7 @@
       "area": "Community and stats",
       "auth": true,
       "write": true,
-      "tested": false
+      "tested": true
     },
     {
       "method": "DELETE",
@@ -403,7 +403,7 @@
       "area": "Community and stats",
       "auth": true,
       "write": true,
-      "tested": false
+      "tested": true
     },
     {
       "method": "POST",
@@ -419,7 +419,7 @@
       "area": "Community and stats",
       "auth": true,
       "write": true,
-      "tested": false
+      "tested": true
     },
     {
       "method": "GET",
@@ -427,7 +427,7 @@
       "area": "Community and stats",
       "auth": false,
       "write": false,
-      "tested": false
+      "tested": true
     },
     {
       "method": "GET",
@@ -435,7 +435,7 @@
       "area": "Community and stats",
       "auth": false,
       "write": false,
-      "tested": false
+      "tested": true
     },
     {
       "method": "GET",
@@ -443,7 +443,7 @@
       "area": "Publishing and files",
       "auth": false,
       "write": false,
-      "tested": false
+      "tested": true
     },
     {
       "method": "GET",
@@ -451,7 +451,7 @@
       "area": "Publishing and files",
       "auth": true,
       "write": false,
-      "tested": false
+      "tested": true
     },
     {
       "method": "POST",
@@ -491,7 +491,7 @@
       "area": "Publishing and files",
       "auth": true,
       "write": true,
-      "tested": false
+      "tested": true
     },
     {
       "method": "PUT",
@@ -515,7 +515,7 @@
       "area": "Publishing and files",
       "auth": true,
       "write": true,
-      "tested": false
+      "tested": true
     },
     {
       "method": "DELETE",
@@ -523,7 +523,7 @@
       "area": "Publishing and files",
       "auth": true,
       "write": true,
-      "tested": false
+      "tested": true
     },
     {
       "method": "PUT",
@@ -555,7 +555,7 @@
       "area": "Publishing and files",
       "auth": true,
       "write": true,
-      "tested": false
+      "tested": true
     },
     {
       "method": "POST",
@@ -619,7 +619,7 @@
       "area": "Publishing and files",
       "auth": true,
       "write": true,
-      "tested": false
+      "tested": true
     },
     {
       "method": "GET",
@@ -667,7 +667,7 @@
       "area": "Store, cart, library",
       "auth": true,
       "write": true,
-      "tested": false
+      "tested": true
     },
     {
       "method": "PUT",
@@ -683,7 +683,7 @@
       "area": "Store, cart, library",
       "auth": true,
       "write": true,
-      "tested": false
+      "tested": true
     },
     {
       "method": "PUT",
@@ -699,7 +699,7 @@
       "area": "Store, cart, library",
       "auth": true,
       "write": true,
-      "tested": false
+      "tested": true
     },
     {
       "method": "PUT",
@@ -715,7 +715,7 @@
       "area": "Store, cart, library",
       "auth": true,
       "write": true,
-      "tested": false
+      "tested": true
     },
     {
       "method": "PUT",
@@ -723,7 +723,7 @@
       "area": "Store, cart, library",
       "auth": true,
       "write": true,
-      "tested": false
+      "tested": true
     },
     {
       "method": "DELETE",
@@ -731,7 +731,7 @@
       "area": "Store, cart, library",
       "auth": true,
       "write": true,
-      "tested": false
+      "tested": true
     },
     {
       "method": "POST",
@@ -763,7 +763,7 @@
       "area": "Store, cart, library",
       "auth": true,
       "write": true,
-      "tested": false
+      "tested": true
     },
     {
       "method": "POST",
@@ -819,7 +819,7 @@
       "area": "Friends, chat, presence",
       "auth": true,
       "write": true,
-      "tested": false
+      "tested": true
     },
     {
       "method": "DELETE",
@@ -827,7 +827,7 @@
       "area": "Friends, chat, presence",
       "auth": true,
       "write": true,
-      "tested": false
+      "tested": true
     },
     {
       "method": "GET",
@@ -835,7 +835,7 @@
       "area": "Friends, chat, presence",
       "auth": true,
       "write": false,
-      "tested": false
+      "tested": true
     },
     {
       "method": "POST",
@@ -891,7 +891,7 @@
       "area": "Friends, chat, presence",
       "auth": true,
       "write": false,
-      "tested": false
+      "tested": true
     },
     {
       "method": "GET",
@@ -915,7 +915,7 @@
       "area": "Friends, chat, presence",
       "auth": true,
       "write": false,
-      "tested": false
+      "tested": true
     },
     {
       "method": "GET",
@@ -955,7 +955,7 @@
       "area": "Friends, chat, presence",
       "auth": true,
       "write": true,
-      "tested": false
+      "tested": true
     },
     {
       "method": "POST",
@@ -979,7 +979,7 @@
       "area": "Friends, chat, presence",
       "auth": true,
       "write": true,
-      "tested": false
+      "tested": true
     },
     {
       "method": "GET",
@@ -994,74 +994,74 @@
     {
       "code": "schinese",
       "name": "Chinese (Simplified)",
-      "have": 113,
-      "total": 113
+      "have": 186,
+      "total": 186
     },
     {
       "code": "english",
       "name": "English",
-      "have": 113,
-      "total": 113
+      "have": 186,
+      "total": 186
     },
     {
       "code": "french",
       "name": "French",
-      "have": 113,
-      "total": 113
+      "have": 186,
+      "total": 186
     },
     {
       "code": "german",
       "name": "German",
-      "have": 113,
-      "total": 113
+      "have": 186,
+      "total": 186
     },
     {
       "code": "italian",
       "name": "Italian",
-      "have": 113,
-      "total": 113
+      "have": 186,
+      "total": 186
     },
     {
       "code": "japanese",
       "name": "Japanese",
-      "have": 113,
-      "total": 113
+      "have": 186,
+      "total": 186
     },
     {
       "code": "koreana",
       "name": "Korean",
-      "have": 113,
-      "total": 113
+      "have": 186,
+      "total": 186
     },
     {
       "code": "polish",
       "name": "Polish",
-      "have": 113,
-      "total": 113
+      "have": 186,
+      "total": 186
     },
     {
       "code": "brazilian",
       "name": "Portuguese (Brazil)",
-      "have": 113,
-      "total": 113
+      "have": 186,
+      "total": 186
     },
     {
       "code": "russian",
       "name": "Russian",
-      "have": 113,
-      "total": 113
+      "have": 186,
+      "total": 186
     },
     {
       "code": "spanish",
       "name": "Spanish",
-      "have": 113,
-      "total": 113
+      "have": 186,
+      "total": 186
     },
     {
       "code": "turkish",
       "name": "Turkish",
-      "have": 113,
-      "total": 113
+      "have": 186,
+      "total": 186
     }
   ],
   "textCoverage": [
@@ -1075,36 +1075,6 @@
       "file": "App.tsx",
       "translated": 0,
       "literals": 2,
-      "pct": 0
-    },
-    {
-      "file": "Charts.tsx",
-      "translated": 0,
-      "literals": 2,
-      "pct": 0
-    },
-    {
-      "file": "Downloads.tsx",
-      "translated": 0,
-      "literals": 13,
-      "pct": 0
-    },
-    {
-      "file": "Explore.tsx",
-      "translated": 0,
-      "literals": 6,
-      "pct": 0
-    },
-    {
-      "file": "Player.tsx",
-      "translated": 0,
-      "literals": 5,
-      "pct": 0
-    },
-    {
-      "file": "Profile.tsx",
-      "translated": 0,
-      "literals": 19,
       "pct": 0
     },
     {
@@ -1124,12 +1094,6 @@
       "translated": 1,
       "literals": 49,
       "pct": 2
-    },
-    {
-      "file": "MegaMenu.tsx",
-      "translated": 1,
-      "literals": 28,
-      "pct": 3.4482758620689653
     },
     {
       "file": "Developer.tsx",
@@ -1178,6 +1142,42 @@
       "translated": 16,
       "literals": 17,
       "pct": 48.484848484848484
+    },
+    {
+      "file": "Profile.tsx",
+      "translated": 18,
+      "literals": 1,
+      "pct": 94.73684210526315
+    },
+    {
+      "file": "Charts.tsx",
+      "translated": 2,
+      "literals": 0,
+      "pct": 100
+    },
+    {
+      "file": "Downloads.tsx",
+      "translated": 13,
+      "literals": 0,
+      "pct": 100
+    },
+    {
+      "file": "Explore.tsx",
+      "translated": 6,
+      "literals": 0,
+      "pct": 100
+    },
+    {
+      "file": "MegaMenu.tsx",
+      "translated": 40,
+      "literals": 0,
+      "pct": 100
+    },
+    {
+      "file": "Player.tsx",
+      "translated": 5,
+      "literals": 0,
+      "pct": 100
     }
   ],
   "evidence": [

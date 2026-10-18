@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { t } from './i18n'
 import { Link } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { GAMES, compact, reviewLabel, type Game } from './data'
@@ -39,15 +40,15 @@ export const Explore = observer(() => {
   if (done) {
     return (
       <div className="container dq-page">
-        <h1>Your Discovery Queue is complete</h1>
+        <h1>{t('dq.done')}</h1>
         <p className="muted">You have looked at all {items.length} recommendations for today. A fresh queue appears tomorrow, or you can look at more now.</p>
-        <div className="dq-done"><button className="btn blue" onClick={restart}>Generate another queue</button><Link to="/store" className="btn">Back to the store</Link></div>
+        <div className="dq-done"><button className="btn blue" onClick={restart}>{t('dq.another')}</button><Link to="/store" className="btn">{t('dq.back')}</Link></div>
       </div>
     )
   }
   return (
     <div className="container dq-page">
-      <div className="dq-head"><h1>Your Discovery Queue</h1><div className="muted">{q.at + 1} of {items.length}</div></div>
+      <div className="dq-head"><h1>{t('mm.queue')}</h1><div className="muted">{q.at + 1} of {items.length}</div></div>
       <div className="dq-bar"><span style={{ width: `${(q.at / items.length) * 100}%` }} /></div>
       <div className="dq-card">
         <Link to={`/store/${g.id}`} className="dq-art"><Art game={g} kind="wide" /></Link>
@@ -62,9 +63,9 @@ export const Explore = observer(() => {
       </div>
       <div className="dq-actions">
         <button className="btn bright" onClick={() => { store.toggleWishlist(g.id); }}><Icon name="star" size={16} /> {store.wishlist.includes(g.id) ? 'On your wishlist' : 'Add to your wishlist'}</button>
-        <button className="btn" onClick={() => { if (!store.signedIn) return; store.toggleIgnore(g.id); next() }}>Not interested</button>
+        <button className="btn" onClick={() => { if (!store.signedIn) return; store.toggleIgnore(g.id); next() }}>{t('dq.notint')}</button>
         <span className="grow" />
-        <button className="btn blue big" onClick={next}>Next in Queue <Icon name="chevronRight" size={18} /></button>
+        <button className="btn blue big" onClick={next}>{t('dq.next')} <Icon name="chevronRight" size={18} /></button>
       </div>
     </div>
   )

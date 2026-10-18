@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { t } from './i18n'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { GAMES } from './data'
@@ -28,17 +29,17 @@ export const Player = observer(() => {
     if (g && store.running === null && src) void store.play(g.id)
   }, [g, src]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (!g) return <div className="container"><h1>Game not found</h1></div>
-  if (!g.playable) return <div className="container"><h1>{g.title}</h1><p className="muted">This game has no browser build. <Link to={`/library/${g.id}`}>Open it in your library</Link>.</p></div>
+  if (!g) return <div className="container"><h1>{t('pl.notfound')}</h1></div>
+  if (!g.playable) return <div className="container"><h1>{g.title}</h1><p className="muted">{t('pl.nobuild')} <Link to={`/library/${g.id}`}>{t('pl.open')}</Link>.</p></div>
 
   return (
     <div className={`player ${full ? 'full' : ''}`}>
       <div className="player-bar">
-        <button className="btn small" onClick={() => nav(`/library/${g.id}`)}><Icon name="back" size={16} /> Library</button>
+        <button className="btn small" onClick={() => nav(`/library/${g.id}`)}><Icon name="back" size={16} /> {t('nav.library')}</button>
         <b className="grow">{g.title}</b>
         <span className="muted small">Playing as {store.name}</span>
         <button className="btn small" onClick={() => setFull(!full)}>{full ? 'Exit full window' : 'Full window'}</button>
-        <button className="btn small red" onClick={() => { store.stop(); nav(`/library/${g.id}`) }}>Stop</button>
+        <button className="btn small red" onClick={() => { store.stop(); nav(`/library/${g.id}`) }}>{t('pl.stop')}</button>
       </div>
       <div className="player-stage">
         {err ? <p className="err">{err}</p> : !src ? <Loading text="Starting game" /> : (

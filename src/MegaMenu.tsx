@@ -30,26 +30,25 @@ const Blue = ({ to, label, icon, onGo }: { to: string; label: string; icon: Para
 const Browse = ({ go }: { go: () => void }) => {
   const hero = topOf(g => g.discount > 0) ?? GAMES[0]
   const rows: [string, string, string?][] = [
-    ['Store Home', '/store'],
-    ['New Releases', '/store/browse?sort=new', 'Explore new content on reSteam'],
-    ['All Charts & Stats', '/charts', 'See what players own, play and wishlist'],
-    ['Top Sellers', '/store/browse?sort=top', 'The games players own and review most'],
-    ['Discounts & Events', '/store/browse?sale=1'],
-    ['Free to Play', '/store/browse?free=1'],
-    ['Browser Games', '/store/browse?playable=1', 'Play instantly, nothing to install'],
-    ['Upload a Game', '/developer', 'Publish your own game'],
+    [t('mm.storehome'), '/store'],
+    [t('mm.newreleases'), '/store/browse?sort=new', t('mm.newreleasesdesc')],
+    [t('mm.charts'), '/charts', t('mm.chartsdesc')],
+    [t('home.discounts'), '/store/browse?sale=1'],
+    [t('home.free'), '/store/browse?free=1'],
+    [t('mm.browsergames'), '/store/browse?playable=1'],
+    [t('auth.upload'), '/developer'],
   ]
   return (
     <div className="mg-browse">
       <div className="mg-list">
         {rows.map(([t, to, sub]) => <Link key={t} to={to} onClick={go} className="mg-row"><b>{t}</b>{sub && <span>{sub}</span>}</Link>)}
       </div>
-      <Link to="/store/browse?sort=top" onClick={go} className="mg-hero"><Art game={hero} kind="wide" showTitle={false} /><span className="mg-hero-btn">TOP SELLERS</span></Link>
+      <Link to="/store/browse?sort=top" onClick={go} className="mg-hero"><Art game={hero} kind="wide" showTitle={false} /><span className="mg-hero-btn">{t('mm.topsellers')}</span></Link>
       <div className="mg-list narrow">
-        <Link to="/store/browse" onClick={go} className="mg-link">Advanced Search</Link>
-        <Link to="/wishlist" onClick={go} className="mg-link">My Wishlist</Link>
-        <Link to="/settings/account" onClick={go} className="mg-link">My Account</Link>
-        <Link to="/community" onClick={go} className="mg-link">Community</Link>
+        <Link to="/store/browse" onClick={go} className="mg-link">{t('mm.advsearch')}</Link>
+        <Link to="/wishlist" onClick={go} className="mg-link">{t('mm.mywish')}</Link>
+        <Link to="/settings/account" onClick={go} className="mg-link">{t('mm.myaccount')}</Link>
+        <Link to="/community" onClick={go} className="mg-link">{t('nav.community')}</Link>
       </div>
     </div>
   )
@@ -61,7 +60,7 @@ const Recommendations = observer(({ go }: { go: () => void }) => {
   return (
     <div className="mg-reco">
       <div>
-        <h4 className="mg-h">RECOMMENDED FOR YOU</h4>
+        <h4 className="mg-h">{t('mm.recfor')}</h4>
         {picks.map(g => (
           <Link key={g.id} to={`/store/${g.id}`} onClick={go} className="mg-pick"><div className="mg-pick-art"><Art game={g} kind="header" /></div><div><b>{g.title}</b><span>{fmt(priceOf(g))}</span></div></Link>
         ))}
@@ -69,16 +68,16 @@ const Recommendations = observer(({ go }: { go: () => void }) => {
       <div className="mg-promo">
         <span className="mg-new">NEW</span>
         <Icon name="clock" size={34} />
-        <div><b>Your Discovery Queue</b><p>Look through a fresh list of games picked from what players own, review and follow.</p>
-          <Link to={store.signedIn ? '/explore' : '/login?next=/explore'} onClick={go} className="btn bright big mg-cta">Explore My Queue <Icon name="chevronRight" size={18} /></Link></div>
+        <div><b>{t('mm.queue')}</b><p>{t('mm.queuedesc')}</p>
+          <Link to={store.signedIn ? '/explore' : '/login?next=/explore'} onClick={go} className="btn bright big mg-cta">{t('mm.explorequeue')} <Icon name="chevronRight" size={18} /></Link></div>
       </div>
       <div className="mg-list narrow right">
-        <Link to="/explore" onClick={go} className="mg-link">Your Discovery Queue</Link>
-        <Link to="/community" onClick={go} className="mg-link">Community Recommendations</Link>
-        <Link to="/store/browse?sort=new" onClick={go} className="mg-link">New Releases Queue</Link>
-        <Link to={store.signedIn ? '/store/browse?friends=1' : '/login?next=/store'} onClick={go} className="mg-link">Popular Among Friends</Link>
-        <Link to={store.signedIn ? '/store/browse?followed=1' : '/login?next=/store'} onClick={go} className="mg-link">Games You Follow</Link>
-        <Link to="/store/browse?sort=rating" onClick={go} className="mg-link">Highest Rated</Link>
+        <Link to="/explore" onClick={go} className="mg-link">{t('mm.queue')}</Link>
+        <Link to="/community" onClick={go} className="mg-link">{t('mm.commrec')}</Link>
+        <Link to="/store/browse?sort=new" onClick={go} className="mg-link">{t('mm.newq')}</Link>
+        <Link to={store.signedIn ? '/store/browse?friends=1' : '/login?next=/store'} onClick={go} className="mg-link">{t('mm.friendsplay')}</Link>
+        <Link to={store.signedIn ? '/store/browse?followed=1' : '/login?next=/store'} onClick={go} className="mg-link">{t('mm.followed')}</Link>
+        <Link to="/store/browse?sort=rating" onClick={go} className="mg-link">{t('mm.highest')}</Link>
       </div>
     </div>
   )
@@ -94,13 +93,13 @@ const Categories = ({ go }: { go: () => void }) => {
   }, [GENRES.length])
   return (
     <div className="mg-cats">
-      <h4 className="mg-h">POPULAR CATEGORIES</h4>
+      <h4 className="mg-h">{t('mm.popcats')}</h4>
       <div className="mg-tiles">{topGenres.map(g => <Tile key={g} to={`/store/browse?genre=${enc(g)}`} label={g.toUpperCase()} game={topOf(x => x.genre.includes(g))} onGo={go} />)}</div>
       <div className="mg-pills">
         {topTags.map(t => <Link key={t} to={`/store/browse?tag=${enc(t)}`} onClick={go} className="mg-pill">{t}</Link>)}
-        <Link to="/store/browse" onClick={go} className="mg-all">View all tags <Icon name="chevronRight" size={14} /></Link>
+        <Link to="/store/browse" onClick={go} className="mg-all">{t('mm.alltags')} <Icon name="chevronRight" size={14} /></Link>
       </div>
-      <div className="mg-gh"><h4 className="mg-h">ALL GENRES &amp; THEMES</h4><button className="mg-expand" onClick={() => setExpand(!expand)}>{expand ? 'Collapse' : 'Expand'} <Icon name="chevronDown" size={16} /></button></div>
+      <div className="mg-gh"><h4 className="mg-h">{t('mm.allgenres')}</h4><button className="mg-expand" onClick={() => setExpand(!expand)}>{expand ? t('mm.collapse') : t('mm.expand')} <Icon name="chevronDown" size={16} /></button></div>
       <div className={`mg-cols ${expand ? 'open' : ''}`}>
         {cols.map((c, i) => <div key={i}>{c.map(g => <Link key={g} to={`/store/browse?genre=${enc(g)}`} onClick={go}>{g}</Link>)}</div>)}
         {expand && <div className="mg-tagcloud">{ALL_TAGS.map(t => <Link key={t} to={`/store/browse?tag=${enc(t)}`} onClick={go}>{t}</Link>)}</div>}
@@ -111,19 +110,19 @@ const Categories = ({ go }: { go: () => void }) => {
 
 const Hardware = ({ go }: { go: () => void }) => (
   <div className="mg-hw">
-    <h4 className="mg-h">INSTALL SIZE</h4>
+    <h4 className="mg-h">{t('mm.installsize')}</h4>
     <div className="mg-tiles three">
       <Tile to="/store/browse?maxSize=5" label="LIGHT (UNDER 5 GB)" game={topOf(g => g.sizeGb <= 5)} onGo={go} />
       <Tile to="/store/browse?minSize=40" label="BIG (OVER 40 GB)" game={topOf(g => g.sizeGb >= 40)} onGo={go} />
       <Tile to="/store/browse?playable=1" label="PLAY IN THE BROWSER" game={topOf(g => !!g.playable) ?? GAMES[0]} onGo={go} />
     </div>
-    <div className="mg-links3"><Link to="/store/browse?maxSize=5" onClick={go}>Quick installs</Link><Link to="/store/browse?minSize=40" onClick={go}>Big installs</Link><Link to="/settings/storage" onClick={go}>Manage storage</Link></div>
+    <div className="mg-links3"><Link to="/store/browse?maxSize=5" onClick={go}>{t('mm.quick')}</Link><Link to="/store/browse?minSize=40" onClick={go}>{t('mm.big')}</Link><Link to="/settings/storage" onClick={go}>{t('mm.storage')}</Link></div>
   </div>
 )
 
 const Ways = ({ go }: { go: () => void }) => (
   <div className="mg-ways">
-    <h4 className="mg-h">WAYS TO PLAY GAMES</h4>
+    <h4 className="mg-h">{t('mm.ways')}</h4>
     <div className="mg-bluerow">
       <Blue to="/store/browse?playable=1" label="PLAY IN BROWSER" icon="monitor" onGo={go} />
       <Blue to="/store/browse?download=1" label="DOWNLOADABLE" icon="download" onGo={go} />
@@ -137,17 +136,17 @@ const Ways = ({ go }: { go: () => void }) => (
 
 const Special = ({ go }: { go: () => void }) => (
   <div className="mg-special">
-    <h4 className="mg-h">SPECIAL SECTIONS</h4>
+    <h4 className="mg-h">{t('mm.special')}</h4>
     <div className="mg-bluerow">
       <Blue to="/store/browse?free=1" label="FREE TO PLAY" icon="gift" onGo={go} />
       <Blue to="/store/browse?under=1000" label="UNDER $10" icon="card" onGo={go} />
       <Blue to="/store/browse?user=1" label="PLAYER UPLOADS" icon="person" onGo={go} />
     </div>
     <div className="mg-list narrow right">
-      <Link to="/store/browse?sale=1" onClick={go} className="mg-link">Discounts &amp; Events</Link>
-      <Link to="/store/browse?minRating=95" onClick={go} className="mg-link">Highly Rated (95%+)</Link>
-      <Link to="/community" onClick={go} className="mg-link">Community Hubs</Link>
-      <Link to="/developer" onClick={go} className="mg-link">Publish a Game</Link>
+      <Link to="/store/browse?sale=1" onClick={go} className="mg-link">{t('home.discounts')}</Link>
+      <Link to="/store/browse?minRating=95" onClick={go} className="mg-link">{t('mm.rated95')}</Link>
+      <Link to="/community" onClick={go} className="mg-link">{t('mm.hubs')}</Link>
+      <Link to="/developer" onClick={go} className="mg-link">{t('mm.publish')}</Link>
     </div>
   </div>
 )

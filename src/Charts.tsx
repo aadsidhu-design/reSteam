@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { t } from './i18n'
 import { Link } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { GAMES, compact } from './data'
@@ -24,7 +25,7 @@ export const ChartsPage = observer(() => {
   const meta = TABS.find(t => t[0] === tab)!
   return (
     <div className="container charts">
-      <h1>Charts &amp; Stats</h1>
+      <h1>{t('ch.title')}</h1>
       <div className="ch-tabs">{TABS.map(([k, label]) => <button key={k} className={k === tab ? 'on' : ''} onClick={() => setTab(k)}>{label}</button>)}</div>
       <p className="muted">{meta[2]}.</p>
       {data === null ? <Loading /> : (
@@ -46,7 +47,7 @@ export const ChartsPage = observer(() => {
               </Link>
             )
           })}
-          {data[tab].length === 0 && <p className="muted">Nothing here yet.</p>}
+          {data[tab].length === 0 && <p className="muted">{t('ch.nothing')}</p>}
         </div>
       )}
     </div>

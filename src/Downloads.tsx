@@ -1,4 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
+import { t } from './i18n'
 import { observer } from 'mobx-react-lite'
 import { GAMES } from './data'
 import { store } from './store'
@@ -41,11 +42,11 @@ export const Downloads = observer(() => {
         {cur && <div className="dl-banner-art"><Art game={cur} kind="hero" showTitle={false} /></div>}
         <Graph />
         <div className="dl-stats">
-          <div className="dl-stat"><span className="dl-ico blue"><Icon name="download" size={14} /></span><div><div className="caps">Network</div><b>{rate(speed)}</b></div></div>
-          <div className="dl-stat"><span className="dl-ico blue"><Icon name="download" size={14} /></span><div><div className="caps">Peak</div><b>{rate(store.peakSpeed)}</b></div></div>
-          <div className="dl-stat"><span className="dl-ico green">▬</span><div><div className="caps">Disk usage</div><b>{speed > 0 ? `${(speed * 0.9).toFixed(1)} MB/s` : '0 bps'}</b></div></div>
+          <div className="dl-stat"><span className="dl-ico blue"><Icon name="download" size={14} /></span><div><div className="caps">{t('dl.network')}</div><b>{rate(speed)}</b></div></div>
+          <div className="dl-stat"><span className="dl-ico blue"><Icon name="download" size={14} /></span><div><div className="caps">{t('dl.peak')}</div><b>{rate(store.peakSpeed)}</b></div></div>
+          <div className="dl-stat"><span className="dl-ico green">▬</span><div><div className="caps">{t('dl.disk')}</div><b>{speed > 0 ? `${(speed * 0.9).toFixed(1)} MB/s` : '0 bps'}</b></div></div>
         </div>
-        <button className="sq-btn dl-gear" onClick={() => nav('/settings/downloads')} aria-label="Download settings"><Icon name="gear" size={20} /></button>
+        <button className="sq-btn dl-gear" onClick={() => nav('/settings/downloads')} aria-label={t('dl.settings')}><Icon name="gear" size={20} /></button>
       </div>
 
       <div className="dl-body">
@@ -58,21 +59,21 @@ export const Downloads = observer(() => {
               <div className="dl-bar"><span style={{ width: `${active.progress}%` }} /></div>
               <div className="muted small">{((cur.sizeGb * active.progress) / 100).toFixed(2)} GB of {cur.sizeGb.toFixed(2)} GB · {eta(active.progress, active.speed, cur.sizeGb * 1024)}</div>
             </div>
-            <button className="btn" onClick={() => store.pause(active.id)}><Icon name="pause" size={18} /> Pause</button>
+            <button className="btn" onClick={() => store.pause(active.id)}><Icon name="pause" size={18} /> {t('dl.pause')}</button>
           </section>
         )}
 
         <section>
-          <div className="dl-head"><h3>Up Next <span className="muted">({waiting.length})</span></h3><span className="dl-line" />
+          <div className="dl-head"><h3>{t('dl.upnext')} <span className="muted">({waiting.length})</span></h3><span className="dl-line" />
             <Link to="/settings/downloads" className="muted small">Auto-updates {store.settings.autoUpdates ? 'enabled' : 'disabled'}</Link></div>
-          {waiting.length === 0 && <p className="muted dl-empty">There are no downloads in the queue</p>}
+          {waiting.length === 0 && <p className="muted dl-empty">{t('dl.none')}</p>}
           {waiting.map(d => {
             const g = gameOf(d.id)
             return (
               <div className="dl-row" key={d.id}>
                 <div className="dl-row-art"><Art game={g} kind="header" /></div>
                 <div className="grow"><div className="dl-title small-title">{g.title}</div><div className="muted small">{d.paused ? 'Paused' : 'Queued'} · {g.sizeGb.toFixed(2)} GB</div></div>
-                {d.paused ? <button className="btn small" onClick={() => store.resume(d.id)}>Resume</button> : <button className="btn small" onClick={() => store.moveToFront(d.id)}>Download next</button>}
+                {d.paused ? <button className="btn small" onClick={() => store.resume(d.id)}>{t('dl.resume')}</button> : <button className="btn small" onClick={() => store.moveToFront(d.id)}>{t('dl.next')}</button>}
                 <button className="icon-btn" onClick={() => store.cancel(d.id)} aria-label={`Remove ${g.title} from queue`}><Icon name="trash" size={18} /></button>
               </div>
             )
@@ -80,16 +81,16 @@ export const Downloads = observer(() => {
         </section>
 
         <section>
-          <div className="dl-head"><h3>Recently Completed <span className="muted">({store.completed.length})</span></h3><span className="dl-line" />
-            {store.completed.length > 0 && <button className="link-btn small" onClick={() => (store.completed = [])}>Clear</button>}</div>
-          {store.completed.length === 0 && <p className="muted dl-empty">Nothing has finished installing in this session</p>}
+          <div className="dl-head"><h3>{t('dl.recent')} <span className="muted">({store.completed.length})</span></h3><span className="dl-line" />
+            {store.completed.length > 0 && <button className="link-btn small" onClick={() => (store.completed = [])}>{t('dl.clear')}</button>}</div>
+          {store.completed.length === 0 && <p className="muted dl-empty">{t('dl.nothing')}</p>}
           {store.completed.map(c => {
             const g = gameOf(c.id)
             return (
               <div className="dl-row" key={`${c.id}-${c.at}`}>
                 <div className="dl-row-art"><Art game={g} kind="header" /></div>
                 <div className="grow"><Link to={`/library/${g.id}`} className="dl-title small-title">{g.title}</Link><div className="muted small">Installed · {g.sizeGb.toFixed(2)} GB</div></div>
-                <Link to={`/library/${g.id}`} className="btn small">Open in Library</Link>
+                <Link to={`/library/${g.id}`} className="btn small">{t('dl.open')}</Link>
               </div>
             )
           })}
