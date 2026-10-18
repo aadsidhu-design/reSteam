@@ -380,6 +380,9 @@ const ROWS: Row[] = [
   ['lb2.refund', 'Request a refund…', 'Solicitar un reembolso…', 'Demander un remboursement…', 'Rückerstattung anfordern…', 'Richiedi un rimborso…', 'Solicitar reembolso…', '返金を申請…', '환불 요청…', '申请退款…', 'Запросить возврат…', 'İade talep et…', 'Poproś o zwrot…'],
   ['lb2.games', 'Games', 'Juegos', 'Jeux', 'Spiele', 'Giochi', 'Jogos', 'ゲーム', '게임', '游戏', 'Игры', 'Oyunlar', 'Gry'],
   ['lb2.software', 'Software', 'Software', 'Logiciels', 'Software', 'Software', 'Software', 'ソフトウェア', '소프트웨어', '软件', 'Программы', 'Yazılım', 'Oprogramowanie'],
+  ['dv.release', 'Release update', 'Publicar actualización', 'Publier la mise à jour', 'Update veröffentlichen', 'Rilascia aggiornamento', 'Lançar atualização', 'アップデートを公開', '업데이트 배포', '发布更新', 'Выпустить обновление', 'Güncellemeyi yayınla', 'Wydaj aktualizację'],
+  ['dv.released', 'Update released', 'Actualización publicada', 'Mise à jour publiée', 'Update veröffentlicht', 'Aggiornamento rilasciato', 'Atualização lançada', 'アップデートを公開しました', '업데이트가 배포되었습니다', '更新已发布', 'Обновление выпущено', 'Güncelleme yayınlandı', 'Aktualizacja wydana'],
+  ['dv.viewstore', 'View store page', 'Ver página de la tienda', 'Voir la page du magasin', 'Shopseite ansehen', 'Vedi pagina del negozio', 'Ver página da loja', 'ストアページを見る', '상점 페이지 보기', '查看商店页面', 'Страница в магазине', 'Mağaza sayfasını gör', 'Zobacz stronę w sklepie'],
 ]
 
 export const PAGE_STRINGS: Record<Lang, Record<string, string>> = Object.fromEntries(

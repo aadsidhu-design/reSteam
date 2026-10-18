@@ -176,7 +176,7 @@ const Release = ({ g, done }: { g: Mine; done: (r: { error?: string }) => Promis
         <div className="muted small">Upload the new files above first, then describe what changed. Everyone who owns the game is notified and the notes appear in the news hub.</div>
         <textarea className="input" rows={3} maxLength={2000} placeholder="What changed in this version?" value={notes} onChange={e => { setNotes(e.target.value); setErr('') }} />
         {err && <div className="err small">{err}</div>}
-        <button className="btn small blue" disabled={notes.trim().length < 5} onClick={async () => { const r = await call('POST', `/dev/games/${g.id}/release`, { notes }); if (r.error) setErr(r.error); else { setNotes(''); store.toast('Update released'); await done({}) } }}>Release update</button>
+        <button className="btn small blue" disabled={notes.trim().length < 5} onClick={async () => { const r = await call('POST', `/dev/games/${g.id}/release`, { notes }); if (r.error) setErr(r.error); else { setNotes(''); store.toast(t('dv.released')); await done({}) } }}>{t('dv.release')}</button>
       </div>
     </div>
   )
@@ -210,7 +210,7 @@ const GameCard = observer(({ g, genres, reload }: { g: Mine; genres: string[]; r
           onClear={async () => done(await call('DELETE', `/dev/games/${g.id}/build`))} />
         <div className="dv-actions">
           {published
-            ? <><Link className="btn small blue" to={`/store/${g.id}`}>View store page</Link><button className="btn small" onClick={async () => done(await call('POST', `/dev/games/${g.id}/unpublish`))}>{t('dv.unpublish')}</button></>
+            ? <><Link className="btn small blue" to={`/store/${g.id}`}>{t('dv.viewstore')}</Link><button className="btn small" onClick={async () => done(await call('POST', `/dev/games/${g.id}/unpublish`))}>{t('dv.unpublish')}</button></>
             : <button className="btn small green" disabled={g.status === 'pending' || (!g.playable && !g.build)} title={!g.playable && !g.build ? 'Upload a web build or a downloadable build first' : undefined} onClick={async () => { const r = await call<{ status: string }>('POST', `/dev/games/${g.id}/publish`); await done(r); if (!r.error) store.toast(r.data?.status === 'pending' ? `${g.title} was submitted for review` : `${g.title} is live on the store`) }}>{t('dev.publish')}</button>}
           <button className="btn small" onClick={() => setEdit(true)}>{t('dv.edit')}</button>
           <button className="btn small red" onClick={async () => { if (confirm(`Delete ${g.title}? This removes it from every library, with its reviews and files.`)) done(await call('DELETE', `/dev/games/${g.id}`)) }}>Delete</button>
