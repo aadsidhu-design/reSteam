@@ -1,6 +1,6 @@
 {
   "generated": "2026-10-18",
-  "commit": "14a768c",
+  "commit": "6af0389",
   "summary": {
     "client": {
       "d": 211,
@@ -1096,12 +1096,6 @@
       "pct": 0
     },
     {
-      "file": "MegaMenu.tsx",
-      "translated": 0,
-      "literals": 28,
-      "pct": 0
-    },
-    {
       "file": "Player.tsx",
       "translated": 0,
       "literals": 5,
@@ -1120,16 +1114,22 @@
       "pct": 0
     },
     {
-      "file": "Settings.tsx",
-      "translated": 0,
-      "literals": 49,
-      "pct": 0
-    },
-    {
       "file": "ui.tsx",
       "translated": 0,
       "literals": 3,
       "pct": 0
+    },
+    {
+      "file": "Settings.tsx",
+      "translated": 1,
+      "literals": 49,
+      "pct": 2
+    },
+    {
+      "file": "MegaMenu.tsx",
+      "translated": 1,
+      "literals": 28,
+      "pct": 3.4482758620689653
     },
     {
       "file": "Developer.tsx",
@@ -1163,9 +1163,9 @@
     },
     {
       "file": "Community.tsx",
-      "translated": 9,
+      "translated": 11,
       "literals": 26,
-      "pct": 25.71428571428571
+      "pct": 29.72972972972973
     },
     {
       "file": "StorePages.tsx",

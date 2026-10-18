@@ -61,7 +61,7 @@ const langRows = ORDER.map((code, i) => {
 // How much of each screen's text goes through t(): translated call sites vs hard-coded literals (a heuristic, not a proof).
 const textCoverage = ls('src/').filter(f => /\.tsx$/.test(f) && !/^(main|art|icons)\./.test(f)).map(f => {
   const src = read(`src/${f}`)
-  const translated = (src.match(/\btr?\('/g) ?? []).length
+  const translated = (src.match(/\btr?\(/g) ?? []).length
   const literals = (src.match(/>\s*[A-Z][A-Za-z][^<>{}\n]{2,}\s*</g) ?? []).length + (src.match(/(placeholder|title|aria-label)="[A-Za-z][^"]{3,}"/g) ?? []).length
   return { file: f, translated, literals, pct: translated + literals ? (translated / (translated + literals)) * 100 : 100 }
 }).filter(r => r.translated + r.literals > 0).sort((a, b) => a.pct - b.pct)

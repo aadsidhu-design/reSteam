@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `14a768c`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `6af0389`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -170,18 +170,18 @@ Generated 2026-10-18 from commit `14a768c`. Run `npm run coverage` to refresh.
 | Charts.tsx | 0 | 2 | 0% |
 | Downloads.tsx | 0 | 13 | 0% |
 | Explore.tsx | 0 | 6 | 0% |
-| MegaMenu.tsx | 0 | 28 | 0% |
 | Player.tsx | 0 | 5 | 0% |
 | Profile.tsx | 0 | 19 | 0% |
 | Reviews.tsx | 0 | 17 | 0% |
-| Settings.tsx | 0 | 49 | 0% |
 | ui.tsx | 0 | 3 | 0% |
+| Settings.tsx | 1 | 49 | 2% |
+| MegaMenu.tsx | 1 | 28 | 3% |
 | Developer.tsx | 3 | 37 | 8% |
 | Library.tsx | 10 | 56 | 15% |
 | Friends.tsx | 9 | 38 | 19% |
 | StoreGame.tsx | 9 | 33 | 21% |
 | Chrome.tsx | 17 | 50 | 25% |
-| Community.tsx | 9 | 26 | 26% |
+| Community.tsx | 11 | 26 | 30% |
 | StorePages.tsx | 31 | 56 | 36% |
 | Auth.tsx | 16 | 17 | 48% |
 
