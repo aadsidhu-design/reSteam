@@ -1,6 +1,7 @@
 import { unzipSync } from 'fflate'
 import { type Ctx, type Env, type Route, b64url, cleanText, fail, json, randomBytes, readJson, route, sha256Hex, tooMany } from './util'
 import { logEvent, notify } from './social'
+import { isAdmin } from './admin'
 
 // Limits are deliberately small: this runs on a free-plan Worker and anyone can sign up.
 const MAX_GAMES_PER_USER = 10
@@ -404,10 +405,15 @@ export const devRoutes: Route[] = [
     const g = await ownedGame(c)
     if (!g) return fail(404, 'no such game')
     if (!g.web_entry && !g.build_name) return fail(400, 'Upload a web build or a downloadable build before publishing')
+    const needsReview = c.env.REQUIRE_APPROVAL === '1' && !isAdmin(c) && g.status !== 'published'
+    if (needsReview) {
+      await c.env.DB.prepare("UPDATE games SET status = 'pending' WHERE id = ?").bind(g.id).run()
+      return json({ ok: true, status: 'pending' })
+    }
     await c.env.DB.prepare("UPDATE games SET status = 'published', released = CASE WHEN released = '' THEN ? ELSE released END WHERE id = ?")
       .bind(new Date().toISOString().slice(0, 10), g.id).run()
     if (g.status !== 'published') c.wait(logEvent(c.env, c.user!.id, 'published', g.id))
-    return json({ ok: true })
+    return json({ ok: true, status: 'published' })
   }),
   route('POST', '/dev/games/:id/unpublish', {}, async c => {
     const g = await ownedGame(c)

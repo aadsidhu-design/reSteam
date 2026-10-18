@@ -98,6 +98,7 @@ class Store {
   followed: number[] = []
   status: 'online' | 'away' | 'offline' = 'online'
   privacy: Privacy = 'public'
+  admin = false
   // social
   friends: Friend[] = []
   incoming: FriendRequest[] = []
@@ -195,7 +196,7 @@ class Store {
   private clearAccount() {
     this.stopSocket()
     clearInterval(this.playTick)
-    this.user = null; this.running = null
+    this.user = null; this.running = null; this.admin = false
     this.owned = []; this.wishlist = []; this.cart = []; this.wallet = 0; this.installed = []; this.favorites = []
     this.lastPlayed = {}; this.playtime = {}; this.ignored = []; this.followed = []
     this.friends = []; this.incoming = []; this.outgoing = []; this.chats = {}; this.groups = []; this.groupMessages = {}; this.groupMembers = {}
@@ -207,6 +208,7 @@ class Store {
     this.account = 'in'
     this.startSocket()
     void this.refreshSocial()
+    void api<{ admin: boolean }>('GET', '/admin/me').then(r => runInAction(() => { this.admin = !!r?.admin }))
   }
   async bootstrap() {
     const m = await api<Me>('GET', '/me')
@@ -709,6 +711,8 @@ export const notificationText = (n: Pick<Notification, 'kind' | 'data'>): string
     case 'post_reply': return `${who} replied to your post "${n.data.title ?? ''}"`
     case 'review_helpful': return `${who} found your review helpful`
     case 'game_update': return `${n.data.title ?? 'A game you own'} was updated to version ${n.data.version}`
+    case 'game_approved': return `${n.data.title ?? 'Your game'} was approved and is now live`
+    case 'game_removed': return `${n.data.title ?? 'Your game'} was taken down: ${n.data.reason ?? 'see the moderators'}`
     case 'wishlist_sale': return `${n.data.title ?? 'A game on your wishlist'} is now ${n.data.percent}% off`
     case 'game_news': return `${n.data.title ?? 'A game you follow'}: ${n.data.headline ?? 'new announcement'}`
     case 'gift': return `${who} sent you ${n.data.cents ? `$${(Number(n.data.cents) / 100).toFixed(2)}` : 'a gift'} in wallet funds`

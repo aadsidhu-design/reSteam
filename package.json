@@ -9,6 +9,7 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "api": "wrangler dev --local --port 8787",
+    "api:test": "wrangler dev --local --port 8787 --var ADMIN_USERNAMES:e2e_admin --var REQUIRE_APPROVAL:1",
     "db:seed": "node scripts/seed.ts",
     "db:local": "wrangler d1 migrations apply resteam --local",
     "deploy": "npm run build && wrangler deploy",
@@ -16,7 +17,8 @@
     "coverage": "node scripts/coverage/index.ts",
     "check:css": "node scripts/css-collisions.ts",
     "typecheck": "tsc -b && tsc -p tsconfig.worker.json",
-    "test:e2e": "node scripts/e2e.mjs && node scripts/e2e-games.mjs && node scripts/e2e-extra.mjs"
+    "test:e2e": "node scripts/e2e.mjs && node scripts/e2e-games.mjs && node scripts/e2e-extra.mjs",
+    "test:admin": "node scripts/e2e-admin.mjs"
   },
   "dependencies": {
     "fflate": "^0.8.3",

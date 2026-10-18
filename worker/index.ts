@@ -1,5 +1,6 @@
 import { authenticate, authRoutes, readCookie, SESSION_COOKIE } from './auth'
 import { communityRoutes } from './community'
+import { adminRoutes } from './admin'
 import { devRoutes, servePlay } from './dev'
 import { shopRoutes } from './shop'
 import { socialRoutes } from './social'
@@ -7,7 +8,7 @@ import { type Ctx, type Env, type Route, HttpError, fail, json, tooMany } from '
 
 export { UserHub } from './hub'
 
-const ROUTES: Route[] = [...authRoutes, ...socialRoutes, ...communityRoutes, ...devRoutes, ...shopRoutes]
+const ROUTES: Route[] = [...authRoutes, ...socialRoutes, ...communityRoutes, ...devRoutes, ...adminRoutes, ...shopRoutes]
 
 const SECURITY_HEADERS: Record<string, string> = {
   'x-content-type-options': 'nosniff',

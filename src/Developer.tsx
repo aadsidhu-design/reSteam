@@ -190,7 +190,7 @@ const GameCard = observer(({ g, genres, reload }: { g: Mine; genres: string[]; r
     <div className="dv-card">
       <div className="dv-art"><Art game={g} kind="header" /></div>
       <div className="dv-main">
-        <div className="dv-head"><h3>{g.title}</h3><span className={`dv-badge ${published ? 'live' : ''}`}>{published ? t('dv.statuspub') : t('dv.statusdraft')}</span><span className="muted">{fmt(g.price)}</span></div>
+        <div className="dv-head"><h3>{g.title}</h3><span className={`dv-badge ${published ? 'live' : ''}`}>{published ? t('dv.statuspub') : g.status === 'pending' ? 'In review' : t('dv.statusdraft')}</span><span className="muted">{fmt(g.price)}</span></div>
         <p className="muted small">{g.blurb}</p>
         <FileSlot title={t('dv.cover')} hint="PNG, JPEG or WebP up to 2 MB. Shown on the store, library and community." accept="image/png,image/jpeg,image/webp" limit={LIMITS.cover}
           have={g.hasCover ? 'Cover uploaded' : null}
@@ -211,7 +211,7 @@ const GameCard = observer(({ g, genres, reload }: { g: Mine; genres: string[]; r
         <div className="dv-actions">
           {published
             ? <><Link className="btn small blue" to={`/store/${g.id}`}>View store page</Link><button className="btn small" onClick={async () => done(await call('POST', `/dev/games/${g.id}/unpublish`))}>{t('dv.unpublish')}</button></>
-            : <button className="btn small green" disabled={!g.playable && !g.build} title={!g.playable && !g.build ? 'Upload a web build or a downloadable build first' : undefined} onClick={async () => { const r = await call('POST', `/dev/games/${g.id}/publish`); await done(r); if (!r.error) store.toast(`${g.title} is live on the store`) }}>{t('dev.publish')}</button>}
+            : <button className="btn small green" disabled={g.status === 'pending' || (!g.playable && !g.build)} title={!g.playable && !g.build ? 'Upload a web build or a downloadable build first' : undefined} onClick={async () => { const r = await call<{ status: string }>('POST', `/dev/games/${g.id}/publish`); await done(r); if (!r.error) store.toast(r.data?.status === 'pending' ? `${g.title} was submitted for review` : `${g.title} is live on the store`) }}>{t('dev.publish')}</button>}
           <button className="btn small" onClick={() => setEdit(true)}>{t('dv.edit')}</button>
           <button className="btn small red" onClick={async () => { if (confirm(`Delete ${g.title}? This removes it from every library, with its reviews and files.`)) done(await call('DELETE', `/dev/games/${g.id}`)) }}>Delete</button>
         </div>

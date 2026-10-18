@@ -16,6 +16,9 @@
   ],
   // Uploaded games live here: `wrangler r2 bucket create resteam-files`
   "r2_buckets": [{ "binding": "FILES", "bucket_name": "resteam-files" }],
+  // Moderators: comma-separated usernames. Leave empty until you have an account to moderate with.
+  // Set REQUIRE_APPROVAL to "1" to hold new publications for review.
+  "vars": { "ADMIN_USERNAMES": "", "REQUIRE_APPROVAL": "0" },
   "ratelimits": [
     // approximate and per Cloudflare location, which is fine for abuse protection
     { "name": "GENERAL_LIMITER", "namespace_id": "1001", "simple": { "limit": 120, "period": 60 } },

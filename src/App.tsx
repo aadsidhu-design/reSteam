@@ -15,6 +15,7 @@ import { ChartsPage } from './Charts'
 import { NewReleases } from './NewReleases'
 import { Specials } from './Specials'
 import { NewsHub } from './NewsHub'
+import { Admin } from './Admin'
 import { Developer } from './Developer'
 import { GAMES } from './data'
 import { store } from './store'
@@ -37,6 +38,7 @@ const App = observer(() => {
             <Route path="/qr/:id" element={<QrApprove />} />
             <Route path="/about" element={<About />} />
             <Route path="/news" element={<NewsHub />} />
+            <Route path="/admin" element={<Admin />} />
             <Route path="/charts" element={<ChartsPage />} />
             <Route path="/explore" element={guard(<Explore />)} />
             <Route path="/play/:id" element={guard(<Player />)} />

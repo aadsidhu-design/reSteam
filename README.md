@@ -57,6 +57,10 @@ Anyone with an account can open **Upload a game** (`/developer`), create a game,
 - **Downloadable builds** are any file up to 50 MB. Owners download it from their library with real progress and speed; the file is saved to disk.
 - Files live in an R2 bucket (`FILES` binding); D1 holds metadata. Limits are small on purpose (10 games per account, 5 creations per hour, 15 MB zips, 40 MB unpacked, 300 files, covers must be real PNG/JPEG/WebP).
 
+## Moderation
+
+Nobody is a moderator by default. Set `ADMIN_USERNAMES` (comma-separated account names) in `wrangler.jsonc` `vars` to let those accounts open `/admin`, review reports, approve or reject submissions and take games down with a reason the owner sees. Set `REQUIRE_APPROVAL` to `"1"` to hold every new publication for review (moderators publish directly). `npm run api:test` starts a local API with both enabled and `npm run test:admin` exercises the flow.
+
 ## Run it locally
 
 ```bash

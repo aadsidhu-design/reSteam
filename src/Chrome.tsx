@@ -84,6 +84,7 @@ export const Header = observer(() => {
                   <button className="pop-item" onClick={() => { setMenu(null); nav('/profile') }}>{t('user.profile')}</button>
                   <button className="pop-item" onClick={() => { setMenu(null); store.friendsOpen = true }}>Friends &amp; Chat</button>
                   <button className="pop-item" onClick={() => { setMenu(null); nav('/downloads') }}>{t('user.downloads')}</button>
+                  {store.admin && <button className="pop-item" onClick={() => { setMenu(null); nav('/admin') }}>Moderation</button>}
                   <button className="pop-item" onClick={() => { setMenu(null); nav('/developer') }}>Upload a game</button>
                   <button className="pop-item" onClick={() => { setMenu(null); nav('/settings/account') }}>{t('user.account')}</button>
                   <button className="pop-item" onClick={() => { setMenu(null); nav('/settings/interface') }}>{t('user.settings')}</button>

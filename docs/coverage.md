@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `5f63650`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `54212fe`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -9,12 +9,12 @@ Generated 2026-10-18 from commit `5f63650`. Run `npm run coverage` to refresh.
 | Measure | Value |
 | --- | --- |
 | Client behaviors replicated | 222 of 250 (12 partial, 16 not yet) |
-| Backend behaviors replicated | 75 of 90 (1 partial, 14 not yet) |
+| Backend behaviors replicated | 77 of 90 (1 partial, 12 not yet) |
 | Visual fidelity (average of compared pages) | 75 / 100 over 20 pages |
 | Behavior fidelity | 70 / 100 |
 | API endpoints | 107 (107 exercised by e2e checks) |
-| Automated checks | 247 |
-| Client routes | 24 |
+| Automated checks | 264 |
+| Client routes | 25 |
 | Database tables | 33 |
 | Languages | 12 (368 strings) |
 
@@ -179,6 +179,7 @@ Generated 2026-10-18 from commit `5f63650`. Run `npm run coverage` to refresh.
 | File | Translated | Hard-coded | Coverage |
 | --- | --- | --- | --- |
 | About.tsx | 0 | 10 | 0% |
+| Admin.tsx | 0 | 9 | 0% |
 | App.tsx | 0 | 2 | 0% |
 | NewsHub.tsx | 0 | 18 | 0% |
 | Versions.tsx | 0 | 7 | 0% |
@@ -191,7 +192,7 @@ Generated 2026-10-18 from commit `5f63650`. Run `npm run coverage` to refresh.
 | Library.tsx | 36 | 33 | 52% |
 | StorePages.tsx | 50 | 37 | 57% |
 | Settings.tsx | 48 | 27 | 64% |
-| Chrome.tsx | 47 | 19 | 71% |
+| Chrome.tsx | 47 | 20 | 70% |
 | Profile.tsx | 18 | 5 | 78% |
 | Friends.tsx | 37 | 8 | 82% |
 | Reviews.tsx | 14 | 3 | 82% |
@@ -554,7 +555,7 @@ Generated 2026-10-18 from commit `5f63650`. Run `npm run coverage` to refresh.
 - [x] Notifications
 - [x] Friend activity feed
 
-**Publishing** (14/16)
+**Publishing** (15/16)
 
 - [x] Create a game
 - [x] Cover upload
@@ -570,10 +571,10 @@ Generated 2026-10-18 from commit `5f63650`. Run `npm run coverage` to refresh.
 - [x] Zip-bomb and path checks
 - [x] Cleanup on delete
 - [x] Versioned updates
+- [x] Review before publish
 - [ ] Developer revenue
-- [ ] Review before publish
 
-**Community** (8/9)
+**Community** (9/9)
 
 - [x] Reviews
 - [x] Helpful votes
@@ -583,7 +584,7 @@ Generated 2026-10-18 from commit `5f63650`. Run `npm run coverage` to refresh.
 - [x] Post votes
 - [x] Reports
 - [x] Hub stats
-- [ ] Moderation tools
+- [x] Moderation tools
 
 **Protection** (10/12)
 

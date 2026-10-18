@@ -79,10 +79,10 @@ export const BACKEND: Group = {
     'Direct messages:d', 'Real-time push (WebSocket):d', 'Typing indicator:d', 'Unread counts:d', 'Group chats:d', 'Notifications:d', 'Friend activity feed:d',
   ],
   'Publishing': [
-    'Create a game:d', 'Cover upload:d', 'Screenshot gallery:d', 'Browser-playable builds:d', 'Downloadable builds:d', 'Publish / unpublish:d', 'Edit and delete:d', 'Sandboxed play:d', 'Play tokens:d', 'Owner-only downloads:d', 'Upload limits:d', 'Zip-bomb and path checks:d', 'Cleanup on delete:d', 'Developer revenue:m', 'Versioned updates:d', 'Review before publish:m',
+    'Create a game:d', 'Cover upload:d', 'Screenshot gallery:d', 'Browser-playable builds:d', 'Downloadable builds:d', 'Publish / unpublish:d', 'Edit and delete:d', 'Sandboxed play:d', 'Play tokens:d', 'Owner-only downloads:d', 'Upload limits:d', 'Zip-bomb and path checks:d', 'Cleanup on delete:d', 'Developer revenue:m', 'Versioned updates:d', 'Review before publish:d',
   ],
   'Community': [
-    'Reviews:d', 'Helpful votes:d', 'Discussions:d', 'Guides:d', 'Replies:d', 'Post votes:d', 'Reports:d', 'Hub stats:d', 'Moderation tools:m',
+    'Reviews:d', 'Helpful votes:d', 'Discussions:d', 'Guides:d', 'Replies:d', 'Post votes:d', 'Reports:d', 'Hub stats:d', 'Moderation tools:d',
   ],
   'Protection': [
     'Per-IP rate limit:d', 'Per-user write limit:d', 'New-user limit:d', 'Body size cap:d', 'Origin check:d', 'Security headers:d', 'CSP:d', 'Bound SQL params:d',

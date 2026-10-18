@@ -13,6 +13,10 @@ export interface Env {
   LOGIN_LIMITER: Limiter
   /** Overrides the PBKDF2 iteration count (Workers cap it at 100000). */
   PBKDF2_ITERS?: string
+  /** Comma-separated usernames allowed to moderate. Empty by default. */
+  ADMIN_USERNAMES?: string
+  /** "1" makes new publications wait for a moderator's approval. */
+  REQUIRE_APPROVAL?: string
 }
 
 export interface AuthUser {

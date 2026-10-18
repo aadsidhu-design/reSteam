@@ -1,6 +1,6 @@
 {
   "generated": "2026-10-18",
-  "commit": "5f63650",
+  "commit": "54212fe",
   "summary": {
     "client": {
       "d": 222,
@@ -9,17 +9,17 @@
       "n": 250
     },
     "backend": {
-      "d": 75,
+      "d": 77,
       "p": 1,
-      "m": 14,
+      "m": 12,
       "n": 90
     },
     "visualAvg": 75.35,
     "behaviorAvg": 70.45,
     "endpoints": 107,
     "tested": 107,
-    "checks": 247,
-    "routes": 24,
+    "checks": 264,
+    "routes": 25,
     "dbTables": 33
   },
   "pages": [
@@ -1184,6 +1184,12 @@
       "pct": 0
     },
     {
+      "file": "Admin.tsx",
+      "translated": 0,
+      "literals": 9,
+      "pct": 0
+    },
+    {
       "file": "App.tsx",
       "translated": 0,
       "literals": 2,
@@ -1258,8 +1264,8 @@
     {
       "file": "Chrome.tsx",
       "translated": 47,
-      "literals": 19,
-      "pct": 71.21212121212122
+      "literals": 20,
+      "pct": 70.1492537313433
     },
     {
       "file": "Profile.tsx",
