@@ -1,0 +1,5 @@
+.player { display: flex; flex-direction: column; flex: 1; min-height: 0; background: #0b0f14; }
+.player.full { position: fixed; inset: 0; z-index: 70; }
+.player-bar { display: flex; align-items: center; gap: 12px; padding: 8px 14px; background: #171d25; }
+.player-stage { flex: 1; min-height: 560px; display: flex; }
+.player-stage iframe { flex: 1; border: 0; background: #000; }

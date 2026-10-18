@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { NavLink, Link, useNavigate, useParams } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
-import { GAMES, type Game } from './data'
+import { GAMES, isLocal, type Game } from './data'
 import { store, type ActivityEvent, type Shelf as ShelfKind } from './store'
 import { AddGameMenu } from './Chrome'
 import { Art } from './art'
@@ -32,7 +32,7 @@ const describe = (e: ActivityEvent): string => {
 }
 
 const allGames = () => [...store.ownedGames, ...store.customGames.map(customToGame)]
-const isInstalled = (g: Game) => g.id >= 1000 || store.installed.includes(g.id)
+const isInstalled = (g: Game) => isLocal(g.id) || g.playable || store.installed.includes(g.id)
 
 type Cat = 'all' | 'games' | 'software'
 const SHELF_LABEL: Record<ShelfKind, string> = { whatsnew: "What's New", recent: 'Recent Games', favorites: 'Favorites', playnext: 'Play Next', installed: 'Installed' }
@@ -186,8 +186,8 @@ export const Library = observer(() => {
 
   const all = allGames()
   let list = all.filter(g => g.title.toLowerCase().includes(q.toLowerCase()))
-  if (cat === 'games') list = list.filter(g => g.id < 1000)
-  if (cat === 'software') list = list.filter(g => g.id >= 1000)
+  if (cat === 'games') list = list.filter(g => !isLocal(g.id))
+  if (cat === 'software') list = list.filter(g => isLocal(g.id))
   if (store.installedOnly) list = list.filter(isInstalled)
   if (favOnly) list = list.filter(g => store.favorites.includes(g.id))
   list = [...list].sort((a, b) => store.recentSort ? (store.lastPlayed[b.id] ?? 0) - (store.lastPlayed[a.id] ?? 0) : a.title.localeCompare(b.title))
@@ -276,14 +276,14 @@ export const Library = observer(() => {
         <div className="ctx popover" ref={ctxRef} style={{ position: 'fixed', left: ctx.x, top: ctx.y, minWidth: 220 }}>
           {isInstalled(ctx.g)
             ? <button className="pop-item" onClick={() => { setCtx(null); nav(`/library/${ctx.g.id}`); store.play(ctx.g.id) }} disabled={store.running !== null}>Play</button>
-            : ctx.g.id < 1000 && <button className="pop-item" onClick={() => { setCtx(null); store.install(ctx.g.id) }}>Install</button>}
+            : !isLocal(ctx.g.id) && <button className="pop-item" onClick={() => { setCtx(null); store.install(ctx.g.id) }}>Install</button>}
           <button className="pop-item" onClick={() => { store.toggleFavorite(ctx.g.id); setCtx(null) }}>{store.favorites.includes(ctx.g.id) ? 'Remove from favorites' : 'Add to favorites'}</button>
           {store.collections.map(c => c.games.includes(ctx.g.id)
             ? <button key={c.id} className="pop-item" onClick={() => { store.removeFromCollection(c.id, ctx.g.id); setCtx(null) }}>Remove from {c.name}</button>
             : <button key={c.id} className="pop-item" onClick={() => { store.addToCollection(c.id, ctx.g.id); setCtx(null) }}>Add to {c.name}</button>)}
           <button className="pop-item" onClick={() => { const g = ctx.g; setCtx(null); setNameDlg({ mode: 'new', gameId: g.id, value: '' }) }}>Add to new collection…</button>
-          {ctx.g.id < 1000 && <button className="pop-item" onClick={() => { setCtx(null); nav(`/store/${ctx.g.id}`) }}>View store page</button>}
-          {ctx.g.id < 1000 && isInstalled(ctx.g) && <button className="pop-item" onClick={() => { store.uninstall(ctx.g.id); setCtx(null) }}>Uninstall</button>}
+          {!isLocal(ctx.g.id) && <button className="pop-item" onClick={() => { setCtx(null); nav(`/store/${ctx.g.id}`) }}>View store page</button>}
+          {!isLocal(ctx.g.id) && isInstalled(ctx.g) && <button className="pop-item" onClick={() => { store.uninstall(ctx.g.id); setCtx(null) }}>Uninstall</button>}
         </div>
       )}
     </div>
@@ -297,7 +297,7 @@ const LibGame = observer(({ g }: { g: Game }) => {
   const [caret, setCaret] = useState(false)
   const gearRef = useDismiss(gear, () => setGear(false))
   const caretRef = useDismiss(caret, () => setCaret(false))
-  const custom = g.id >= 1000
+  const custom = isLocal(g.id)
   const installed = isInstalled(g)
   const dl = store.queue.find(d => d.id === g.id)
   const running = store.running === g.id
@@ -318,7 +318,10 @@ const LibGame = observer(({ g }: { g: Game }) => {
       </div>
       <div className="gp-bar">
         <div className="gp-action">
-          {running ? (
+          {g.build && !g.playable && !running ? (
+            dl ? <button className="btn big blue" onClick={() => (dl.paused ? store.resume(g.id) : store.pause(g.id))}><Icon name={dl.paused ? 'play' : 'pause'} size={26} /> {dl.paused ? 'RESUME' : 'PAUSE'}</button>
+              : <button className="btn big blue" onClick={() => store.install(g.id, true)}><Icon name="download" size={26} /> {installed ? 'DOWNLOAD AGAIN' : 'DOWNLOAD'}</button>
+          ) : running ? (
             <button className="btn red big" onClick={() => store.stop()}><Icon name="close" size={26} /> STOP</button>
           ) : installed ? (
             <button className="btn play big" disabled={store.running !== null} onClick={() => store.play(g.id)}><Icon name="play" size={28} /> PLAY</button>

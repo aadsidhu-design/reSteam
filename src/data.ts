@@ -21,6 +21,13 @@ export interface Game {
   motif: Motif
   achievements: number
   sizeGb: number
+  // set for games uploaded by players
+  user?: boolean
+  owner?: string | null
+  hasCover?: boolean
+  playable?: boolean
+  build?: { name: string; size: number } | null
+  status?: string
 }
 
 const g = (
@@ -74,5 +81,8 @@ export type Presence = 'online' | 'away' | 'offline' | 'ingame'
 
 export const slug = (title: string) => title.replace(/[^A-Za-z0-9]+/g, '_').replace(/^_|_$/g, '')
 export const compact = (n: number) => n.toLocaleString('en-US')
-export const GENRES = [...new Set(GAMES.flatMap(g => g.genre))].sort()
-export const ALL_TAGS = [...new Set(GAMES.flatMap(g => g.tags))].sort()
+export const GENRES: string[] = observable([...new Set(GAMES.flatMap(g => g.genre))].sort())
+export const ALL_TAGS: string[] = observable([...new Set(GAMES.flatMap(g => g.tags))].sort())
+/** Custom (browser-only) library entries live far above any server id. */
+export const LOCAL_ID = 2_000_000_000
+export const isLocal = (id: number) => id >= LOCAL_ID

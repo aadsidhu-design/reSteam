@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { compact, reviewLabel, type Game } from './data'
 import { api, call, store } from './store'
 import { Icon } from './icons'
-import { Avatar, ago, hours } from './ui'
+import { Avatar, Loading, ago, hours } from './ui'
 import { reviewClass } from './StorePages'
 
 export interface Review {
@@ -101,7 +101,7 @@ export const GameReviews = observer(({ g }: { g: Game }) => {
         <label>Sort <select value={sort} onChange={e => setSort(e.target.value as typeof sort)} aria-label="Sort reviews"><option value="helpful">Most helpful</option><option value="recent">Most recent</option></select></label>
       </div>
       <div className="rv-list one">
-        {list === null && <div className="muted">Loading reviews…</div>}
+        {list === null && <Loading text="Loading reviews" />}
         {list?.length === 0 && <div className="muted">{g.reviews === 0 ? 'No one has reviewed this game yet.' : 'No reviews match this filter.'}</div>}
         {list?.map(r => <ReviewCard key={r.id} r={r} onChange={() => { void load(); void store.loadStats() }} />)}
       </div>

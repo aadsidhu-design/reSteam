@@ -3,7 +3,7 @@ import { Link, Navigate, useNavigate, useParams, useSearchParams } from 'react-r
 import { observer } from 'mobx-react-lite'
 import qrcode from 'qrcode-generator'
 import { api, call, store } from './store'
-import { Logo } from './ui'
+import { Loading, Logo } from './ui'
 import './auth.css'
 
 type Mode = 'signin' | 'join' | 'recover'
@@ -87,7 +87,7 @@ export const LoginPage = observer(() => {
   const registering = useRef(false)
 
   if (store.account === 'in' && !newKey && !done.current && !registering.current) return <Navigate to={next} replace />
-  if (store.account === 'loading') return <div className="auth-page"><div className="muted">Loading…</div></div>
+  if (store.account === 'loading') return <div className="auth-page"><Loading /></div>
 
   const switchTo = (m: Mode) => { setMode(m); setErr(''); setPassword(''); setConfirm('') }
   const submit = async (e: React.FormEvent) => {
@@ -185,7 +185,7 @@ export const QrApprove = observer(() => {
 
 /** Wraps pages that need an account. */
 export const RequireAuth = observer(({ children }: { children: React.ReactNode }) => {
-  if (store.account === 'loading') return <div className="auth-page"><div className="muted">Loading…</div></div>
+  if (store.account === 'loading') return <div className="auth-page"><Loading /></div>
   if (store.account === 'out') return <Navigate to={`/login?next=${encodeURIComponent(location.hash.replace(/^#/, '') || '/store')}`} replace />
   return <>{children}</>
 })

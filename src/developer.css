@@ -1,0 +1,21 @@
+.dev-page { padding-top: 24px; padding-bottom: 40px; }
+.dv-top { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; margin-bottom: 16px; }
+.dv-top p { max-width: 640px; }
+.dv-empty { background: #16202d; padding: 40px; text-align: center; color: #9fb2c4; }
+.dv-card { display: grid; grid-template-columns: 300px 1fr; gap: 20px; background: #16202d; padding: 16px; margin-bottom: 14px; }
+.dv-art { aspect-ratio: 460 / 215; overflow: hidden; align-self: start; }
+.dv-head { display: flex; align-items: center; gap: 12px; }
+.dv-head h3 { margin: 0; font-size: 20px; color: #fff; }
+.dv-badge { background: #3a4048; padding: 2px 10px; font-size: 12px; border-radius: 2px; }
+.dv-badge.live { background: #4c6b22; color: #beee11; }
+.dv-slot { display: flex; align-items: center; gap: 12px; background: #1b2838; padding: 10px 12px; margin: 8px 0; }
+.dv-slot .btn { cursor: pointer; }
+.dv-bar { height: 6px; background: #0008; margin-top: 6px; border-radius: 3px; overflow: hidden; }
+.dv-bar span { display: block; height: 100%; background: var(--accent); transition: width .15s linear; }
+.dv-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.dv-form { display: grid; gap: 12px; }
+.dv-form label { display: grid; gap: 4px; color: #c6d4df; }
+.dv-genres { display: flex; flex-wrap: wrap; gap: 4px 14px; }
+.dv-genres > span { width: 100%; }
+.dv-chk { display: flex !important; flex-direction: row; align-items: center; gap: 6px !important; }
+@media (max-width: 800px) { .dv-card { grid-template-columns: 1fr; } }

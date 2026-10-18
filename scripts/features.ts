@@ -8,7 +8,7 @@ export const CLIENT: Group = {
     'Notification bell:d', 'Unread count badge:d', 'Notifications popover:d',
     'Mark all read:d', 'Account menu:d', 'Balance chip:d', 'Add a Game menu:d',
     'Add non-store game:d', 'Activate a product:d', 'Manage Downloads button:d', 'Mini download progress:d', 'Floating Friends & Chat bar:d',
-    'Toast notifications:d', 'Keyboard shortcuts:m',
+    'Toast notifications:d', 'Loading throbber:d', 'Carousel crossfade:d', 'Hover motion:d', 'Keyboard shortcuts:m',
   ],
   'Library': [
     'Home button:d', 'Grid view toggle:d', 'Category dropdown:d', 'Platform filter:p', 'Recent sort toggle:d', 'Ready-to-play toggle:d', 'Library search:d',
@@ -48,7 +48,7 @@ export const CLIENT: Group = {
   'Community': [
     'Activity page:d', 'Recently played hubs:d', 'Popular hubs:d', 'Find hubs search:d', 'Find people search:d', 'Content tabs:d', 'Most popular / recent:d',
     'Content cards:d', 'Review cards:d', 'Hub pages:d', 'Discussions:d', 'Guides:d', 'Market:m',
-    'Hub header and stats:d', 'Hub store banner:d', 'Guide cards:d', 'Post replies and votes:d', 'Real posts and users:d',
+    'Hub header and stats:d', 'Hub store banner:d', 'Guide cards:d', 'Post replies and votes:d', 'Real posts and users:d', 'Upload your own game:d', 'Real file downloads:d',
   ],
   'Settings': [
     'Settings window:d', 'Account page:d', 'Add funds:d', 'Privacy settings:d', 'Change password:d', 'Delete account:d', 'Friends & Chat page:d', 'Notifications page:d',
@@ -77,6 +77,9 @@ export const BACKEND: Group = {
   'Social': [
     'Friend requests:d', 'Accept / decline:d', 'Remove friend:d', 'Blocking:d', 'User search:d', 'Profile privacy:d', 'Presence + now playing:d',
     'Direct messages:d', 'Real-time push (WebSocket):d', 'Typing indicator:d', 'Unread counts:d', 'Group chats:d', 'Notifications:d', 'Friend activity feed:d',
+  ],
+  'Publishing': [
+    'Create a game:d', 'Cover upload:d', 'Browser-playable builds:d', 'Downloadable builds:d', 'Publish / unpublish:d', 'Edit and delete:d', 'Sandboxed play:d', 'Play tokens:d', 'Owner-only downloads:d', 'Upload limits:d', 'Zip-bomb and path checks:d', 'Cleanup on delete:d', 'Developer revenue:m', 'Versioned updates:m', 'Review before publish:m',
   ],
   'Community': [
     'Reviews:d', 'Helpful votes:d', 'Discussions:d', 'Guides:d', 'Replies:d', 'Post votes:d', 'Reports:d', 'Hub stats:d', 'Moderation tools:m',

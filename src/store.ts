@@ -1,5 +1,5 @@
 import { makeAutoObservable, autorun, runInAction } from 'mobx'
-import { GAMES, priceOf, type Presence } from './data'
+import { ALL_TAGS, GAMES, GENRES, LOCAL_ID, isLocal, priceOf, type Game, type Presence } from './data'
 
 export interface User { username: string; name: string }
 export interface ChatMessage { id?: number; from: 'me' | string; text: string; at: number }
@@ -12,7 +12,7 @@ export interface GroupMessage { id: number; from: 'me' | string; text: string; a
 export interface Person { username: string; name: string }
 export interface Notification { id: number; kind: string; data: Record<string, any>; at: number; read: boolean }
 export interface ActivityEvent { id: number; kind: string; gameId: number | null; data: Record<string, any>; at: number; user: 'me' | Person }
-export interface DownloadItem { id: number; progress: number; phase: string; speed: number; paused: boolean }
+export interface DownloadItem { id: number; progress: number; phase: string; speed: number; paused: boolean; real?: boolean; bytes?: number; total?: number }
 export interface Toast { id: number; text: string }
 export interface Settings {
   uiScale: number // 0.85 .. 1.3
@@ -83,6 +83,7 @@ const sizeMb = (id: number) => (GAMES.find(g => g.id === id)?.sizeGb ?? 1) * 102
 class Store {
   // auth
   account: Account = 'loading'
+  catalogReady = false
   user: User | null = null
   // server-backed
   owned: number[] = []
@@ -141,11 +142,11 @@ class Store {
   constructor() {
     const local = readJson<Partial<LocalState>>(LOCAL, {})
     Object.assign(this, local, { settings: { ...DEFAULT_SETTINGS, ...(local.settings ?? {}) } })
-    makeAutoObservable<Store, 'ws' | 'wsTimer' | 'pingTimer' | 'typingTimers' | 'lastTypingSent' | 'playTick' | 'unsent'>(this, {
-      ws: false, wsTimer: false, pingTimer: false, typingTimers: false, lastTypingSent: false, playTick: false, unsent: false,
+    makeAutoObservable<Store, 'aborts' | 'ws' | 'wsTimer' | 'pingTimer' | 'typingTimers' | 'lastTypingSent' | 'playTick' | 'unsent'>(this, {
+      aborts: false, ws: false, wsTimer: false, pingTimer: false, typingTimers: false, lastTypingSent: false, playTick: false, unsent: false,
     })
     void this.bootstrap()
-    void this.loadStats()
+    void this.loadCatalog().then(() => this.loadStats())
     setInterval(() => this.tickDownloads(), 250)
     autorun(() => {
       const l: LocalState = {
@@ -214,6 +215,25 @@ class Store {
   async hydrate() {
     const m = await api<Me>('GET', '/me')
     if (m) runInAction(() => this.apply(m))
+  }
+  /** Pulls the live catalog (built-in games plus everything players published) into the shared GAMES list. */
+  async loadCatalog() {
+    const list = await api<Game[]>('GET', '/games')
+    runInAction(() => {
+      if (list) {
+        const ids = new Set(list.map(g => g.id))
+        for (const s of list) {
+          const have = GAMES.find(g => g.id === s.id)
+          if (have) Object.assign(have, { price: s.price, discount: s.discount, hasCover: s.hasCover, playable: s.playable, build: s.build, owner: s.owner, user: s.user, sizeGb: s.sizeGb || have.sizeGb })
+          else GAMES.push({ ...s, rating: 0, reviews: 0, owners: 0, playing: 0 })
+        }
+        // drop uploaded games that were unpublished or deleted
+        for (let i = GAMES.length - 1; i >= 0; i--) if (GAMES[i].user && !ids.has(GAMES[i].id)) GAMES.splice(i, 1)
+        GENRES.splice(0, GENRES.length, ...[...new Set(GAMES.flatMap(g => g.genre))].sort())
+        ALL_TAGS.splice(0, ALL_TAGS.length, ...[...new Set(GAMES.flatMap(g => g.tags))].sort())
+      }
+      this.catalogReady = true
+    })
   }
   /** Loads public review counts into the catalog so every price/rating widget reads real data. */
   async loadStats() {
@@ -363,18 +383,69 @@ class Store {
   addCustomGame(title: string) {
     const t = title.trim().slice(0, 40)
     if (!t) return
-    this.customGames.push({ id: 1000 + this.customGames.length + 1, title: t })
+    this.customGames.push({ id: LOCAL_ID + this.customGames.length + 1, title: t })
     this.toast(`${t} was added to your library`)
   }
 
   // ---- downloads (single active download, the rest queue) ----
-  install(id: number) {
-    if (this.installed.includes(id) || this.queue.some(d => d.id === id)) return
-    this.queue.push({ id, progress: 0, phase: 'Starting Download', speed: 0, paused: false })
+  install(id: number, force = false) {
+    if ((this.installed.includes(id) && !force) || this.queue.some(d => d.id === id)) return
+    const g = GAMES.find(x => x.id === id)
+    if (g?.playable && !g.build) { void this.sync('PUT', `/installed/${id}`); this.toast(`${g.title} is ready to play`); return }
+    const real = !!g?.build
+    this.queue.push({ id, progress: 0, phase: 'Starting Download', speed: 0, paused: false, real, bytes: 0, total: g?.build?.size })
+    if (real) void this.runDownload(id)
   }
-  pause(id: number) { const d = this.queue.find(x => x.id === id); if (d) { d.paused = true; d.speed = 0 } }
-  resume(id: number) { const d = this.queue.find(x => x.id === id); if (d) d.paused = false }
-  cancel(id: number) { this.queue = this.queue.filter(d => d.id !== id) }
+  pause(id: number) { const d = this.queue.find(x => x.id === id); if (d) { d.paused = true; d.speed = 0; this.aborts[id]?.abort() } }
+  resume(id: number) { const d = this.queue.find(x => x.id === id); if (d) { d.paused = false; if (d.real) void this.runDownload(id) } }
+  cancel(id: number) { this.aborts[id]?.abort(); this.queue = this.queue.filter(d => d.id !== id) }
+  /** A real download: streams the uploaded build, reports true progress and speed, then saves the file to disk. */
+  private async runDownload(id: number) {
+    const g = GAMES.find(x => x.id === id)
+    const ctl = new AbortController()
+    this.aborts[id] = ctl
+    try {
+      const res = await fetch(`/api/games/${id}/download`, { credentials: 'same-origin', signal: ctl.signal })
+      if (!res.ok || !res.body) throw new Error((await res.json().catch(() => ({}))).error ?? 'Download failed')
+      const total = Number(res.headers.get('content-length') ?? g?.build?.size ?? 0)
+      const reader = res.body.getReader()
+      const chunks: Uint8Array[] = []
+      let got = 0, last = performance.now(), lastBytes = 0
+      for (;;) {
+        const { done, value } = await reader.read()
+        if (done) break
+        chunks.push(value); got += value.length
+        const now = performance.now()
+        if (now - last > 200) {
+          const speed = ((got - lastBytes) / 1048576) / ((now - last) / 1000)
+          last = now; lastBytes = got
+          runInAction(() => {
+            const d = this.queue.find(x => x.id === id)
+            if (!d) return
+            d.bytes = got; d.speed = speed; d.progress = total ? Math.min(99, (got / total) * 100) : 50
+            d.phase = 'Downloading'
+            this.peakSpeed = Math.max(this.peakSpeed, speed)
+            this.speedHistory = [...this.speedHistory.slice(-59), speed]
+          })
+        }
+      }
+      const url = URL.createObjectURL(new Blob(chunks as BlobPart[]))
+      const a = document.createElement('a')
+      a.href = url; a.download = g?.build?.name ?? 'game.zip'; document.body.appendChild(a); a.click(); a.remove()
+      setTimeout(() => URL.revokeObjectURL(url), 10_000)
+      runInAction(() => {
+        this.queue = this.queue.filter(x => x.id !== id)
+        this.completed.unshift({ id, at: Date.now() })
+        if (!this.installed.includes(id)) this.installed.push(id)
+        this.toast(`${g?.title ?? 'Game'} was downloaded`)
+      })
+      void this.sync('PUT', `/installed/${id}`)
+    } catch (e) {
+      if ((e as Error).name === 'AbortError') return
+      runInAction(() => { this.queue = this.queue.filter(x => x.id !== id); this.toast((e as Error).message) })
+    } finally { delete this.aborts[id] }
+  }
+  private aborts: Record<number, AbortController> = {}
   moveToFront(id: number) {
     const d = this.queue.find(x => x.id === id)
     if (d) this.queue = [d, ...this.queue.filter(x => x !== d)]
@@ -382,6 +453,7 @@ class Store {
   /** A real game is ~GBs; compress time so an install takes 8-40s, while the shown speed still reflects the limit. */
   private tickDownloads() {
     const d = this.activeDownload
+    if (d?.real) return
     if (!d || (this.running !== null && !this.settings.downloadsDuringGame)) {
       this.speedHistory = [...this.speedHistory.slice(-59), 0]
       return
@@ -407,7 +479,9 @@ class Store {
   /** Launching tells friends what you are playing; time accrues in the library once the server knows. */
   async play(id: number) {
     if (this.running !== null) return
-    if (id < 1000) {
+    const web = GAMES.find(g => g.id === id)?.playable
+    if (web && !this.installed.includes(id)) { await this.sync('PUT', `/installed/${id}`); runInAction(() => { if (!this.installed.includes(id)) this.installed.push(id) }) }
+    if (!isLocal(id)) {
       const { error } = await call('POST', '/presence/playing', { gameId: id })
       if (error) { this.toast(error); return }
     }
@@ -415,18 +489,19 @@ class Store {
       this.running = id
       this.lastPlayed[id] = Date.now()
       this.unsent = 0
+      if (web) location.hash = `#/play/${id}`
       this.playTick = setInterval(() => runInAction(() => {
         this.playtime[id] = (this.playtime[id] ?? 0) + 1
         this.lastPlayed[id] = Date.now()
         this.unsent += 1
-        if (id < 1000 && this.unsent >= 5) { const n = this.unsent; this.unsent = 0; void call('POST', `/playtime/${id}`, { minutes: n }) }
+        if (!isLocal(id) && this.unsent >= 5) { const n = this.unsent; this.unsent = 0; void call('POST', `/playtime/${id}`, { minutes: n }) }
       }), 6000) // one "minute" per 6s so playtime visibly moves
     })
   }
   stop() {
     clearInterval(this.playTick)
     const id = this.running
-    if (id !== null && id < 1000) {
+    if (id !== null && !isLocal(id)) {
       if (this.unsent > 0) void call('POST', `/playtime/${id}`, { minutes: this.unsent }).then(() => call('POST', '/presence/playing', { gameId: null }))
       else void call('POST', '/presence/playing', { gameId: null })
     }

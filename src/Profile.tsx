@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { GAMES } from './data'
 import { api, store, type Person } from './store'
 import { Art } from './art'
-import { Avatar, Modal, ago, hours } from './ui'
+import { Avatar, Loading, Modal, ago, hours } from './ui'
 import type { Presence } from './data'
 
 interface ProfileData extends Person {
@@ -43,7 +43,7 @@ export const ProfilePage = observer(() => {
 
   if (!param && store.account === 'out') return <Navigate to="/login?next=/profile" replace />
   if (param && store.user && param.toLowerCase() === store.user.username.toLowerCase()) return <Navigate to="/profile" replace />
-  if (data === null) return <div className="profile"><div className="pf-wrap muted">Loading…</div></div>
+  if (data === null) return <div className="profile"><div className="pf-wrap"><Loading /></div></div>
   if (data === 'missing') return <div className="profile"><div className="pf-wrap"><h1>Profile not found</h1><p className="muted">No account with that name was found, or you cannot view it.</p><Link to="/community" className="btn">Back to Community</Link></div></div>
 
   const self = data.relation === 'self'

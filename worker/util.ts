@@ -4,6 +4,8 @@ export interface Env {
   DB: D1Database
   ASSETS: Fetcher
   USER_HUB: DurableObjectNamespace
+  /** Uploaded game files and covers. */
+  FILES: R2Bucket
   GENERAL_LIMITER: Limiter
   WRITE_LIMITER: Limiter
   NEW_USER_LIMITER: Limiter

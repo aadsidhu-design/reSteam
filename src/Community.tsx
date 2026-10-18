@@ -5,7 +5,7 @@ import { GAMES, compact, fmt, priceOf, type Game } from './data'
 import { api, call, store, type Person } from './store'
 import { Art } from './art'
 import { Icon } from './icons'
-import { Avatar, Modal, ago, hours } from './ui'
+import { Avatar, Loading, Modal, ago, hours } from './ui'
 import { ReviewCard, type Review } from './Reviews'
 import './community.css'
 
@@ -63,7 +63,7 @@ const PostView = observer(({ id, onBack }: { id: number; onBack: () => void }) =
   const [err, setErr] = useState('')
   const load = useCallback(async () => { const r = await api<{ post: Post; replies: Reply[] }>('GET', `/posts/${id}`); setData(r ?? 'gone') }, [id])
   useEffect(() => { void load() }, [load])
-  if (data === null) return <p className="muted">Loading…</p>
+  if (data === null) return <Loading />
   if (data === 'gone') return <div><button className="link-btn" onClick={onBack}>← Back</button><p className="muted">This post no longer exists.</p></div>
   const { post, replies } = data
   const self = (u: string) => store.user?.username.toLowerCase() === u.toLowerCase()
@@ -223,7 +223,7 @@ export const Community = observer(() => {
         {hubGame && <div className="cm-tabs viewrow"><span className="grow" /><span className="muted viewing">Viewing</span>
           <button className={`seg ${popular ? 'on' : ''}`} onClick={() => setPopular(true)}>MOST POPULAR</button><button className={`seg ${!popular ? 'on' : ''}`} onClick={() => setPopular(false)}>MOST RECENT</button></div>}
 
-        {feed === null && <p className="muted">Loading…</p>}
+        {feed === null && <Loading />}
         <div className="cm-grid one">
           {items.slice(0, shown).map(i => i.type === 'review'
             ? <FeedReview key={`r${(i.item as Review).id}`} r={i.item as Review} />

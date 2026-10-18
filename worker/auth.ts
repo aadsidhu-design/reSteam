@@ -1,3 +1,4 @@
+import { purgeUserGames } from './dev'
 import {
   type AuthUser, type Ctx, type Env, type Route, USERNAME_RE, RESERVED,
   b64url, fail, fromHex, hex, json, pbkdf2, randomBytes, readJson, route, safeEqual, sha256Hex, tooMany,
@@ -187,6 +188,7 @@ export const authRoutes: Route[] = [
     const row = await c.env.DB.prepare('SELECT pass_hash, pass_salt, pass_iters FROM users WHERE id = ?').bind(c.user!.id).first<{ pass_hash: string | null; pass_salt: string | null; pass_iters: number }>()
     if (typeof b.password !== 'string' || !(await verifyPassword(b.password, row, c.env))) return fail(403, 'Your password is not correct')
     const id = c.user!.id, db = c.env.DB
+    await purgeUserGames(c.env, id)
     await db.batch([
       db.prepare('DELETE FROM review_votes WHERE user_id = ? OR review_id IN (SELECT id FROM reviews WHERE user_id = ?)').bind(id, id),
       db.prepare('DELETE FROM post_votes WHERE user_id = ? OR post_id IN (SELECT id FROM posts WHERE user_id = ?)').bind(id, id),
@@ -208,6 +210,7 @@ export const authRoutes: Route[] = [
       db.prepare('DELETE FROM cart WHERE user_id = ?').bind(id),
       db.prepare('DELETE FROM wishlist WHERE user_id = ?').bind(id),
       db.prepare('DELETE FROM library WHERE user_id = ?').bind(id),
+      db.prepare('DELETE FROM play_tokens WHERE user_id = ?').bind(id),
       db.prepare('DELETE FROM qr_logins WHERE user_id = ?').bind(id),
       db.prepare('DELETE FROM sessions WHERE user_id = ?').bind(id),
       db.prepare('DELETE FROM users WHERE id = ?').bind(id),

@@ -377,3 +377,23 @@ a.lrow:hover { background: #1e2d40; color: #fff; }
 .rv-filters { display: flex; gap: 18px; margin: 4px 0 12px; color: #8f98a0; }
 .rv-filters select { background: #16202d; color: #c6d4df; border: 1px solid #2f353e; padding: 4px 8px; margin-left: 6px; }
 @media (max-width: 700px) { .rv-card { grid-template-columns: 1fr; } }
+
+/* ---- motion measured from the real store ---- */
+.feat-main { position: relative; }
+.feat-fade { animation: feat-in .4s ease-out; }
+@keyframes feat-in { from { opacity: 0; } }
+.out-arrow { opacity: .7; transition: opacity .2s ease-in-out; }
+.dots button { transition: background-color .2s; }
+.giftbtn { transition: transform .2s ease-in-out, box-shadow .2s ease-in-out; }
+.giftbtn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px 4px rgba(13, 170, 243, .35); }
+.scard-art img, .scard-art svg { transition: transform .2s ease-in-out; }
+.scard:hover .scard-art svg { transform: scale(1.03); }
+.smenu > button { transition: color .15s ease-in-out, background-color .15s ease-in-out; }
+.smenu > button:hover, .smenu > button.on { background: linear-gradient(-60deg, #67c1f5 0%, #417a9b 100%); color: #fff; }
+.smenu-pop .pop-item { border-bottom: 2px solid transparent; transition: border-color .15s ease-in-out, color .15s ease-in-out; }
+.smenu-pop .pop-item:hover { border-bottom-color: #fff; background: transparent; }
+.list.loading { opacity: .5; transition: opacity .25s; }
+.fp-shot { opacity: .6; transition: opacity .2s; } .fp-shot:hover { opacity: 1; }
+.srow { transition: background-color .15s; }
+.skel { background: linear-gradient(90deg, #16202d 25%, #1e2d40 50%, #16202d 75%); background-size: 200% 100%; animation: skel 1.4s linear infinite; }
+@keyframes skel { to { background-position: -200% 0; } }

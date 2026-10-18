@@ -9,9 +9,12 @@ import { SettingsPage } from './Settings'
 import { ProfilePage } from './Profile'
 import { LoginPage, QrApprove, RequireAuth } from './Auth'
 import { About } from './About'
+import { Player } from './Player'
+import { Developer } from './Developer'
 import { GAMES } from './data'
 import { store } from './store'
 import { Downloads } from './Downloads'
+import { Loading } from './ui'
 import { FriendsDock, FriendsWindow } from './Friends'
 
 const App = observer(() => {
@@ -23,11 +26,13 @@ const App = observer(() => {
       <Header />
       <main className={`view ${lib ? 'lib' : ''}`}>
         <div className="page">
-          <Routes>
+          {store.account === 'loading' || !store.catalogReady ? <Loading /> : <Routes>
             <Route path="/" element={<Navigate to="/store" replace />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/qr/:id" element={<QrApprove />} />
             <Route path="/about" element={<About />} />
+            <Route path="/play/:id" element={guard(<Player />)} />
+            <Route path="/developer" element={guard(<Developer />)} />
             <Route path="/library" element={guard(<Library />)} />
             <Route path="/library/:id" element={guard(<Library />)} />
             <Route element={<StoreLayout />}>
@@ -44,9 +49,9 @@ const App = observer(() => {
             <Route path="/profile/:username" element={guard(<ProfilePage />)} />
             <Route path="/downloads" element={guard(<Downloads />)} />
             <Route path="*" element={<div className="container"><h1>Page not found</h1><p className="muted">That page does not exist.</p></div>} />
-          </Routes>
+          </Routes>}
         </div>
-        {!lib && <Footer />}
+        {!lib && !loc.pathname.startsWith('/play/') && <Footer />}
       </main>
       {store.running !== null && store.settings.fpsCounter && store.settings.overlay && <div className="fps-overlay">FPS {58 + (store.running % 5)} · {GAMES.find(g => g.id === store.running)?.title ?? 'Game'}</div>}
       <FriendsWindow />

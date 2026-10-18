@@ -37,3 +37,16 @@
 .fdock:hover { background: #26324a; color: #fff; }
 .fdock .badge { background: #d94a4a; color: #fff; border-radius: 9px; min-width: 18px; padding: 0 5px; height: 18px; display: grid; place-items: center; font-size: 11px; letter-spacing: 0; }
 .fdock .online-n { color: #57cbde; letter-spacing: 0; }
+
+/* ---- loading screen (measured from the real store's LoadingWrapper / loading_throbber_bar) ---- */
+.loadwrap { position: relative; margin: auto; padding: 120px 0; text-align: center; }
+.throbber { width: 62px; height: 68px; margin: 0 auto 40px; display: flex; justify-content: center; }
+.throbber i { display: block; width: 12px; height: 68px; margin-right: 6px; background-color: #67c1f5; animation: loading_throbber_bar 1s ease-in-out infinite; }
+.throbber i:nth-child(2) { animation-delay: .16s; }
+.throbber i:nth-child(3) { animation-delay: .32s; margin-right: 0; }
+.loadtext { color: #60acde; font-size: 22px; }
+@keyframes loading_throbber_bar {
+  0% { transform: scale(1, .6); } 30% { transform: scale(1, 1); } 55% { transform: scale(1, .6); } 100% { transform: scale(1, .6); }
+}
+.pagefade { animation: pagefade-in .25s ease-out; }
+@keyframes pagefade-in { from { opacity: 0; } }

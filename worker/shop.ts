@@ -1,6 +1,7 @@
 import { type Ctx, type Env, type Route, cleanText, fail, json, readJson, route } from './util'
 import { logEvent, notify, push } from './social'
 import { publicUser } from './auth'
+import { shapeGame } from './dev'
 
 const STARTER_GAME = 11
 const MAX_WALLET = 100_000
@@ -13,7 +14,7 @@ export const salePrice = (g: { price: number; discount: number }) => Math.round(
 const MINUTES_PER_ACHIEVEMENT = 3
 
 const gameId = (c: Ctx) => Number(c.params.id)
-const gameExists = async (c: Ctx) => Number.isInteger(gameId(c)) && !!(await c.env.DB.prepare('SELECT 1 FROM games WHERE id = ?').bind(gameId(c)).first())
+const gameExists = async (c: Ctx) => Number.isInteger(gameId(c)) && !!(await c.env.DB.prepare("SELECT 1 FROM games WHERE id = ? AND (status = 'published' OR owner_id = ?)").bind(gameId(c), c.user?.id ?? '').first())
 
 /** Everything the client needs about the signed-in account's store state, in one read. */
 export async function me(env: Env, uid: string) {
@@ -41,8 +42,9 @@ export async function me(env: Env, uid: string) {
 
 export const shopRoutes: Route[] = [
   route('GET', '/games', { auth: false }, async c => {
-    const { results } = await c.env.DB.prepare('SELECT * FROM games ORDER BY id').all<Record<string, unknown>>()
-    return json(results.map(({ icon: _icon, size_gb, ...g }) => ({ ...g, genre: JSON.parse(g.genre as string), tags: JSON.parse(g.tags as string), sizeGb: size_gb })), 200, { 'cache-control': 'public, max-age=60' })
+    // drafts are visible only to their author (through /dev/games)
+    const { results } = await c.env.DB.prepare("SELECT g.*, u.username AS owner FROM games g LEFT JOIN users u ON u.id = g.owner_id WHERE g.status = 'published' ORDER BY g.id").all<Parameters<typeof shapeGame>[0]>()
+    return json(results.map(shapeGame), 200, { 'cache-control': 'public, max-age=15' })
   }),
 
   route('GET', '/me', {}, async c => json(await me(c.env, c.user!.id))),

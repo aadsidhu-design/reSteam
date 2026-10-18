@@ -137,6 +137,9 @@ export function Art({ game, kind = 'header', variant = 0, className = '', showTi
   const longest = Math.max(1, ...lines.map(l => l.length))
   const fs = kind === 'icon' ? 0 : Math.min(base, (w * (portrait ? 0.9 : 0.86)) / (longest * 0.68))
 
+  if (game.hasCover && kind !== 'shot') {
+    return <img className={`art-svg art-img ${className}`} src={`/api/games/${game.id}/cover`} alt={game.title} loading="lazy" />
+  }
   return (
     <svg className={`art-svg ${className}`} viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="xMidYMid slice" role="img" aria-label={game.title}>
       <defs>

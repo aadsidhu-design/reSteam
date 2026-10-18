@@ -218,7 +218,7 @@ export const StoreHome = observer(() => {
         <div className="feat-wrap" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
           <Arrows onPrev={() => setIdx((idx + featured.length - 1) % featured.length)} onNext={() => setIdx((idx + 1) % featured.length)} />
           <div className="feat">
-            <Link to={`/store/${f.id}`} className="feat-main"><Art game={f} kind="wide" variant={idx % 3} /></Link>
+            <Link to={`/store/${f.id}`} className="feat-main feat-fade" key={f.id}><Art game={f} kind="wide" variant={idx % 3} /></Link>
             <div className="feat-panel">
               <div className="fp-title">{f.title}</div>
               <div className="fp-rev"><span className={reviewClass(f.rating, f.reviews)}>{reviewLabel(f.rating, f.reviews)}</span> {f.reviews >= 10 && <span className="muted">({compact(f.reviews)} Reviews)</span>}</div>

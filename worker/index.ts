@@ -1,12 +1,13 @@
 import { authenticate, authRoutes, readCookie, SESSION_COOKIE } from './auth'
 import { communityRoutes } from './community'
+import { devRoutes, servePlay } from './dev'
 import { shopRoutes } from './shop'
 import { socialRoutes } from './social'
 import { type Ctx, type Env, type Route, HttpError, fail, json, tooMany } from './util'
 
 export { UserHub } from './hub'
 
-const ROUTES: Route[] = [...authRoutes, ...socialRoutes, ...communityRoutes, ...shopRoutes]
+const ROUTES: Route[] = [...authRoutes, ...socialRoutes, ...communityRoutes, ...devRoutes, ...shopRoutes]
 
 const SECURITY_HEADERS: Record<string, string> = {
   'x-content-type-options': 'nosniff',
@@ -18,7 +19,7 @@ const SECURITY_HEADERS: Record<string, string> = {
 function hardened(res: Response): Response {
   if (res.status === 101) return res // a websocket upgrade must be passed through untouched
   const out = new Response(res.body, res)
-  for (const [k, v] of Object.entries(SECURITY_HEADERS)) out.headers.set(k, v)
+  for (const [k, v] of Object.entries(SECURITY_HEADERS)) if (!out.headers.has(k)) out.headers.set(k, v)
   if (!out.headers.has('cache-control')) out.headers.set('cache-control', 'no-store')
   return out
 }
@@ -67,6 +68,7 @@ async function handle(req: Request, env: Env, wait: (p: Promise<unknown>) => voi
 export default {
   async fetch(req, env, ctx) {
     try {
+      if (new URL(req.url).pathname.startsWith('/play/')) return await servePlay(req, env)
       return hardened(await handle(req, env, p => ctx.waitUntil(p.catch(e => console.error('background task failed', e)))))
     } catch (e) {
       if (e instanceof HttpError) return hardened(fail(e.status, e.message))

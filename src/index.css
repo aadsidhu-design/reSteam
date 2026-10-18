@@ -121,3 +121,4 @@ select.input { appearance: none; background-image: linear-gradient(45deg, transp
 .arrow:disabled { opacity: .25; cursor: default; }
 .shelf-row { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
 .shelf-row::-webkit-scrollbar { display: none; }
+.art-img { object-fit: cover; }

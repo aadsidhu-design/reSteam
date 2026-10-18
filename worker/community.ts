@@ -5,7 +5,7 @@ const DAY = 86_400_000
 const HOUR = 3_600_000
 
 const gameId = (c: Ctx) => Number(c.params.id)
-const gameExists = async (c: Ctx) => Number.isInteger(gameId(c)) && !!(await c.env.DB.prepare('SELECT 1 FROM games WHERE id = ?').bind(gameId(c)).first())
+const gameExists = async (c: Ctx) => Number.isInteger(gameId(c)) && !!(await c.env.DB.prepare("SELECT 1 FROM games WHERE id = ? AND (status = 'published' OR owner_id = ?)").bind(gameId(c), c.user?.id ?? '').first())
 const owns = async (c: Ctx) => !!(await c.env.DB.prepare('SELECT 1 FROM library WHERE user_id = ? AND game_id = ?').bind(c.user!.id, gameId(c)).first())
 
 const reviewSelect = `

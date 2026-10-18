@@ -80,6 +80,7 @@ export const Header = observer(() => {
                   <button className="pop-item" onClick={() => { setMenu(null); nav('/profile') }}>View my profile</button>
                   <button className="pop-item" onClick={() => { setMenu(null); store.friendsOpen = true }}>Friends &amp; Chat</button>
                   <button className="pop-item" onClick={() => { setMenu(null); nav('/downloads') }}>Manage downloads</button>
+                  <button className="pop-item" onClick={() => { setMenu(null); nav('/developer') }}>Upload a game</button>
                   <button className="pop-item" onClick={() => { setMenu(null); nav('/settings/account') }}>Account details</button>
                   <button className="pop-item" onClick={() => { setMenu(null); nav('/settings/interface') }}>Settings</button>
                   <button className="pop-item" onClick={() => { setMenu(null); void store.signOut().then(() => nav('/store')) }}>Sign out of account…</button>
@@ -128,6 +129,7 @@ export const AddGameMenu = observer(() => {
           <button className="pop-item" onClick={() => { setAdd(false); setDlg('custom') }}>Add a Non-Store Game…</button>
           <button className="pop-item" onClick={() => { setAdd(false); setDlg('redeem') }}>Activate a Product on reSteam…</button>
           <button className="pop-item" onClick={() => { setAdd(false); nav('/store/browse?free=1') }}>Browse free games</button>
+          <button className="pop-item" onClick={() => { setAdd(false); nav('/developer') }}>Upload your own game…</button>
         </div>
       )}
       {dlg === 'redeem' && <RedeemModal onClose={() => setDlg(null)} />}

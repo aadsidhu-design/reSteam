@@ -98,3 +98,11 @@ export function Shelf({ children, step = 600 }: { children: ReactNode; step?: nu
     </div>
   )
 }
+
+/** The real store's three-bar loading screen. */
+export const Loading = ({ text = 'Loading' }: { text?: string }) => (
+  <div className="loadwrap" role="status" aria-live="polite">
+    <div className="throbber"><i /><i /><i /></div>
+    <div className="loadtext">{text}</div>
+  </div>
+)

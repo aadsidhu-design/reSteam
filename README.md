@@ -32,12 +32,20 @@ No reference screenshots are included in this repository, because they can conta
 
 The game catalog lives once, in `src/data.ts`; `npm run db:seed` turns it into an upserting migration so the browser and the database cannot drift apart.
 
+## Uploading games
+
+Anyone with an account can open **Upload a game** (`/developer`), create a game, upload a cover, a **web build** and/or a **downloadable build**, and publish it to the store.
+
+- **Web builds** are a `.zip` with `index.html` at the top (HTML5 / JS / WebAssembly). They run inside reSteam in a sandboxed frame (`allow-scripts` only: no cookies, no access to the site or its API, no network except its own files). Access goes through a short-lived play token, so only owners can load them.
+- **Downloadable builds** are any file up to 50 MB. Owners download it from their library with real progress and speed; the file is saved to disk.
+- Files live in an R2 bucket (`FILES` binding); D1 holds metadata. Limits are small on purpose (10 games per account, 5 creations per hour, 15 MB zips, 40 MB unpacked, 300 files, covers must be real PNG/JPEG/WebP).
+
 ## Run it locally
 
 ```bash
 npm install
 cp wrangler.example.jsonc wrangler.jsonc   # local dev needs no real ids
-npm run db:local                           # create and migrate the local D1 database
+npm run db:local                           # create and migrate the local D1 database (local R2 is simulated)
 npm run build
 npm run api                                # Worker + built UI at http://localhost:8787
 ```
@@ -51,6 +59,7 @@ For UI work with hot reload, run `npm run api` in one terminal and `npm run dev`
 ```bash
 npx wrangler login
 npx wrangler d1 create resteam              # paste the database_id into wrangler.jsonc
+npx wrangler r2 bucket create resteam-files  # uploaded games live here
 npx wrangler d1 migrations apply resteam --remote   # migration 0009 deletes all old anonymous-session data
 npm run deploy
 ```
