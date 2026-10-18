@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { t } from './i18n'
 import { Link } from 'react-router-dom'
 import { observer } from 'mobx-react-lite'
 import { GAMES } from './data'
@@ -40,13 +41,13 @@ const Reactions = observer(({ n }: { n: Item }) => {
               <div>{c.body}</div>
               {store.user?.username.toLowerCase() === c.username.toLowerCase() && <button className="link-btn small" onClick={async () => { await call('DELETE', `/news-comments/${c.id}`); void load() }}>Delete</button>}</div>
           ))}
-          {list?.length === 0 && <span className="muted small">No comments yet.</span>}
+          {list?.length === 0 && <span className="muted small">{t('nh.nocomments')}</span>}
           {store.signedIn ? (
             <form onSubmit={async e => { e.preventDefault(); const r = await call('POST', `/news/${n.id}/comments`, { body: text }); if (r.error) setErr(r.error); else { setText(''); setErr(''); void load() } }}>
-              <input className="input" placeholder="Add a comment" maxLength={1000} value={text} onChange={e => { setText(e.target.value); setErr('') }} />
+              <input className="input" placeholder={t('nh.addcomment')} maxLength={1000} value={text} onChange={e => { setText(e.target.value); setErr('') }} />
               {err && <div className="err small">{err}</div>}
             </form>
-          ) : <span className="small muted"><Link to="/login?next=/news">Sign in</Link> to comment.</span>}
+          ) : <span className="small muted"><Link to="/login?next=/news">{t('auth.signin')}</Link> {t('nh.tocomment')}</span>}
         </div>
       )}
     </div>
@@ -74,9 +75,9 @@ export const NewsHub = observer(() => {
       <aside className="nh-side">
         <h1>reSteam<br />NEWS HUB</h1>
         <div className="nh-h">YOUR NEWS &amp; EVENTS</div>
-        <button className={`nh-item ${scope === 'mine' ? 'on' : ''}`} onClick={() => { if (store.needLogin()) return; setScope('mine') }}><b>YOUR NEWS</b><span>Personalized</span></button>
+        <button className={`nh-item ${scope === 'mine' ? 'on' : ''}`} onClick={() => { if (store.needLogin()) return; setScope('mine') }}><b>{t('nh.mine')}</b><span>{t('nh.personal')}</span></button>
         <div className="nh-h">GLOBAL NEWS &amp; EVENTS</div>
-        <button className={`nh-item ${scope === 'all' ? 'on' : ''}`} onClick={() => setScope('all')}><b>FEATURED</b><span>From every game</span></button>
+        <button className={`nh-item ${scope === 'all' ? 'on' : ''}`} onClick={() => setScope('all')}><b>{t('nh.featured')}</b><span>{t('nh.everygame')}</span></button>
         <div className="nh-h">SEARCH</div>
         <input className="nh-search" value={q} onChange={e => setQ(e.target.value)} aria-label="Search news" />
         <div className="nh-h">DISCOVER</div>

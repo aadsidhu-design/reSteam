@@ -15,7 +15,7 @@ export function useAchievements(gameId: number): Ach[] | null {
 export const AchievementList = ({ gameId, unlocked }: { gameId: number; unlocked: number | null }) => {
   const list = useAchievements(gameId)
   if (list === null) return <p className="muted small">Loading…</p>
-  if (list.length === 0) return <p className="muted small">The developer has not named any achievements yet.</p>
+  if (list.length === 0) return <p className="muted small">{t('vr.noach')}</p>
   return (
     <div className="ach-list">
       {list.map(a => {

@@ -1,6 +1,6 @@
 {
   "generated": "2026-10-18",
-  "commit": "ee0cb1a",
+  "commit": "81dca91",
   "summary": {
     "client": {
       "d": 224,
@@ -1138,74 +1138,74 @@
     {
       "code": "schinese",
       "name": "Chinese (Simplified)",
-      "have": 474,
-      "total": 474
+      "have": 486,
+      "total": 486
     },
     {
       "code": "english",
       "name": "English",
-      "have": 474,
-      "total": 474
+      "have": 486,
+      "total": 486
     },
     {
       "code": "french",
       "name": "French",
-      "have": 474,
-      "total": 474
+      "have": 486,
+      "total": 486
     },
     {
       "code": "german",
       "name": "German",
-      "have": 474,
-      "total": 474
+      "have": 486,
+      "total": 486
     },
     {
       "code": "italian",
       "name": "Italian",
-      "have": 474,
-      "total": 474
+      "have": 486,
+      "total": 486
     },
     {
       "code": "japanese",
       "name": "Japanese",
-      "have": 474,
-      "total": 474
+      "have": 486,
+      "total": 486
     },
     {
       "code": "koreana",
       "name": "Korean",
-      "have": 474,
-      "total": 474
+      "have": 486,
+      "total": 486
     },
     {
       "code": "polish",
       "name": "Polish",
-      "have": 474,
-      "total": 474
+      "have": 486,
+      "total": 486
     },
     {
       "code": "brazilian",
       "name": "Portuguese (Brazil)",
-      "have": 474,
-      "total": 474
+      "have": 486,
+      "total": 486
     },
     {
       "code": "russian",
       "name": "Russian",
-      "have": 474,
-      "total": 474
+      "have": 486,
+      "total": 486
     },
     {
       "code": "spanish",
       "name": "Spanish",
-      "have": 474,
-      "total": 474
+      "have": 486,
+      "total": 486
     },
     {
       "code": "turkish",
       "name": "Turkish",
-      "have": 474,
-      "total": 474
+      "have": 486,
+      "total": 486
     }
   ],
   "textCoverage": [
@@ -1228,21 +1228,9 @@
       "pct": 0
     },
     {
-      "file": "NewsHub.tsx",
-      "translated": 0,
-      "literals": 18,
-      "pct": 0
-    },
-    {
       "file": "Shortcuts.tsx",
       "translated": 0,
       "literals": 1,
-      "pct": 0
-    },
-    {
-      "file": "Versions.tsx",
-      "translated": 0,
-      "literals": 11,
       "pct": 0
     },
     {
@@ -1252,16 +1240,16 @@
       "pct": 0
     },
     {
-      "file": "Achievements.tsx",
-      "translated": 1,
-      "literals": 2,
-      "pct": 33.33333333333333
+      "file": "Versions.tsx",
+      "translated": 2,
+      "literals": 9,
+      "pct": 18.181818181818183
     },
     {
-      "file": "NewReleases.tsx",
-      "translated": 3,
-      "literals": 4,
-      "pct": 42.857142857142854
+      "file": "NewsHub.tsx",
+      "translated": 8,
+      "literals": 11,
+      "pct": 42.10526315789473
     },
     {
       "file": "Developer.tsx",
@@ -1270,10 +1258,22 @@
       "pct": 59.25925925925925
     },
     {
+      "file": "Achievements.tsx",
+      "translated": 2,
+      "literals": 1,
+      "pct": 66.66666666666666
+    },
+    {
       "file": "Chrome.tsx",
       "translated": 47,
       "literals": 20,
       "pct": 70.1492537313433
+    },
+    {
+      "file": "NewReleases.tsx",
+      "translated": 5,
+      "literals": 2,
+      "pct": 71.42857142857143
     },
     {
       "file": "StorePages.tsx",
@@ -1300,12 +1300,6 @@
       "pct": 85.52631578947368
     },
     {
-      "file": "Community.tsx",
-      "translated": 34,
-      "literals": 5,
-      "pct": 87.17948717948718
-    },
-    {
       "file": "Friends.tsx",
       "translated": 43,
       "literals": 4,
@@ -1316,6 +1310,12 @@
       "translated": 31,
       "literals": 2,
       "pct": 93.93939393939394
+    },
+    {
+      "file": "Community.tsx",
+      "translated": 38,
+      "literals": 2,
+      "pct": 95
     },
     {
       "file": "Profile.tsx",

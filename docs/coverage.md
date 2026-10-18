@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `ee0cb1a`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `81dca91`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -16,7 +16,7 @@ Generated 2026-10-18 from commit `ee0cb1a`. Run `npm run coverage` to refresh.
 | Automated checks | 283 |
 | Client routes | 25 |
 | Database tables | 34 |
-| Languages | 12 (474 strings) |
+| Languages | 12 (486 strings) |
 
 ## Fidelity by page
 
@@ -165,18 +165,18 @@ Generated 2026-10-18 from commit `ee0cb1a`. Run `npm run coverage` to refresh.
 
 | Language | Strings | Coverage |
 | --- | --- | --- |
-| Chinese (Simplified) | 474/474 | 100% |
-| English | 474/474 | 100% |
-| French | 474/474 | 100% |
-| German | 474/474 | 100% |
-| Italian | 474/474 | 100% |
-| Japanese | 474/474 | 100% |
-| Korean | 474/474 | 100% |
-| Polish | 474/474 | 100% |
-| Portuguese (Brazil) | 474/474 | 100% |
-| Russian | 474/474 | 100% |
-| Spanish | 474/474 | 100% |
-| Turkish | 474/474 | 100% |
+| Chinese (Simplified) | 486/486 | 100% |
+| English | 486/486 | 100% |
+| French | 486/486 | 100% |
+| German | 486/486 | 100% |
+| Italian | 486/486 | 100% |
+| Japanese | 486/486 | 100% |
+| Korean | 486/486 | 100% |
+| Polish | 486/486 | 100% |
+| Portuguese (Brazil) | 486/486 | 100% |
+| Russian | 486/486 | 100% |
+| Spanish | 486/486 | 100% |
+| Turkish | 486/486 | 100% |
 
 ## UI text going through the translator
 
@@ -185,21 +185,21 @@ Generated 2026-10-18 from commit `ee0cb1a`. Run `npm run coverage` to refresh.
 | About.tsx | 0 | 10 | 0% |
 | Admin.tsx | 0 | 9 | 0% |
 | App.tsx | 0 | 2 | 0% |
-| NewsHub.tsx | 0 | 18 | 0% |
 | Shortcuts.tsx | 0 | 1 | 0% |
-| Versions.tsx | 0 | 11 | 0% |
 | ui.tsx | 0 | 3 | 0% |
-| Achievements.tsx | 1 | 2 | 33% |
-| NewReleases.tsx | 3 | 4 | 43% |
+| Versions.tsx | 2 | 9 | 18% |
+| NewsHub.tsx | 8 | 11 | 42% |
 | Developer.tsx | 32 | 22 | 59% |
+| Achievements.tsx | 2 | 1 | 67% |
 | Chrome.tsx | 47 | 20 | 70% |
+| NewReleases.tsx | 5 | 2 | 71% |
 | StorePages.tsx | 65 | 23 | 74% |
 | Reviews.tsx | 14 | 3 | 82% |
 | Library.tsx | 59 | 12 | 83% |
 | Settings.tsx | 65 | 11 | 86% |
-| Community.tsx | 34 | 5 | 87% |
 | Friends.tsx | 43 | 4 | 91% |
 | Auth.tsx | 31 | 2 | 94% |
+| Community.tsx | 38 | 2 | 95% |
 | Profile.tsx | 22 | 1 | 96% |
 | StoreGame.tsx | 46 | 2 | 96% |
 | Charts.tsx | 9 | 0 | 100% |

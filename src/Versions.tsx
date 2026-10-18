@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { t } from './i18n'
 import { api, call, store } from './store'
 import { Modal, ago } from './ui'
 import { fmt, type Game } from './data'
@@ -17,8 +18,8 @@ export const PropertiesModal = ({ g, onClose }: { g: Game; onClose: () => void }
         <dt>Install size</dt><dd>{g.sizeGb ? `${g.sizeGb.toFixed(2)} GB` : 'n/a'}</dd>
         <dt>Game ID</dt><dd>{g.id}</dd>
       </dl>
-      <h3 className="vr-h">Update history</h3>
-      {vers === null ? <p className="muted small">Loading…</p> : vers.length === 0 ? <p className="muted small">No updates have been released yet.</p> : (
+      <h3 className="vr-h">{t('vr.history')}</h3>
+      {vers === null ? <p className="muted small">Loading…</p> : vers.length === 0 ? <p className="muted small">{t('vr.none')}</p> : (
         <div className="vr-list">{vers.map(v => <div key={v.version} className="vr-row"><b>Version {v.version}</b> <span className="muted small">{ago(v.at)}</span><div className="vr-notes">{v.notes}</div></div>)}</div>
       )}
     </Modal>

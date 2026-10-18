@@ -29,9 +29,9 @@ export const NewReleases = observer(() => {
       </div>
       <div className="container">
         <div className="nr-spots">{spots.map(g => <Spot key={g.id} g={g} />)}</div>
-        <h2 className="nr-h2">Newest games</h2>
+        <h2 className="nr-h2">{t('nr.newest')}</h2>
         <div className="cards">{list.slice(0, 12).map(g => <Card key={g.id} g={g} />)}</div>
-        <p className="muted nr-more"><Link to="/store/browse?sort=new">See every new release</Link></p>
+        <p className="muted nr-more"><Link to="/store/browse?sort=new">{t('nr.seeall')}</Link></p>
       </div>
     </div>
   )
