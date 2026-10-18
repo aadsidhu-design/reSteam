@@ -55,11 +55,11 @@ Anyone with an account can open **Upload a game** (`/developer`), create a game,
 
 - **Web builds** are a `.zip` with `index.html` at the top (HTML5 / JS / WebAssembly). They run inside reSteam in a sandboxed frame (`allow-scripts` only: no cookies, no access to the site or its API, no network except its own files). Access goes through a short-lived play token, so only owners can load them.
 - **Downloadable builds** are any file up to 50 MB. Owners download it from their library with real progress and speed; the file is saved to disk.
-- Files live in an R2 bucket (`FILES` binding); D1 holds metadata. Limits are small on purpose (10 games per account, 5 creations per hour, 15 MB zips, 40 MB unpacked, 300 files, covers must be real PNG/JPEG/WebP).
+- Files live in an R2 bucket (`FILES` binding); D1 holds metadata. Limits are small on purpose (10 games per account, 150 MB of downloadable builds per account, 5 creations per hour, 15 MB zips, 40 MB unpacked, 300 files, covers must be real PNG/JPEG/WebP).
 
 ## Moderation
 
-Nobody is a moderator by default. Set `ADMIN_USERNAMES` (comma-separated account names) in `wrangler.jsonc` `vars` to let those accounts open `/admin`, review reports, approve or reject submissions and take games down with a reason the owner sees. Set `REQUIRE_APPROVAL` to `"1"` to hold every new publication for review (moderators publish directly). `npm run api:test` starts a local API with both enabled and `npm run test:admin` exercises the flow.
+Nobody is a moderator by default. Set `ADMIN_USERNAMES` (comma-separated account names) in `wrangler.jsonc` `vars` to let those accounts open `/admin`, review reports, approve or reject submissions and take games down with a reason the owner sees. Set `REQUIRE_APPROVAL` to `"1"` to hold every new publication for review (moderators publish directly). Create (register) the moderator account first, then add its name to `ADMIN_USERNAMES`: until the account exists, anyone could register that name and become a moderator. `npm run api:test` starts a local API with both enabled and `npm run test:admin` exercises the flow.
 
 ## Run it locally
 
@@ -95,6 +95,8 @@ For later releases use `npm run ship`: it applies migrations, confirms none are 
 - Accounts use a username and password. Passwords are hashed with salted PBKDF2-SHA256; only a hash of each session token is stored, and the cookie is `HttpOnly; SameSite=Strict`.
 - Each account gets a one-time recovery key (shown once, rotated on use). QR sign-in lets a signed-in device approve another browser.
 - Non-GET requests need `x-requested-with` and a same-origin `Origin`; login, registration and username lookups are throttled per IP and per name, and login errors are generic.
+- Uploaded web games run in an iframe with `sandbox="allow-scripts"` and a CSP that only allows their own files, behind short-lived play tokens, so they cannot read cookies or call the site's API. Covers and screenshots are checked by magic bytes and served with `sandbox` CSP. Zips are checked for size, file count, unpacked size and unsafe paths before anything is unpacked.
+- Refunds, moderation actions and uploads are rate limited and every moderation route checks the moderator list on the server.
 - The wallet is play money, and a few public promo codes exist for the demo (see `worker/shop.ts`).
 - Rate limits are per Cloudflare location and approximate; they are a backstop against abuse, not an exact quota.
 

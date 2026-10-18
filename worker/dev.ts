@@ -9,6 +9,7 @@ const MAX_CREATES_PER_HOUR = 5
 const MAX_COVER = 2 * 1024 * 1024
 const MAX_SHOTS = 6
 const MAX_BUILD = 50 * 1024 * 1024
+const MAX_BUILDS_TOTAL = 150 * 1024 * 1024 // per account, across all of its games
 const MAX_ZIP = 15 * 1024 * 1024
 const MAX_WEB_TOTAL = 40 * 1024 * 1024
 const MAX_WEB_FILE = 20 * 1024 * 1024
@@ -194,6 +195,9 @@ export const devRoutes: Route[] = [
     const len = Number(c.req.headers.get('content-length') ?? 0)
     if (!len || !c.req.body) return fail(411, 'Content-Length is required')
     if (len > MAX_BUILD) return fail(413, `Downloadable builds can be up to ${MAX_BUILD / 1024 / 1024} MB`)
+    // a per-account cap keeps one person from filling the bucket with many 50 MB files
+    const used = await c.env.DB.prepare('SELECT COALESCE(SUM(build_size), 0) AS n FROM games WHERE owner_id = ? AND id != ?').bind(c.user!.id, g.id).first<{ n: number }>()
+    if ((used?.n ?? 0) + len > MAX_BUILDS_TOTAL) return fail(413, `Your downloadable builds can total ${MAX_BUILDS_TOTAL / 1024 / 1024} MB across all your games`)
     const name = safeName(c.url.searchParams.get('name') ?? 'game.zip')
     await c.env.FILES.put(`games/${g.id}/build`, c.req.body, { httpMetadata: { contentType: 'application/octet-stream' } })
     await c.env.DB.prepare('UPDATE games SET build_name = ?, build_size = ?, size_gb = ? WHERE id = ?').bind(name, len, Math.max(0.001, len / 1024 ** 3), g.id).run()
