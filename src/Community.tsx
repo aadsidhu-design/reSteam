@@ -191,8 +191,9 @@ export const Community = observer(() => {
             <div className="cm-panels">
               <div className="cm-panel cols2">
                 <div>
-                  <h4>YOUR RECENTLY PLAYED GAMES</h4>
-                  {recentHubs.length === 0 && <div className="muted">{store.signedIn ? 'Play a game and its hub will show up here.' : <><Link to="/login">Sign in</Link> to see your games.</>}</div>}
+                  <h4>{store.signedIn ? 'YOUR RECENTLY PLAYED GAMES' : 'WELCOME TO THE COMMUNITY'}</h4>
+                  {!store.signedIn && <div className="cm-welcome"><p>Log in to the reSteam Community to find more hubs to browse.</p><div className="cm-wbtns"><Link to="/login?next=/community" className="btn green">Sign In</Link><span>or</span><Link to="/login?mode=join&next=/community" className="btn green">Join reSteam</Link></div></div>}
+                  {store.signedIn && recentHubs.length === 0 && <div className="muted">Play a game and its hub will show up here.</div>}
                   {recentHubs.map(g => <Link key={g.id} to={`/community?hub=${g.id}`} className="hubrow"><Art game={g} kind="icon" className="hub-icon" /><div><div className="hn">{g.title}</div><div className="hl">{hours(store.playtime[g.id])} played</div></div></Link>)}
                 </div>
                 <div>

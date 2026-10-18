@@ -83,3 +83,6 @@
 .pv-reply { display: flex; gap: 12px; background: #0f1722; padding: 12px 16px; }
 .pv-form { display: grid; gap: 10px; justify-items: start; }
 .pv-form textarea { width: 100%; }
+.cm-welcome p { margin: 0 0 14px; color: #fff; }
+.cm-wbtns { display: flex; align-items: center; gap: 10px; }
+.cm-wbtns .btn { padding: 8px 18px; font-size: 15px; }

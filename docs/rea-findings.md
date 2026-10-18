@@ -55,3 +55,19 @@ Read from the real store's stylesheets (asset URLs taken from the REA network ca
 - **Capsule hover previews:** screenshots cross-fade on a 4 s loop (`screenshot_hover_fadein`).
 
 REA's response-body capture is capped at 64 KiB per body, so large stylesheets and scripts were read from the asset URLs the capture reported.
+
+## Layout measurements (REA screenshots at 1400 px, plus the store's own CSS)
+
+| Part | Real value | Where it is used |
+| --- | --- | --- |
+| Global header | 104 px tall, `#171d25`, content column 1200 px (940 px on community pages) | `shell.css` |
+| Header nav items | 16 px, weight 500-600, uppercase, 45 px top padding, active item `#1a9fff` with a 3 px underline | `shell.css` |
+| Header top row | install button, `sign in`, `language`, 12 px, right aligned | `shell.css` |
+| Store sub-nav | 46 px band, `#182535`; tabs 13 px bold with a chevron; search 480 px wide with a 34 px `#1a9fff` button | `store.css` |
+| Dropdown menus | solid `#417a9b`, white text, white 2 px underline on hover | `store.css` |
+| Hero | starts at y 150, 450 px tall, capsules 335 x 245 with 20 px gaps | `store.css` |
+| Featured carousel | 840 px art + 360 px panel (30 %), 481 px tall; neighbouring slides peek 60 px at 60 % opacity | `store.css` |
+| Game page | blurred, darkened key art behind the header; blue "You're not signed in!" band when signed out | `StoreGame.tsx` |
+| Discovery Queue | purple-to-blue banner after Discounts & Events, linking to a one-item-at-a-time queue | `Explore.tsx` |
+
+The store's category and ways-to-play menus are rendered by React only while open, so they are not present in a static DOM capture; their contents were matched from screenshots instead.

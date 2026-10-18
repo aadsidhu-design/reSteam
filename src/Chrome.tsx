@@ -22,7 +22,7 @@ export const Header = observer(() => {
 
   return (
     <header className="gheader">
-      <div className="gh-inner">
+      <div className={`gh-inner ${isCommunity || path.startsWith('/profile') ? 'narrow' : ''}`}>
         <Link to="/store" className="gh-logo" aria-label="reSteam home"><Logo size={36} /><span>reSteam</span></Link>
         <nav className="gh-nav">
           <NavLink to="/store" className={isStore ? 'active' : ''}>STORE</NavLink>
