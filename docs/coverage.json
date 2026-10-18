@@ -1,6 +1,6 @@
 {
   "generated": "2026-10-18",
-  "commit": "27772b0",
+  "commit": "a6225f2",
   "summary": {
     "client": {
       "d": 224,
@@ -1138,74 +1138,74 @@
     {
       "code": "schinese",
       "name": "Chinese (Simplified)",
-      "have": 442,
-      "total": 442
+      "have": 444,
+      "total": 444
     },
     {
       "code": "english",
       "name": "English",
-      "have": 442,
-      "total": 442
+      "have": 444,
+      "total": 444
     },
     {
       "code": "french",
       "name": "French",
-      "have": 442,
-      "total": 442
+      "have": 444,
+      "total": 444
     },
     {
       "code": "german",
       "name": "German",
-      "have": 442,
-      "total": 442
+      "have": 444,
+      "total": 444
     },
     {
       "code": "italian",
       "name": "Italian",
-      "have": 442,
-      "total": 442
+      "have": 444,
+      "total": 444
     },
     {
       "code": "japanese",
       "name": "Japanese",
-      "have": 442,
-      "total": 442
+      "have": 444,
+      "total": 444
     },
     {
       "code": "koreana",
       "name": "Korean",
-      "have": 442,
-      "total": 442
+      "have": 444,
+      "total": 444
     },
     {
       "code": "polish",
       "name": "Polish",
-      "have": 442,
-      "total": 442
+      "have": 444,
+      "total": 444
     },
     {
       "code": "brazilian",
       "name": "Portuguese (Brazil)",
-      "have": 442,
-      "total": 442
+      "have": 444,
+      "total": 444
     },
     {
       "code": "russian",
       "name": "Russian",
-      "have": 442,
-      "total": 442
+      "have": 444,
+      "total": 444
     },
     {
       "code": "spanish",
       "name": "Spanish",
-      "have": 442,
-      "total": 442
+      "have": 444,
+      "total": 444
     },
     {
       "code": "turkish",
       "name": "Turkish",
-      "have": 442,
-      "total": 442
+      "have": 444,
+      "total": 444
     }
   ],
   "textCoverage": [
@@ -1289,9 +1289,9 @@
     },
     {
       "file": "StorePages.tsx",
-      "translated": 63,
-      "literals": 25,
-      "pct": 71.5909090909091
+      "translated": 65,
+      "literals": 23,
+      "pct": 73.86363636363636
     },
     {
       "file": "Profile.tsx",
@@ -1318,16 +1318,16 @@
       "pct": 87.17948717948718
     },
     {
-      "file": "StoreGame.tsx",
-      "translated": 45,
-      "literals": 3,
-      "pct": 93.75
-    },
-    {
       "file": "Auth.tsx",
       "translated": 31,
       "literals": 2,
       "pct": 93.93939393939394
+    },
+    {
+      "file": "StoreGame.tsx",
+      "translated": 46,
+      "literals": 2,
+      "pct": 95.83333333333334
     },
     {
       "file": "Charts.tsx",

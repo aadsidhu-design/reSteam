@@ -400,6 +400,8 @@ const ROWS: Row[] = [
   ['st.purchase', 'Purchase', 'Comprar', 'Acheter', 'Kaufen', 'Acquista', 'Comprar', '購入', '구매', '购买', 'Купить', 'Satın al', 'Kup'],
   ['st.cart', 'Your Shopping Cart', 'Tu carrito de la compra', 'Votre panier', 'Dein Warenkorb', 'Il tuo carrello', 'Seu carrinho de compras', 'ショッピングカート', '장바구니', '您的购物车', 'Ваша корзина', 'Alışveriş Sepetin', 'Twój koszyk'],
   ['st.home', 'Home', 'Inicio', 'Accueil', 'Startseite', 'Home', 'Início', 'ホーム', '홈', '首页', 'Главная', 'Ana sayfa', 'Strona główna'],
+  ['st.featuredtag', 'Featured tag', 'Etiqueta destacada', 'Tag à la une', 'Hervorgehobener Tag', 'Tag in evidenza', 'Etiqueta em destaque', '注目のタグ', '추천 태그', '精选标签', 'Рекомендуемая метка', 'Öne çıkan etiket', 'Wyróżniony tag'],
+  ['st.allgames', 'All Games', 'Todos los juegos', 'Tous les jeux', 'Alle Spiele', 'Tutti i giochi', 'Todos os jogos', 'すべてのゲーム', '모든 게임', '所有游戏', 'Все игры', 'Tüm Oyunlar', 'Wszystkie gry'],
 ]
 
 export const PAGE_STRINGS: Record<Lang, Record<string, string>> = Object.fromEntries(

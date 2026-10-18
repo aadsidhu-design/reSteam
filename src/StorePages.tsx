@@ -270,7 +270,7 @@ export const StoreHome = observer(() => {
           <div className="q-text">
             <h3>{tr('st.discoverq')}</h3>
             <p>{store.signedIn ? 'Browse popular, new and recommended titles picked for you.' : 'Sign in to discover top-selling, new and recommended titles.'}</p>
-            {store.signedIn ? <Link to="/explore" className="btn bright">{tr('st.startexplore')}</Link> : <Link to="/login?next=/explore" className="btn bright">Sign in</Link>}
+            {store.signedIn ? <Link to="/explore" className="btn bright">{tr('st.startexplore')}</Link> : <Link to="/login?next=/explore" className="btn bright">{tr('auth.signin')}</Link>}
           </div>
           <div className="q-shots">{[2, 4, 6].map((v, i) => <div key={v} className={`q-shot s${i}`}><Art game={byReviews[i]} kind="shot" variant={v} showTitle={false} /></div>)}</div>
         </div>
@@ -282,7 +282,7 @@ export const StoreHome = observer(() => {
           const list = GAMES.filter(g => g.tags.includes(t) && !used.has(g.id)).slice(0, 4)
           return (
             <div key={t}>
-              <h2 className="tag-title">{t.toUpperCase()} GAMES</h2><div className="tag-sub">Featured tag</div>
+              <h2 className="tag-title">{t.toUpperCase()} GAMES</h2><div className="tag-sub">{tr('st.featuredtag')}</div>
               <div className="tag-panel">{list.map(g => <Link key={g.id} to={`/store/${g.id}`} className="tg"><div className="tg-art"><Art game={g} kind="header" /></div><CapPrice g={g} /></Link>)}</div>
               <div className="seerow"><Link to={`/store/browse?tag=${encodeURIComponent(t)}`} className="seebtn">{tr('home.seemore')}</Link></div>
             </div>

@@ -70,7 +70,7 @@ export const StoreGame = observer(() => {
     <div className="sg-bd" aria-hidden><Art game={g} kind="hero" showTitle={false} /></div>
     {!store.signedIn && <div className="notsigned"><div><Link className="btn" to={`/login?next=${encodeURIComponent(`/store/${g.id}`)}`}>{t('game.signin')}</Link><span><b>{t('game.banner')}</b>{t('game.bannersub')}</span></div></div>}
     <div className="container sgame">
-      <div className="crumbs"><Link to="/store/browse">All Games</Link> &gt; <Link to={`/store/browse?genre=${encodeURIComponent(g.genre[0])}`}>{g.genre[0]} Games</Link> &gt; <span>{g.title}</span></div>
+      <div className="crumbs"><Link to="/store/browse">{t('st.allgames')}</Link> &gt; <Link to={`/store/browse?genre=${encodeURIComponent(g.genre[0])}`}>{g.genre[0]} Games</Link> &gt; <span>{g.title}</span></div>
       <div className="sg-title"><h1>{g.title}</h1><Link to={`/community?hub=${g.id}`} className="hubbtn">{t('game.hub')}</Link></div>
 
       <div className="sg-top">
