@@ -1,6 +1,6 @@
 # reSteam replication coverage
 
-Generated 2026-10-18 from commit `a6692ea`. Run `npm run coverage` to refresh.
+Generated 2026-10-18 from commit `a1f86ff`. Run `npm run coverage` to refresh.
 
 ![coverage poster](coverage.svg)
 
@@ -8,14 +8,14 @@ Generated 2026-10-18 from commit `a6692ea`. Run `npm run coverage` to refresh.
 
 | Measure | Value |
 | --- | --- |
-| Client behaviors replicated | 219 of 249 (12 partial, 18 not yet) |
+| Client behaviors replicated | 220 of 250 (12 partial, 18 not yet) |
 | Backend behaviors replicated | 74 of 90 (1 partial, 15 not yet) |
 | Visual fidelity (average of compared pages) | 75 / 100 over 20 pages |
 | Behavior fidelity | 70 / 100 |
-| API endpoints | 99 (99 exercised by e2e checks) |
-| Automated checks | 228 |
+| API endpoints | 103 (103 exercised by e2e checks) |
+| Automated checks | 236 |
 | Client routes | 24 |
-| Database tables | 29 |
+| Database tables | 31 |
 | Languages | 12 (368 strings) |
 
 ## Fidelity by page
@@ -35,7 +35,7 @@ Generated 2026-10-18 from commit `a6692ea`. Run `npm run coverage` to refresh.
 | Charts | `/charts` | connected-browser | 78 | 80 | 2026-10-18 | Sub-nav, centered title over blurred art and the rank, price, change and weeks columns match; no regions and 25 rows instead of 100. Movement and weeks come from daily snapshots. |
 | New Releases | `/store/new` | connected-browser | 76 | 64 | 2026-10-18 | Breadcrumb, large title, patterned header and two spotlight capsules with caption bars match; the real page has more sections below that were not captured. |
 | Discounts and events | `/store/specials` | connected-browser | 72 | 66 | 2026-10-18 | Large title over blurred art and the spotlight carousel (media left, capsule, tags and wishlist star right) match; no video and no event sections below. |
-| News hub | `/news` | connected-browser | 80 | 68 | 2026-10-18 | Checked side by side: sidebar, day-grouped feed and cards match. No likes, comments, curators or events. |
+| News hub | `/news` | connected-browser | 80 | 68 | 2026-10-18 | Checked side by side: sidebar, day-grouped feed and cards match. Likes and comments are real; no curators or events. |
 | Footer | `(all)` | connected-browser | 74 | 60 | 2026-10-18 | Four-column layout matched; legal pages do not exist. |
 | Loading and motion | `(all)` | screenshot+css | 94 | 88 | 2026-10-18 | Throbber, carousel fades, hover lifts and menu timings copied from the real CSS values. |
 | Language menu | `(header)` | connected-browser | 70 | 55 | 2026-10-18 | 12 of about 29 languages, chrome strings only; real store translates every page. |
@@ -92,6 +92,10 @@ Generated 2026-10-18 from commit `a6692ea`. Run `npm run coverage` to refresh.
 | PUT | `/dev/games/:id/discount` | Publishing and files | yes | yes | yes |
 | GET | `/games/:id/news` | Publishing and files | public | - | yes |
 | GET | `/news` | Publishing and files | public | - | yes |
+| POST | `/news/:id/like` | Publishing and files | yes | yes | yes |
+| GET | `/news/:id/comments` | Publishing and files | public | - | yes |
+| POST | `/news/:id/comments` | Publishing and files | yes | yes | yes |
+| DELETE | `/news-comments/:id` | Publishing and files | yes | yes | yes |
 | POST | `/dev/games/:id/news` | Publishing and files | yes | yes | yes |
 | DELETE | `/dev/news/:id` | Publishing and files | yes | yes | yes |
 | POST | `/dev/games/:id/publish` | Publishing and files | yes | yes | yes |
@@ -172,7 +176,7 @@ Generated 2026-10-18 from commit `a6692ea`. Run `npm run coverage` to refresh.
 | --- | --- | --- | --- |
 | About.tsx | 0 | 10 | 0% |
 | App.tsx | 0 | 2 | 0% |
-| NewsHub.tsx | 0 | 12 | 0% |
+| NewsHub.tsx | 0 | 18 | 0% |
 | ui.tsx | 0 | 3 | 0% |
 | Community.tsx | 11 | 28 | 28% |
 | NewReleases.tsx | 3 | 4 | 43% |
@@ -409,7 +413,7 @@ Generated 2026-10-18 from commit `a6692ea`. Run `npm run coverage` to refresh.
 - [ ] Emoji and stickers
 - [ ] Nicknames
 
-**Community** (26/27)
+**Community** (27/28)
 
 - [x] Activity page
 - [x] Recently played hubs
@@ -432,6 +436,7 @@ Generated 2026-10-18 from commit `a6692ea`. Run `npm run coverage` to refresh.
 - [x] Sale pricing
 - [x] Game news and follower alerts
 - [x] Store-wide news feed
+- [x] News likes and comments
 - [x] Developer achievements
 - [x] Wishlist sale alerts
 - [x] UI translation (11 languages)

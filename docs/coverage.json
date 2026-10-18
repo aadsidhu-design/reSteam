@@ -1,12 +1,12 @@
 {
   "generated": "2026-10-18",
-  "commit": "a6692ea",
+  "commit": "a1f86ff",
   "summary": {
     "client": {
-      "d": 219,
+      "d": 220,
       "p": 12,
       "m": 18,
-      "n": 249
+      "n": 250
     },
     "backend": {
       "d": 74,
@@ -16,11 +16,11 @@
     },
     "visualAvg": 75.35,
     "behaviorAvg": 70.45,
-    "endpoints": 99,
-    "tested": 99,
-    "checks": 228,
+    "endpoints": 103,
+    "tested": 103,
+    "checks": 236,
     "routes": 24,
-    "dbTables": 29
+    "dbTables": 31
   },
   "pages": [
     {
@@ -161,7 +161,7 @@
       "visual": 80,
       "behavior": 68,
       "verified": "2026-10-18",
-      "notes": "Checked side by side: sidebar, day-grouped feed and cards match. No likes, comments, curators or events."
+      "notes": "Checked side by side: sidebar, day-grouped feed and cards match. Likes and comments are real; no curators or events."
     },
     {
       "page": "Footer",
@@ -587,6 +587,38 @@
       "area": "Publishing and files",
       "auth": false,
       "write": false,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/news/:id/like",
+      "area": "Publishing and files",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "GET",
+      "path": "/news/:id/comments",
+      "area": "Publishing and files",
+      "auth": false,
+      "write": false,
+      "tested": true
+    },
+    {
+      "method": "POST",
+      "path": "/news/:id/comments",
+      "area": "Publishing and files",
+      "auth": true,
+      "write": true,
+      "tested": true
+    },
+    {
+      "method": "DELETE",
+      "path": "/news-comments/:id",
+      "area": "Publishing and files",
+      "auth": true,
+      "write": true,
       "tested": true
     },
     {
@@ -1128,7 +1160,7 @@
     {
       "file": "NewsHub.tsx",
       "translated": 0,
-      "literals": 12,
+      "literals": 18,
       "pct": 0
     },
     {

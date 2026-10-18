@@ -23,3 +23,11 @@
 .nh-body p { margin: 0; font-size: 16px; color: #dfe3e6; line-height: 1.45; white-space: pre-wrap; }
 .nh-empty { padding: 40px 0; }
 @media (max-width: 900px) { .nh { grid-template-columns: 1fr; } .nh-card { grid-template-columns: 1fr; } }
+
+.nh-react { margin-top: 12px; }
+.nh-counts { display: flex; gap: 6px; justify-content: flex-end; }
+.nh-counts button { background: none; border: 0; color: #8f98a0; padding: 4px 10px; display: inline-flex; gap: 6px; align-items: center; font-size: 14px; transition: color .15s; }
+.nh-counts button:hover, .nh-counts button.on { color: #1a9fff; }
+.nh-comments { display: grid; gap: 8px; margin-top: 8px; background: #00000030; padding: 10px 12px; }
+.nh-comment { font-size: 14px; color: #dfe3e6; }
+.nh-comment a { color: #67c1f5; }

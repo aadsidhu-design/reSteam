@@ -77,6 +77,8 @@ function purgeStatements(env: Env, id: number) {
     db.prepare('DELETE FROM replies WHERE post_id IN (SELECT id FROM posts WHERE game_id = ?)').bind(id),
     db.prepare('DELETE FROM posts WHERE game_id = ?').bind(id),
     db.prepare('DELETE FROM events WHERE game_id = ?').bind(id),
+    db.prepare('DELETE FROM news_likes WHERE news_id IN (SELECT id FROM game_news WHERE game_id = ?)').bind(id),
+    db.prepare('DELETE FROM news_comments WHERE news_id IN (SELECT id FROM game_news WHERE game_id = ?)').bind(id),
     db.prepare('DELETE FROM game_news WHERE game_id = ?').bind(id),
     db.prepare('DELETE FROM play_tokens WHERE game_id = ?').bind(id),
     db.prepare('UPDATE users SET playing_game = NULL WHERE playing_game = ?').bind(id),
@@ -275,15 +277,48 @@ export const devRoutes: Route[] = [
     const mine = c.url.searchParams.get('scope') === 'mine'
     if (mine && !c.user) return fail(401, 'not signed in')
     const q = (c.url.searchParams.get('q') ?? '').trim().slice(0, 40).replace(/[\\%_]/g, m => `\\${m}`)
-    const binds: unknown[] = []
+    const binds: unknown[] = [c.user?.id ?? '']
     let where = "g.status = 'published'"
     if (mine) { where += ' AND g.id IN (SELECT game_id FROM followed WHERE user_id = ? UNION SELECT game_id FROM library WHERE user_id = ?)'; binds.push(c.user!.id, c.user!.id) }
     if (q) { where += " AND (n.title LIKE ? ESCAPE '\\' OR g.title LIKE ? ESCAPE '\\')"; binds.push(`%${q}%`, `%${q}%`) }
     const { results } = await c.env.DB.prepare(
-      `SELECT n.id, n.title, n.body, n.created_at AS at, g.id AS gameId, g.title AS gameTitle, u.display_name AS author
+      `SELECT n.id, n.title, n.body, n.created_at AS at, g.id AS gameId, g.title AS gameTitle, u.display_name AS author,
+         (SELECT COUNT(*) FROM news_likes l WHERE l.news_id = n.id) AS likes,
+         (SELECT COUNT(*) FROM news_comments m WHERE m.news_id = n.id) AS comments,
+         EXISTS (SELECT 1 FROM news_likes l WHERE l.news_id = n.id AND l.user_id = ?) AS liked
        FROM game_news n JOIN games g ON g.id = n.game_id JOIN users u ON u.id = n.user_id WHERE ${where} ORDER BY n.created_at DESC LIMIT 60`,
     ).bind(...binds).all()
-    return json({ news: results }, 200, mine ? {} : { 'cache-control': 'public, max-age=20' })
+    return json({ news: results.map(r => ({ ...r, liked: !!(r as { liked: number }).liked })) }, 200, { 'cache-control': 'private, no-store' })
+  }),
+
+  route('POST', '/news/:id/like', {}, async c => {
+    const n = await c.env.DB.prepare("SELECT n.id FROM game_news n JOIN games g ON g.id = n.game_id WHERE n.id = ? AND g.status = 'published'").bind(c.params.id).first()
+    if (!n) return fail(404, 'no such post')
+    const had = await c.env.DB.prepare('SELECT 1 FROM news_likes WHERE news_id = ? AND user_id = ?').bind(c.params.id, c.user!.id).first()
+    await (had ? c.env.DB.prepare('DELETE FROM news_likes WHERE news_id = ? AND user_id = ?') : c.env.DB.prepare('INSERT INTO news_likes (news_id, user_id) VALUES (?, ?)')).bind(c.params.id, c.user!.id).run()
+    const cnt = await c.env.DB.prepare('SELECT COUNT(*) AS n FROM news_likes WHERE news_id = ?').bind(c.params.id).first<{ n: number }>()
+    return json({ likes: cnt?.n ?? 0, liked: !had })
+  }),
+  route('GET', '/news/:id/comments', { auth: false }, async c => {
+    const { results } = await c.env.DB.prepare(
+      `SELECT m.id, m.body, m.created_at AS at, u.username, u.display_name AS name FROM news_comments m JOIN users u ON u.id = m.user_id
+       JOIN game_news n ON n.id = m.news_id JOIN games g ON g.id = n.game_id WHERE m.news_id = ? AND g.status = 'published' ORDER BY m.id LIMIT 100`).bind(c.params.id).all()
+    return json({ comments: results })
+  }),
+  route('POST', '/news/:id/comments', {}, async c => {
+    const n = await c.env.DB.prepare("SELECT n.id FROM game_news n JOIN games g ON g.id = n.game_id WHERE n.id = ? AND g.status = 'published'").bind(c.params.id).first()
+    if (!n) return fail(404, 'no such post')
+    const b = await readJson<{ body: string }>(c.req, 4_000)
+    const body = cleanText(b.body, 1000, true)
+    if (body.length < 1) return fail(400, 'Write something first')
+    const recent = await c.env.DB.prepare('SELECT COUNT(*) AS n FROM news_comments WHERE user_id = ? AND created_at > ?').bind(c.user!.id, Date.now() - HOUR).first<{ n: number }>()
+    if ((recent?.n ?? 0) >= 20) return tooMany()
+    const r = await c.env.DB.prepare('INSERT INTO news_comments (news_id, user_id, body, created_at) VALUES (?, ?, ?, ?)').bind(c.params.id, c.user!.id, body, Date.now()).run()
+    return json({ id: r.meta.last_row_id }, 201)
+  }),
+  route('DELETE', '/news-comments/:id', {}, async c => {
+    const r = await c.env.DB.prepare('DELETE FROM news_comments WHERE id = ? AND user_id = ?').bind(c.params.id, c.user!.id).run()
+    return r.meta.changes ? json({ ok: true }) : fail(404, 'no such comment')
   }),
 
   route('POST', '/dev/games/:id/news', {}, async c => {
@@ -303,8 +338,14 @@ export const devRoutes: Route[] = [
     return json({ id: r.meta.last_row_id }, 201)
   }),
   route('DELETE', '/dev/news/:id', {}, async c => {
-    const r = await c.env.DB.prepare('DELETE FROM game_news WHERE id = ? AND user_id = ?').bind(c.params.id, c.user!.id).run()
-    return r.meta.changes ? json({ ok: true }) : fail(404, 'no such post')
+    const own = await c.env.DB.prepare('SELECT 1 FROM game_news WHERE id = ? AND user_id = ?').bind(c.params.id, c.user!.id).first()
+    if (!own) return fail(404, 'no such post')
+    await c.env.DB.batch([
+      c.env.DB.prepare('DELETE FROM news_likes WHERE news_id = ?').bind(c.params.id),
+      c.env.DB.prepare('DELETE FROM news_comments WHERE news_id = ?').bind(c.params.id),
+      c.env.DB.prepare('DELETE FROM game_news WHERE id = ?').bind(c.params.id),
+    ])
+    return json({ ok: true })
   }),
 
   route('POST', '/dev/games/:id/publish', {}, async c => {
